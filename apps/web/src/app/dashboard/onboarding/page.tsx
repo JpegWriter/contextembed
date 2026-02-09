@@ -270,22 +270,30 @@ function OnboardingContent() {
   async function saveProgress() {
     try {
       const token = await getToken();
+      
+      // Helper to convert comma-separated string to array
+      const toArray = (str: string): string[] | undefined => {
+        if (!str) return undefined;
+        const arr = str.split(',').map(s => s.trim()).filter(Boolean);
+        return arr.length > 0 ? arr : undefined;
+      };
+      
       await userProfileApi.update(token, {
         // Context
         businessName: context.businessName || undefined,
         tagline: context.tagline || undefined,
         industry: context.industry || undefined,
         niche: context.niche || undefined,
-        services: context.services || undefined,
+        services: toArray(context.services),
         targetAudience: context.targetAudience || undefined,
         brandVoice: context.brandVoice || undefined,
         city: context.city || undefined,
         state: context.state || undefined,
         country: context.country || undefined,
         // Authority
-        yearsExperience: authority.yearsExperience || undefined,
+        yearsExperience: authority.yearsExperience ? Number(authority.yearsExperience) : undefined,
         credentials: authority.credentials || undefined,
-        specializations: authority.specializations || undefined,
+        specializations: toArray(authority.specializations),
         awardsRecognition: authority.awardsRecognition || undefined,
         clientTypes: authority.clientTypes || undefined,
         keyDifferentiator: authority.keyDifferentiator || undefined,
@@ -293,7 +301,7 @@ function OnboardingContent() {
         brandStory: authority.brandStory || undefined,
         serviceArea: authority.serviceArea || undefined,
         defaultEventType: authority.defaultEventType || undefined,
-        typicalDeliverables: authority.typicalDeliverables || undefined,
+        typicalDeliverables: toArray(authority.typicalDeliverables),
         // Rights
         creatorName: rights.creatorName || undefined,
         copyrightTemplate: rights.copyrightTemplate || undefined,

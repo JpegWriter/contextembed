@@ -82,8 +82,8 @@ export default function DashboardPage() {
       setProjects(prev => [data.project, ...prev]);
       toast.success('Project created!');
       
-      // Navigate to onboarding to complete setup
-      router.push(`/dashboard/projects/${data.project.id}/onboarding`);
+      // Navigate directly to project (user onboarding already complete)
+      router.push(`/dashboard/projects/${data.project.id}`);
     } catch (error) {
       toast.error('Failed to create project');
       throw error;
@@ -141,11 +141,7 @@ export default function DashboardPage() {
           {projects.map(project => (
             <Link
               key={project.id}
-              href={
-                project.onboardingCompleted
-                  ? `/dashboard/projects/${project.id}`
-                  : `/dashboard/projects/${project.id}/onboarding`
-              }
+              href={`/dashboard/projects/${project.id}`}
               className="block p-4 bg-gray-900 border border-gray-800 rounded hover:border-gray-700 
                 hover:bg-gray-800/50 transition-colors group"
             >
@@ -153,12 +149,6 @@ export default function DashboardPage() {
                 <div className="p-2 bg-gray-800 rounded">
                   <Folder className="h-5 w-5 text-cyan-400" />
                 </div>
-                {!project.onboardingCompleted && (
-                  <span className="text-[10px] px-1.5 py-0.5 bg-amber-900/40 text-amber-400 
-                    border border-amber-700/50 rounded font-medium uppercase">
-                    Setup
-                  </span>
-                )}
               </div>
               <h3 className="text-sm font-semibold text-white mb-0.5">{project.name}</h3>
               {project.description && (

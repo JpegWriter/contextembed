@@ -82,9 +82,7 @@ export default function ProjectPage() {
       setAssets(assetsData.assets);
       setJobStats(statsData.stats);
       
-      if (!projectData.project.onboardingCompleted) {
-        router.push(`/dashboard/projects/${projectId}/onboarding`);
-      }
+      // No per-project onboarding needed - user profile handles defaults
     } catch (error: any) {
       // On auth errors, redirect to login instead of retrying
       if (error?.message?.includes('token') || error?.message?.includes('Unauthorized') || error?.message?.includes('expired')) {

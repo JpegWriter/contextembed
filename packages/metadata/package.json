@@ -13,10 +13,10 @@
   },
   "dependencies": {
     "@contextembed/core": "workspace:*",
+    "@types/node": "^20.11.0",
     "exiftool-vendored": "^26.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.11.0",
     "rimraf": "^5.0.5",
     "typescript": "^5.3.3",
     "vitest": "^1.2.0"

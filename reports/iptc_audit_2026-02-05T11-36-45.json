@@ -1,0 +1,2849 @@
+{
+  "generatedAt": "2026-02-05T11:36:45.877Z",
+  "summary": {
+    "total": 121,
+    "passed": 16,
+    "failed": 105,
+    "passRate": "13.2",
+    "topMissing": [
+      [
+        "RightsUsageTerms",
+        105
+      ],
+      [
+        "ObjectName (Title)",
+        100
+      ],
+      [
+        "Caption-Abstract (Description)",
+        100
+      ],
+      [
+        "Keywords",
+        100
+      ],
+      [
+        "Credit",
+        100
+      ]
+    ],
+    "topWarnings": [
+      [
+        "Missing XMP-contextembed namespace",
+        121
+      ],
+      [
+        "Sentence-like keywords detected",
+        2
+      ]
+    ],
+    "hasContextEmbed": 0,
+    "avgTitleLen": 5,
+    "avgCaptionLen": 84,
+    "avgKeywordCount": "3.0"
+  },
+  "results": [
+    {
+      "filename": "analysis.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.png",
+      "pass_required": false,
+      "missing_required": [
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 28,
+      "caption_len": 437,
+      "keyword_count": 25,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 19,
+      "caption_len": 487,
+      "keyword_count": 25,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.jpeg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.jpeg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.jpeg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.jpeg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 24,
+      "caption_len": 346,
+      "keyword_count": 15,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 22,
+      "caption_len": 524,
+      "keyword_count": 20,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "Credit",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [
+        "By-line",
+        "CopyrightNotice"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.jpg",
+      "pass_required": true,
+      "missing_required": [],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 21,
+      "caption_len": 534,
+      "keyword_count": 21,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": true,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice",
+        "UsageTerms"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "Credit",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [
+        "By-line",
+        "CopyrightNotice"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.jpg",
+      "pass_required": true,
+      "missing_required": [],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 33,
+      "caption_len": 388,
+      "keyword_count": 16,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": true,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice",
+        "UsageTerms"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "Credit",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [
+        "By-line",
+        "CopyrightNotice"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.jpg",
+      "pass_required": true,
+      "missing_required": [],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 26,
+      "caption_len": 461,
+      "keyword_count": 25,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": true,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice",
+        "UsageTerms"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "Credit",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [
+        "By-line",
+        "CopyrightNotice"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.jpg",
+      "pass_required": true,
+      "missing_required": [],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 28,
+      "caption_len": 462,
+      "keyword_count": 17,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": true,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice",
+        "UsageTerms"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.jpeg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.jpeg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.jpeg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.jpeg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "Credit",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [
+        "By-line",
+        "CopyrightNotice"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.jpg",
+      "pass_required": true,
+      "missing_required": [],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 20,
+      "caption_len": 410,
+      "keyword_count": 24,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": true,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice",
+        "UsageTerms"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "Credit",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [
+        "By-line",
+        "CopyrightNotice"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.jpg",
+      "pass_required": true,
+      "missing_required": [],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 28,
+      "caption_len": 623,
+      "keyword_count": 15,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": true,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice",
+        "UsageTerms"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.jpg",
+      "pass_required": true,
+      "missing_required": [],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 26,
+      "caption_len": 427,
+      "keyword_count": 15,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": true,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice",
+        "UsageTerms"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "Credit",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [
+        "By-line",
+        "CopyrightNotice"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.jpg",
+      "pass_required": true,
+      "missing_required": [],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 35,
+      "caption_len": 494,
+      "keyword_count": 25,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": true,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice",
+        "UsageTerms"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "Credit",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [
+        "By-line",
+        "CopyrightNotice"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.jpg",
+      "pass_required": true,
+      "missing_required": [],
+      "warnings": [
+        "Sentence-like keywords detected: \"St. John the Baptist\"",
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 50,
+      "caption_len": 554,
+      "keyword_count": 15,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": true,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice",
+        "UsageTerms"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.png",
+      "pass_required": false,
+      "missing_required": [
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 22,
+      "caption_len": 492,
+      "keyword_count": 25,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "Credit",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [
+        "By-line",
+        "CopyrightNotice"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.jpg",
+      "pass_required": true,
+      "missing_required": [],
+      "warnings": [
+        "Sentence-like keywords detected: \"Parish of St John in Eversholt\"",
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 23,
+      "caption_len": 528,
+      "keyword_count": 10,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": true,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice",
+        "UsageTerms"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "Credit",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [
+        "By-line",
+        "CopyrightNotice"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.jpg",
+      "pass_required": true,
+      "missing_required": [],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 23,
+      "caption_len": 468,
+      "keyword_count": 10,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": true,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice",
+        "UsageTerms"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "Credit",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [
+        "By-line",
+        "CopyrightNotice"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.jpg",
+      "pass_required": true,
+      "missing_required": [],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 35,
+      "caption_len": 506,
+      "keyword_count": 8,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": true,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice",
+        "UsageTerms"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "Credit",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [
+        "By-line",
+        "CopyrightNotice"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.jpg",
+      "pass_required": true,
+      "missing_required": [],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 21,
+      "caption_len": 386,
+      "keyword_count": 15,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": true,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice",
+        "UsageTerms"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.jpg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.png",
+      "pass_required": true,
+      "missing_required": [],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 27,
+      "caption_len": 529,
+      "keyword_count": 17,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": true,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice",
+        "UsageTerms"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.jpeg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.jpeg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.jpeg",
+      "pass_required": true,
+      "missing_required": [],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 28,
+      "caption_len": 508,
+      "keyword_count": 10,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": true,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice",
+        "UsageTerms"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.jpeg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.jpeg",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "analysis.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "original_embedded.png",
+      "pass_required": true,
+      "missing_required": [],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 29,
+      "caption_len": 584,
+      "keyword_count": 11,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": true,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice",
+        "UsageTerms"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "preview.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "thumbnail.png",
+      "pass_required": false,
+      "missing_required": [
+        "ObjectName (Title)",
+        "Caption-Abstract (Description)",
+        "Keywords",
+        "By-line (Creator)",
+        "Credit",
+        "CopyrightNotice",
+        "RightsUsageTerms"
+      ],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 0,
+      "caption_len": 0,
+      "keyword_count": 0,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": false,
+      "fields_present": [],
+      "contextembed_fields": {}
+    }
+  ]
+}

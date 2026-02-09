@@ -1,0 +1,91 @@
+{
+  "generatedAt": "2026-02-05T11:33:37.177Z",
+  "summary": {
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "passRate": "100.0",
+    "topMissing": [],
+    "topWarnings": [
+      [
+        "Missing XMP-contextembed namespace",
+        3
+      ]
+    ],
+    "hasContextEmbed": 0,
+    "avgTitleLen": 26,
+    "avgCaptionLen": 553,
+    "avgKeywordCount": "16.0"
+  },
+  "results": [
+    {
+      "filename": "Infant_Sleeps_Peacefully_on_Father's_Hand_A_Smith_Family_Portrait.jpg",
+      "pass_required": true,
+      "missing_required": [],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 29,
+      "caption_len": 575,
+      "keyword_count": 10,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": true,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice",
+        "UsageTerms"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "Joyful_Smith_Family_Portrait_Session_Captured_in_Studio_by_Matt_Pantling.jpg",
+      "pass_required": true,
+      "missing_required": [],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 21,
+      "caption_len": 613,
+      "keyword_count": 19,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": true,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice",
+        "UsageTerms"
+      ],
+      "contextembed_fields": {}
+    },
+    {
+      "filename": "Smith_Family's_Joyful_Studio_Session_Celebrating_a_Decade_of_Lively_Visits.jpg",
+      "pass_required": true,
+      "missing_required": [],
+      "warnings": [
+        "Missing XMP-contextembed namespace"
+      ],
+      "title_len": 27,
+      "caption_len": 470,
+      "keyword_count": 19,
+      "has_contextembed_namespace": false,
+      "has_usage_terms": true,
+      "fields_present": [
+        "ObjectName",
+        "Caption-Abstract",
+        "Keywords",
+        "By-line",
+        "Credit",
+        "CopyrightNotice",
+        "UsageTerms"
+      ],
+      "contextembed_fields": {}
+    }
+  ]
+}

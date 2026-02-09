@@ -1,0 +1,4 @@
+filename,pass_required,missing_required,warnings,title_len,caption_len,keyword_count,has_contextembed,has_usage_terms
+"Infant_Sleeps_Peacefully_on_Father's_Hand_A_Smith_Family_Portrait.jpg",true,"","Missing XMP-contextembed namespace",29,575,10,false,true
+"Joyful_Smith_Family_Portrait_Session_Captured_in_Studio_by_Matt_Pantling.jpg",true,"","Missing XMP-contextembed namespace",21,613,19,false,true
+"Smith_Family's_Joyful_Studio_Session_Celebrating_a_Decade_of_Lively_Visits.jpg",true,"","Missing XMP-contextembed namespace",27,470,19,false,true

@@ -1,0 +1,661 @@
+// Prisma Schema for ContextEmbed
+// Database: PostgreSQL (Supabase compatible)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// Users & Authentication
+// ============================================
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  avatarUrl String?
+  
+  profile   UserProfile?
+  projects  Project[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("users")
+}
+
+// ============================================
+// User Profile (Business Defaults)
+// ============================================
+
+model UserProfile {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  
+  // Business Identity (used as defaults for all projects)
+  businessName          String?
+  tagline               String?
+  industry              String?
+  niche                 String?
+  services              String?   // Comma-separated
+  targetAudience        String?
+  brandVoice            String?
+  
+  // Location Defaults
+  city                  String?
+  state                 String?
+  country               String?
+  serviceArea           String?
+  
+  // Authority (used for EEAT)
+  yearsExperience       String?
+  credentials           String?
+  specializations       String?
+  awardsRecognition     String?
+  clientTypes           String?
+  keyDifferentiator     String?
+  pricePoint            String?
+  brandStory            String?   @db.Text
+  
+  // Rights Defaults (inherited by all projects)
+  creatorName           String?
+  copyrightTemplate     String?   // e.g., "© {year} {businessName}. All rights reserved."
+  creditTemplate        String?   // e.g., "{businessName} | {creatorName}"
+  usageTerms            String?   @db.Text
+  website               String?
+  contactEmail          String?
+  
+  // Preferences
+  primaryLanguage       String    @default("en")
+  keywordStyle          String    @default("mixed")
+  maxKeywords           Int       @default(15)
+  defaultEventType      String?
+  typicalDeliverables   String?
+  
+  // Onboarding status
+  onboardingCompleted   Boolean   @default(false)
+  completedAt           DateTime?
+  
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  
+  @@map("user_profiles")
+}
+
+// ============================================
+// Projects & Onboarding
+// ============================================
+
+model Project {
+  id                        String   @id @default(cuid())
+  userId                    String
+  name                      String
+  goal                      ProjectGoal
+  onboardingCompleted       Boolean  @default(false)
+  
+  // Governance settings
+  visualAuthenticityPolicy  VisualAuthenticityPolicy?  // NULL = 'conditional' in code
+  startupModeEnabled        Boolean  @default(false)   // When true, policy locked to 'deny_ai_proof'
+  
+  user                      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  onboardingProfile         OnboardingProfile?
+  assets                    Asset[]
+  jobs                      Job[]
+  exports                   Export[]
+  growthImages              GrowthImage[]
+  
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+  
+  @@index([userId])
+  @@map("projects")
+}
+
+enum VisualAuthenticityPolicy {
+  conditional      // Default: AI-generated images allowed for decorative roles only
+  deny_ai_proof    // Strict: Block AI-generated images from proof/hero roles
+  allow            // Permissive: Allow AI images anywhere (with warning)
+}
+
+enum ProjectGoal {
+  seo_aeo
+  archive
+  delivery
+  stock
+  social
+}
+
+model OnboardingProfile {
+  id                String   @id @default(cuid())
+  projectId         String   @unique
+  version           Int      @default(1)
+  
+  // Stage 1: Project basics
+  projectName       String
+  primaryGoal       ProjectGoal
+  
+  // Stage 2: URL Audit
+  websiteUrl        String?
+  urlAuditResult    Json?    // UrlAuditResult
+  confirmedContext  Json     // ConfirmedContext
+  
+  // Stage 3: Rights
+  rights            Json     // RightsInfo
+  
+  // Stage 4: Preferences
+  preferences       Json     // OutputPreferences
+  
+  // Tracking
+  completenessScore Int      @default(0)
+  isComplete        Boolean  @default(false)
+  
+  project           Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  metadataResults   MetadataResult[]
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("onboarding_profiles")
+}
+
+// ============================================
+// Assets
+// ============================================
+
+model Asset {
+  id               String      @id @default(cuid())
+  projectId        String
+  
+  // File info
+  filename         String
+  originalFilename String
+  mimeType         String
+  size             Int
+  hash             String
+  
+  // Storage paths
+  storagePath      String
+  thumbnailPath    String?
+  previewPath      String?
+  analysisPath     String?
+  
+  // Type tracking (for RAW support later)
+  originalType     String      @default("jpeg")
+  proxyType        String?
+  
+  // Dimensions
+  width            Int?
+  height           Int?
+  
+  // Status
+  status           AssetStatus @default(pending)
+  userComment      String?
+  
+  // Relations
+  project          Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  visionResults    VisionResult[]
+  metadataResults  MetadataResult[]
+  embedResults     EmbedResult[]
+  jobs             Job[]
+  exportAssets     ExportAsset[]
+  
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  
+  @@index([projectId])
+  @@index([status])
+  @@index([hash])
+  @@map("assets")
+}
+
+enum AssetStatus {
+  pending
+  preprocessing
+  analyzing
+  synthesizing
+  embedding
+  verifying
+  completed
+  failed
+  approved
+}
+
+// ============================================
+// Jobs
+// ============================================
+
+model Job {
+  id          String    @id @default(cuid())
+  projectId   String
+  assetId     String?
+  
+  type        JobType
+  status      JobStatus @default(pending)
+  progress    Int       @default(0)
+  error       String?
+  metadata    Json?
+  
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  asset       Asset?    @relation(fields: [assetId], references: [id], onDelete: SetNull)
+  
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@index([projectId])
+  @@index([assetId])
+  @@index([status])
+  @@index([type])
+  @@map("jobs")
+}
+
+enum JobType {
+  preprocess
+  vision_analysis
+  metadata_synthesis
+  embed
+  verify
+  full_pipeline
+  url_audit
+  export
+}
+
+enum JobStatus {
+  pending
+  running
+  completed
+  failed
+  cancelled
+}
+
+// ============================================
+// Results
+// ============================================
+
+model VisionResult {
+  id              String   @id @default(cuid())
+  assetId         String
+  
+  modelId         String
+  promptVersion   String
+  inputHash       String
+  result          Json     // VisionAnalysis
+  tokensUsed      Int
+  processingTimeMs Int
+  
+  asset           Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  metadataResults MetadataResult[]
+  
+  createdAt       DateTime @default(now())
+  
+  @@index([assetId])
+  @@map("vision_results")
+}
+
+model MetadataResult {
+  id                   String   @id @default(cuid())
+  assetId              String
+  visionResultId       String
+  onboardingProfileId  String
+  
+  modelId              String
+  promptVersion        String
+  inputHash            String
+  result               Json     // SynthesizedMetadata
+  tokensUsed           Int
+  processingTimeMs     Int
+  
+  asset                Asset             @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  visionResult         VisionResult      @relation(fields: [visionResultId], references: [id], onDelete: Cascade)
+  onboardingProfile    OnboardingProfile @relation(fields: [onboardingProfileId], references: [id], onDelete: Cascade)
+  embedResults         EmbedResult[]
+  
+  createdAt            DateTime @default(now())
+  
+  @@index([assetId])
+  @@index([visionResultId])
+  @@map("metadata_results")
+}
+
+model EmbedResult {
+  id                String   @id @default(cuid())
+  assetId           String
+  metadataResultId  String
+  
+  embeddedPath      String
+  fieldsWritten     String[]
+  exiftoolLogs      String
+  verified          Boolean  @default(false)
+  verificationDetails Json?
+  
+  asset             Asset          @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  metadataResult    MetadataResult @relation(fields: [metadataResultId], references: [id], onDelete: Cascade)
+  
+  createdAt         DateTime @default(now())
+  
+  @@index([assetId])
+  @@index([metadataResultId])
+  @@map("embed_results")
+}
+
+// ============================================
+// Exports
+// ============================================
+
+model Export {
+  id                String       @id @default(cuid())
+  projectId         String
+  
+  destinationType   ExportDestinationType
+  destinationConfig Json?
+  status            ExportStatus @default(pending)
+  outputPath        String?
+  error             String?
+  
+  project           Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  exportAssets      ExportAsset[]
+  
+  createdAt         DateTime     @default(now())
+  completedAt       DateTime?
+  
+  @@index([projectId])
+  @@map("exports")
+}
+
+model ExportAsset {
+  id        String @id @default(cuid())
+  exportId  String
+  assetId   String
+  
+  export    Export @relation(fields: [exportId], references: [id], onDelete: Cascade)
+  asset     Asset  @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  
+  @@unique([exportId, assetId])
+  @@map("export_assets")
+}
+
+enum ExportDestinationType {
+  download
+  folder
+  cloud
+}
+
+enum ExportStatus {
+  pending
+  processing
+  completed
+  failed
+}
+
+// ============================================
+// Usage Tracking (for billing later)
+// ============================================
+
+model UsageLog {
+  id          String   @id @default(cuid())
+  projectId   String
+  jobId       String?
+  
+  type        UsageType
+  units       Int
+  modelId     String?
+  metadata    Json?
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([projectId])
+  @@index([createdAt])
+  @@map("usage_logs")
+}
+
+enum UsageType {
+  vision_tokens
+  llm_tokens
+  storage_bytes
+  export_count
+}
+
+// ============================================
+// IA Content OS - Information Architecture
+// ============================================
+
+model IAPlan {
+  id                String   @id @default(cuid())
+  version           String
+  productName       String
+  oneLiner          String
+  corePromise       String
+  differentiators   String[]
+  guardrails        String[]
+  
+  // Cadence configuration
+  cadenceConfig     Json     // { moneyPagesPerMonth, supportPostsPerMonth, etc. }
+  roleDefinitions   Json     // { money: "...", pillar: "...", etc. }
+  
+  // Brand mention strategy
+  brandMentionGoal  String
+  brandMentionRules String[]
+  allowedMentions   String[]
+  
+  // Calendar config
+  timezone          String   @default("UTC")
+  startMonth        String   // YYYY-MM
+  
+  // Computed metrics
+  coverageScore     Int      @default(0)
+  
+  // Relations
+  pages             IAPage[]
+  calendarItems     IACalendarItem[]
+  linkRules         IAInternalLinkRule[]
+  mentionsPolicies  IAMentionsPolicy[]
+  
+  importedAt        DateTime @default(now())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("ia_plans")
+}
+
+model IAPage {
+  id               String   @id @default(cuid())
+  planId           String
+  
+  pageId           String   // e.g., "mp_pricing", "p_metadata_for_seo"
+  role             IAPageRole
+  title            String
+  slug             String
+  
+  // Optional fields based on role
+  primaryIntent    String?  // For money pages
+  cta              String?  // For money pages
+  goal             String?  // For pillars
+  supportingTopics String[] // For pillars
+  moneyLinkTarget  String?  // For pillars
+  internalLinksOut String[]
+  
+  // Content status
+  contentStatus    IAContentStatus @default(planned)
+  draftPath        String?
+  publishedUrl     String?
+  
+  plan             IAPlan   @relation(fields: [planId], references: [id], onDelete: Cascade)
+  
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  @@unique([planId, pageId])
+  @@index([planId])
+  @@index([role])
+  @@index([slug])
+  @@map("ia_pages")
+}
+
+enum IAPageRole {
+  money
+  pillar
+  trust
+  support
+  caseStudy
+  release
+}
+
+enum IAContentStatus {
+  planned
+  draft
+  review
+  published
+  archived
+}
+
+model IACalendarItem {
+  id           String   @id @default(cuid())
+  planId       String
+  
+  month        String   // YYYY-MM
+  theme        String
+  week         Int      // 1-5
+  type         IACalendarType
+  title        String
+  slug         String
+  primaryLinks String[]
+  
+  // Mention tracking
+  adobeMention Boolean  @default(false)
+  mentionNote  String?
+  
+  // Content status
+  contentStatus IAContentStatus @default(planned)
+  draftPath     String?
+  publishedUrl  String?
+  publishedAt   DateTime?
+  
+  plan         IAPlan   @relation(fields: [planId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  @@index([planId])
+  @@index([month])
+  @@index([type])
+  @@index([contentStatus])
+  @@map("ia_calendar_items")
+}
+
+enum IACalendarType {
+  money
+  support
+  trust
+  trust_or_release
+  caseStudy
+  release
+}
+
+model IAInternalLinkRule {
+  id           String   @id @default(cuid())
+  planId       String
+  
+  ruleType     IALinkRuleType
+  sourcePageId String?  // null for global rules
+  targetPageId String?  // null for global rules
+  required     Boolean  @default(true)
+  minLinks     Int      @default(1)
+  description  String
+  
+  plan         IAPlan   @relation(fields: [planId], references: [id], onDelete: Cascade)
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  @@index([planId])
+  @@index([ruleType])
+  @@map("ia_internal_link_rules")
+}
+
+enum IALinkRuleType {
+  global
+  page_specific
+}
+
+model IAMentionsPolicy {
+  id              String   @id @default(cuid())
+  planId          String
+  
+  brand           String   // e.g., "Adobe"
+  maxPerMonth     Int      @default(1)
+  allowedContexts String[]
+  rules           String[]
+  
+  plan            IAPlan   @relation(fields: [planId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([planId])
+  @@index([brand])
+  @@map("ia_mentions_policies")
+}
+
+// ============================================
+// Growth Plan Images (for governance & retry flow)
+// ============================================
+
+model GrowthImage {
+  id              String   @id @default(cuid())
+  projectId       String
+  
+  // File info
+  filename        String
+  originalFilename String
+  mimeType        String
+  size            Int
+  storagePath     String
+  
+  // Role classification
+  role            GrowthImageRole @default(proof)
+  
+  // AI detection
+  aiGenerated     Boolean?        // null = not yet analyzed
+  aiConfidence    Float?          // 0-1 confidence score
+  aiDetectionModel String?        // Model used for detection
+  
+  // Governance
+  governanceStatus   GrowthImageGovernance @default(pending)
+  governanceReason   String?
+  
+  // Decision log (JSON array of log entries)
+  decisionLog     Json      @default("[]")
+  
+  // Relations
+  project         Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@index([projectId])
+  @@index([governanceStatus])
+  @@index([role])
+  @@map("growth_images")
+}
+
+enum GrowthImageRole {
+  proof       // Case study, testimonial, portfolio proof (requires real photos)
+  hero        // Homepage/landing hero images (requires real photos in strict mode)
+  decorative  // Blog illustrations, backgrounds (AI allowed)
+  stock       // Licensed stock photography
+}
+
+enum GrowthImageGovernance {
+  pending     // Not yet evaluated
+  approved    // Passed governance check
+  blocked     // Blocked by policy
+  warning     // Allowed with warning
+}

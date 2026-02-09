@@ -1,0 +1,751 @@
+{
+  "planVersion": "1.0.0",
+  "product": {
+    "name": "ContextEmbed",
+    "positioning": {
+      "oneLiner": "Context onboarding + vision analysis + standards-aware embedding so files stay self-describing.",
+      "corePromise": "Embed meaning into the file, not just into a database.",
+      "differentiators": [
+        "Context-first onboarding (brand, rights, intent) before processing images",
+        "Vision analysis + user context synthesis (not generic auto-tagging)",
+        "Standards-aware mapping to IPTC/EXIF/XMP with verification read-back",
+        "Audit trail for every embedded asset (inputs, versions, fields written)"
+      ],
+      "guardrails": [
+        "No ranking guarantees",
+        "No claims of inventing IPTC/EXIF",
+        "Avoid adversarial language about other platforms",
+        "Mention Adobe sparingly and use-case driven"
+      ]
+    }
+  },
+  "iaStructure": {
+    "cadence": {
+      "moneyPagesPerMonth": 1,
+      "supportPostsPerMonth": 2,
+      "trustPostsPerMonth": 1,
+      "caseStudyPerQuarter": 1,
+      "releaseNotesPerMonth": 1
+    },
+    "roleDefinitions": {
+      "money": "Primary conversion pages (pricing, use-cases, integrations, downloads).",
+      "pillar": "Cornerstone authority hubs that define the topic clusters.",
+      "support": "How-to, comparisons, FAQs, templates, checklists.",
+      "trust": "About, security, compliance, methodology, transparency, evidence.",
+      "caseStudy": "Real workflows + before/after metadata examples + outcomes.",
+      "release": "Changelog and product updates (also supports long-term SEO)."
+    }
+  },
+  "siteMap": {
+    "moneyPages": [
+      {
+        "id": "mp_home",
+        "title": "ContextEmbed",
+        "slug": "/",
+        "primaryIntent": "convert",
+        "cta": "Get Started",
+        "internalLinksOut": ["mp_pricing", "p_metadata_for_seo", "p_rights_provenance", "p_workflow_integrations"]
+      },
+      {
+        "id": "mp_pricing",
+        "title": "Pricing",
+        "slug": "/pricing",
+        "primaryIntent": "buy",
+        "cta": "Start Free",
+        "internalLinksOut": ["t_security", "s_ipct_exif_xmp", "cs_before_after_01"]
+      },
+      {
+        "id": "mp_upload",
+        "title": "Upload & Embed",
+        "slug": "/app/upload",
+        "primaryIntent": "activate",
+        "cta": "Upload Images",
+        "internalLinksOut": ["mp_dashboard", "t_methodology"]
+      },
+      {
+        "id": "mp_dashboard",
+        "title": "Review Dashboard",
+        "slug": "/app/dashboard",
+        "primaryIntent": "retain",
+        "cta": "Review Results",
+        "internalLinksOut": ["s_review_checklist", "t_audit_trail"]
+      },
+      {
+        "id": "mp_export",
+        "title": "Export Destinations",
+        "slug": "/export",
+        "primaryIntent": "convert",
+        "cta": "Export",
+        "internalLinksOut": ["s_export_workflows", "p_workflow_integrations"]
+      },
+      {
+        "id": "mp_integrations",
+        "title": "Integrations",
+        "slug": "/integrations",
+        "primaryIntent": "convert",
+        "cta": "See Integrations",
+        "internalLinksOut": ["p_workflow_integrations", "s_adobe_workflow_bridge"]
+      },
+      {
+        "id": "mp_for_photographers",
+        "title": "For Photographers",
+        "slug": "/for/photographers",
+        "primaryIntent": "convert",
+        "cta": "Try It",
+        "internalLinksOut": ["p_metadata_for_seo", "p_rights_provenance", "cs_photographer_01"]
+      },
+      {
+        "id": "mp_for_agencies",
+        "title": "For Agencies",
+        "slug": "/for/agencies",
+        "primaryIntent": "convert",
+        "cta": "Book Demo",
+        "internalLinksOut": ["p_workflow_integrations", "t_security", "cs_agency_01"]
+      },
+      {
+        "id": "mp_for_enterprise",
+        "title": "For Enterprise",
+        "slug": "/for/enterprise",
+        "primaryIntent": "convert",
+        "cta": "Talk to Sales",
+        "internalLinksOut": ["t_security", "t_compliance", "t_audit_trail"]
+      }
+    ],
+    "pillars": [
+      {
+        "id": "p_metadata_for_seo",
+        "title": "Metadata for SEO, AEO and AI Discovery",
+        "slug": "/guides/metadata-for-seo-aeo",
+        "role": "pillar",
+        "goal": "Own the category: embedded meaning improves discoverability and reduces ambiguity.",
+        "supportingTopics": [
+          "Image metadata basics: IPTC vs EXIF vs XMP",
+          "How captions and keywords affect search understanding",
+          "AEO for images: how AI answers interpret visual assets",
+          "Local signals inside metadata (safe, non-hallucinatory)",
+          "How to standardize metadata across teams"
+        ],
+        "moneyLinkTarget": "mp_pricing"
+      },
+      {
+        "id": "p_rights_provenance",
+        "title": "Rights, Credits and Provenance for Visual Media",
+        "slug": "/guides/rights-credits-provenance",
+        "role": "pillar",
+        "goal": "Become the trusted authority for attribution, copyright and auditability in assets.",
+        "supportingTopics": [
+          "Copyright fields that matter (creator, credit, usage terms)",
+          "How to reduce misuse with embedded rights data",
+          "Provenance: what it is and why it will matter more",
+          "Team workflows: keeping rights consistent at scale",
+          "Audit trails: how to prove what was embedded and when"
+        ],
+        "moneyLinkTarget": "mp_for_enterprise"
+      },
+      {
+        "id": "p_workflow_integrations",
+        "title": "Workflow Integrations and Metadata Persistence",
+        "slug": "/guides/workflow-integrations-metadata",
+        "role": "pillar",
+        "goal": "Own the integration story and create high-intent comparison traffic.",
+        "supportingTopics": [
+          "Metadata survival through exports and re-saves",
+          "Common pitfalls: platforms that strip fields",
+          "How to build a metadata QA workflow",
+          "Batch processing vs per-image review",
+          "Desktop vs web: choosing the right setup"
+        ],
+        "moneyLinkTarget": "mp_integrations"
+      }
+    ],
+    "trustPages": [
+      {
+        "id": "t_about",
+        "title": "About",
+        "slug": "/about",
+        "role": "trust",
+        "internalLinksOut": ["t_methodology", "t_security"]
+      },
+      {
+        "id": "t_methodology",
+        "title": "Methodology",
+        "slug": "/methodology",
+        "role": "trust",
+        "internalLinksOut": ["t_audit_trail", "p_metadata_for_seo_audit_anchor"]
+      },
+      {
+        "id": "t_security",
+        "title": "Security",
+        "slug": "/security",
+        "role": "trust",
+        "internalLinksOut": ["t_compliance", "mp_for_enterprise"]
+      },
+      {
+        "id": "t_compliance",
+        "title": "Compliance and Data Handling",
+        "slug": "/compliance",
+        "role": "trust",
+        "internalLinksOut": ["t_security", "t_audit_trail"]
+      },
+      {
+        "id": "t_audit_trail",
+        "title": "Audit Trail and Verification",
+        "slug": "/audit-trail",
+        "role": "trust",
+        "internalLinksOut": ["mp_dashboard", "s_review_checklist"]
+      }
+    ],
+    "supportPages": [
+      {
+        "id": "s_ipct_exif_xmp",
+        "title": "IPTC vs EXIF vs XMP",
+        "slug": "/help/iptc-exif-xmp",
+        "role": "support",
+        "internalLinksOut": ["p_metadata_for_seo", "mp_pricing"]
+      },
+      {
+        "id": "s_review_checklist",
+        "title": "Metadata Review Checklist",
+        "slug": "/help/review-checklist",
+        "role": "support",
+        "internalLinksOut": ["mp_dashboard", "t_audit_trail"]
+      },
+      {
+        "id": "s_export_workflows",
+        "title": "Export Workflows",
+        "slug": "/help/export-workflows",
+        "role": "support",
+        "internalLinksOut": ["mp_export", "p_workflow_integrations"]
+      },
+      {
+        "id": "s_desktop_vs_web",
+        "title": "Desktop vs Web: Which Version Should You Use?",
+        "slug": "/help/desktop-vs-web",
+        "role": "support",
+        "internalLinksOut": ["mp_integrations", "mp_pricing"]
+      },
+      {
+        "id": "s_adobe_workflow_bridge",
+        "title": "Metadata Workflows with Creative Apps",
+        "slug": "/help/metadata-workflows-creative-apps",
+        "role": "support",
+        "internalLinksOut": ["p_workflow_integrations", "mp_integrations"]
+      }
+    ],
+    "caseStudies": [
+      {
+        "id": "cs_before_after_01",
+        "title": "Before/After: Metadata that Survives Real Workflows",
+        "slug": "/case-studies/before-after-metadata",
+        "role": "caseStudy",
+        "internalLinksOut": ["mp_pricing", "t_audit_trail", "p_workflow_integrations"]
+      },
+      {
+        "id": "cs_photographer_01",
+        "title": "Photographer Workflow: Consistent Credits and Captions at Scale",
+        "slug": "/case-studies/photographer-workflow",
+        "role": "caseStudy",
+        "internalLinksOut": ["mp_for_photographers", "p_rights_provenance"]
+      },
+      {
+        "id": "cs_agency_01",
+        "title": "Agency Workflow: Standardized Metadata Across 5 Brands",
+        "slug": "/case-studies/agency-workflow",
+        "role": "caseStudy",
+        "internalLinksOut": ["mp_for_agencies", "p_workflow_integrations"]
+      }
+    ],
+    "releaseNotes": [
+      {
+        "id": "rel_index",
+        "title": "Changelog",
+        "slug": "/changelog",
+        "role": "release",
+        "internalLinksOut": ["mp_pricing", "t_methodology"]
+      }
+    ]
+  },
+  "brandMentionStrategy": {
+    "goal": "Be discoverable by relevant teams without sounding like we are chasing them.",
+    "rules": [
+      "Mention Adobe only when contextually relevant (workflow, standards, persistence).",
+      "Never use it in titles more than 1x per month.",
+      "Avoid comparative claims like 'better than Adobe'. Keep it neutral and respectful.",
+      "Use 'works alongside' language, not 'replaces'.",
+      "Add a small 'Compatibility' section on integration pages that includes Adobe as an example of creative workflows."
+    ],
+    "allowedMentions": [
+      "Creative Cloud workflows",
+      "XMP metadata standards",
+      "Export/re-save survival discussion",
+      "Professional editing pipelines"
+    ]
+  },
+  "contentCalendar": {
+    "timezone": "Europe/Vienna",
+    "startMonth": "2026-02",
+    "cadence": {
+      "postsPerMonth": 4,
+      "weeklyPattern": ["money", "support", "support", "trust_or_release"],
+      "monthlyReleaseNote": true
+    },
+    "months": [
+      {
+        "month": "2026-02",
+        "theme": "Category Definition + Core Problem",
+        "items": [
+          {
+            "week": 1,
+            "type": "money",
+            "title": "ContextEmbed Pricing: What You Get and Why Metadata Needs Context",
+            "slug": "/blog/contextembed-pricing-metadata-context",
+            "primaryLinks": ["mp_pricing", "p_metadata_for_seo"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 2,
+            "type": "support",
+            "title": "IPTC vs EXIF vs XMP: Which Fields Actually Matter?",
+            "slug": "/blog/iptc-exif-xmp-which-fields-matter",
+            "primaryLinks": ["s_ipct_exif_xmp", "p_metadata_for_seo"],
+            "mentions": { "adobe": true, "note": "Mention XMP in a neutral standards context." }
+          },
+          {
+            "week": 3,
+            "type": "support",
+            "title": "Metadata Review Checklist: Stop Publishing Mystery Files",
+            "slug": "/blog/metadata-review-checklist",
+            "primaryLinks": ["s_review_checklist", "t_audit_trail"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 4,
+            "type": "trust_or_release",
+            "title": "Changelog: First Public Beta and Verification Read-Back",
+            "slug": "/changelog/2026-02",
+            "primaryLinks": ["rel_index", "t_methodology"],
+            "mentions": { "adobe": false }
+          }
+        ]
+      },
+      {
+        "month": "2026-03",
+        "theme": "Onboarding + Trust + Rights",
+        "items": [
+          {
+            "week": 1,
+            "type": "money",
+            "title": "For Photographers: Consistent Credits, Captions and Keywords in Minutes",
+            "slug": "/blog/for-photographers-consistent-metadata",
+            "primaryLinks": ["mp_for_photographers", "p_rights_provenance"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 2,
+            "type": "support",
+            "title": "How to Embed Copyright and Credit Correctly",
+            "slug": "/blog/embed-copyright-credit-correctly",
+            "primaryLinks": ["p_rights_provenance", "t_audit_trail"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 3,
+            "type": "support",
+            "title": "Metadata QA Workflow for Teams",
+            "slug": "/blog/metadata-qa-workflow-teams",
+            "primaryLinks": ["p_workflow_integrations", "s_review_checklist"],
+            "mentions": { "adobe": true, "note": "One paragraph on 'works alongside editing suites'." }
+          },
+          {
+            "week": 4,
+            "type": "trust_or_release",
+            "title": "Methodology: How ContextEmbed Verifies What It Writes",
+            "slug": "/blog/how-we-verify-embedded-metadata",
+            "primaryLinks": ["t_methodology", "t_audit_trail"],
+            "mentions": { "adobe": false }
+          }
+        ]
+      },
+      {
+        "month": "2026-04",
+        "theme": "Workflow + Persistence + Exports",
+        "items": [
+          {
+            "week": 1,
+            "type": "money",
+            "title": "Export Destinations: Keep Metadata Intact from Library to Delivery",
+            "slug": "/blog/export-destinations-keep-metadata-intact",
+            "primaryLinks": ["mp_export", "p_workflow_integrations"],
+            "mentions": { "adobe": true, "note": "Short compatibility note, no comparisons." }
+          },
+          {
+            "week": 2,
+            "type": "support",
+            "title": "Desktop vs Web: What to Use for Batch Jobs",
+            "slug": "/blog/desktop-vs-web-batch-metadata",
+            "primaryLinks": ["s_desktop_vs_web", "mp_pricing"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 3,
+            "type": "support",
+            "title": "Common Reasons Metadata Gets Stripped (and How to Prevent It)",
+            "slug": "/blog/why-metadata-gets-stripped",
+            "primaryLinks": ["p_workflow_integrations", "t_audit_trail"],
+            "mentions": { "adobe": true, "note": "Neutral mention in 'editing + exporting' discussion." }
+          },
+          {
+            "week": 4,
+            "type": "trust_or_release",
+            "title": "Changelog: Batch Processing Improvements",
+            "slug": "/changelog/2026-04",
+            "primaryLinks": ["rel_index", "mp_integrations"],
+            "mentions": { "adobe": false }
+          }
+        ]
+      },
+      {
+        "month": "2026-05",
+        "theme": "AEO and AI Discovery for Visual Assets",
+        "items": [
+          {
+            "week": 1,
+            "type": "money",
+            "title": "Metadata for AI Discovery: Make Your Images Explain Themselves",
+            "slug": "/blog/metadata-for-ai-discovery",
+            "primaryLinks": ["p_metadata_for_seo", "mp_pricing"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 2,
+            "type": "support",
+            "title": "How to Write Captions That Stay Factual and Useful",
+            "slug": "/blog/factual-useful-captions",
+            "primaryLinks": ["p_metadata_for_seo", "s_review_checklist"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 3,
+            "type": "support",
+            "title": "Keyword Strategy for Image Libraries (No Spam, No Noise)",
+            "slug": "/blog/keyword-strategy-image-libraries",
+            "primaryLinks": ["p_metadata_for_seo", "mp_for_agencies"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 4,
+            "type": "trust_or_release",
+            "title": "Case Study: Before/After Metadata that Survives Real Workflows",
+            "slug": "/case-studies/before-after-metadata",
+            "primaryLinks": ["cs_before_after_01", "mp_pricing"],
+            "mentions": { "adobe": true, "note": "Optional single mention in workflow context." }
+          }
+        ]
+      },
+      {
+        "month": "2026-06",
+        "theme": "Agency Standardization",
+        "items": [
+          {
+            "week": 1,
+            "type": "money",
+            "title": "For Agencies: Standardize Metadata Across Brands Without Rework",
+            "slug": "/blog/for-agencies-standardize-metadata",
+            "primaryLinks": ["mp_for_agencies", "p_workflow_integrations"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 2,
+            "type": "support",
+            "title": "Metadata Templates: Brand, Location, Rights (Copy/Paste)",
+            "slug": "/blog/metadata-templates-brand-location-rights",
+            "primaryLinks": ["p_rights_provenance", "mp_for_agencies"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 3,
+            "type": "support",
+            "title": "Batch vs Per-Image Review: When Accuracy Matters Most",
+            "slug": "/blog/batch-vs-per-image-review",
+            "primaryLinks": ["mp_dashboard", "s_review_checklist"],
+            "mentions": { "adobe": true, "note": "Mention in 'editing suites' workflow example." }
+          },
+          {
+            "week": 4,
+            "type": "trust_or_release",
+            "title": "Changelog: Agency Batch Review Enhancements",
+            "slug": "/changelog/2026-06",
+            "primaryLinks": ["rel_index", "mp_for_agencies"],
+            "mentions": { "adobe": false }
+          }
+        ]
+      },
+      {
+        "month": "2026-07",
+        "theme": "Compliance + Provenance",
+        "items": [
+          {
+            "week": 1,
+            "type": "money",
+            "title": "For Enterprise: Audit Trails for Every Embedded Asset",
+            "slug": "/blog/for-enterprise-audit-trails",
+            "primaryLinks": ["mp_for_enterprise", "t_audit_trail"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 2,
+            "type": "support",
+            "title": "How to Store and Prove Attribution at Scale",
+            "slug": "/blog/prove-attribution-at-scale",
+            "primaryLinks": ["p_rights_provenance", "t_compliance"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 3,
+            "type": "support",
+            "title": "Provenance Explained: What It Is and Why It's Coming",
+            "slug": "/blog/provenance-explained",
+            "primaryLinks": ["p_rights_provenance", "t_methodology"],
+            "mentions": { "adobe": true, "note": "Neutral mention of industry direction; no claims." }
+          },
+          {
+            "week": 4,
+            "type": "trust_or_release",
+            "title": "Changelog: Compliance Fields and Validation Rules",
+            "slug": "/changelog/2026-07",
+            "primaryLinks": ["rel_index", "t_compliance"],
+            "mentions": { "adobe": false }
+          }
+        ]
+      },
+      {
+        "month": "2026-08",
+        "theme": "Desktop vs Web + Future-proofing",
+        "items": [
+          {
+            "week": 1,
+            "type": "money",
+            "title": "Integrations: Fit ContextEmbed Into Your Existing Workflow",
+            "slug": "/blog/contextembed-integrations-workflow",
+            "primaryLinks": ["mp_integrations", "p_workflow_integrations"],
+            "mentions": { "adobe": true, "note": "Short, respectful mention in compatibility section." }
+          },
+          {
+            "week": 2,
+            "type": "support",
+            "title": "Folder Watchers and Re-Evaluation: When Desktop Makes Sense",
+            "slug": "/blog/folder-watchers-re-evaluation",
+            "primaryLinks": ["s_desktop_vs_web", "mp_integrations"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 3,
+            "type": "support",
+            "title": "Versioning Your Context Profile: How to Keep Metadata Consistent Over Time",
+            "slug": "/blog/versioning-context-profile",
+            "primaryLinks": ["t_methodology", "mp_dashboard"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 4,
+            "type": "trust_or_release",
+            "title": "Changelog: Context Profile Versioning",
+            "slug": "/changelog/2026-08",
+            "primaryLinks": ["rel_index", "t_methodology"],
+            "mentions": { "adobe": false }
+          }
+        ]
+      },
+      {
+        "month": "2026-09",
+        "theme": "Photographer Scale + Real Examples",
+        "items": [
+          {
+            "week": 1,
+            "type": "money",
+            "title": "Photographer Workflow: Faster Delivery Without Losing Attribution",
+            "slug": "/blog/photographer-workflow-faster-delivery",
+            "primaryLinks": ["mp_for_photographers", "p_rights_provenance"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 2,
+            "type": "support",
+            "title": "How to Embed Location Safely (No Guessing, No Hallucinations)",
+            "slug": "/blog/embed-location-safely",
+            "primaryLinks": ["p_metadata_for_seo", "t_methodology"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 3,
+            "type": "support",
+            "title": "Before/After Gallery: What Changes When Meaning Is Embedded",
+            "slug": "/blog/before-after-meaning-embedded",
+            "primaryLinks": ["cs_before_after_01", "mp_dashboard"],
+            "mentions": { "adobe": true, "note": "One neutral mention in 'editing pipeline' context." }
+          },
+          {
+            "week": 4,
+            "type": "trust_or_release",
+            "title": "Case Study: Photographer Workflow at Scale",
+            "slug": "/case-studies/photographer-workflow",
+            "primaryLinks": ["cs_photographer_01", "mp_for_photographers"],
+            "mentions": { "adobe": false }
+          }
+        ]
+      },
+      {
+        "month": "2026-10",
+        "theme": "Agency + Enterprise Proof",
+        "items": [
+          {
+            "week": 1,
+            "type": "money",
+            "title": "Enterprise Metadata Governance: Make Teams Consistent",
+            "slug": "/blog/enterprise-metadata-governance",
+            "primaryLinks": ["mp_for_enterprise", "t_audit_trail"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 2,
+            "type": "support",
+            "title": "Metadata Governance Policy Template (One Page)",
+            "slug": "/blog/metadata-governance-policy-template",
+            "primaryLinks": ["t_compliance", "mp_for_enterprise"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 3,
+            "type": "support",
+            "title": "How to Run a Metadata QA Sprint (30 Minutes per Week)",
+            "slug": "/blog/metadata-qa-sprint",
+            "primaryLinks": ["s_review_checklist", "p_workflow_integrations"],
+            "mentions": { "adobe": true, "note": "Mention in 'fits alongside existing tools' context." }
+          },
+          {
+            "week": 4,
+            "type": "trust_or_release",
+            "title": "Case Study: Agency Standardization Across 5 Brands",
+            "slug": "/case-studies/agency-workflow",
+            "primaryLinks": ["cs_agency_01", "mp_for_agencies"],
+            "mentions": { "adobe": false }
+          }
+        ]
+      },
+      {
+        "month": "2026-11",
+        "theme": "Comparisons and Buying Intent",
+        "items": [
+          {
+            "week": 1,
+            "type": "money",
+            "title": "ContextEmbed vs Manual Metadata: What You Gain (and What You Avoid)",
+            "slug": "/blog/contextembed-vs-manual-metadata",
+            "primaryLinks": ["mp_pricing", "t_methodology"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 2,
+            "type": "support",
+            "title": "Metadata Field Guide: Headline, Caption, Keywords, Rights",
+            "slug": "/blog/metadata-field-guide",
+            "primaryLinks": ["s_ipct_exif_xmp", "p_rights_provenance"],
+            "mentions": { "adobe": true, "note": "XMP standards mention only." }
+          },
+          {
+            "week": 3,
+            "type": "support",
+            "title": "How to Audit an Existing Library and Fix It in Batches",
+            "slug": "/blog/audit-and-fix-library-in-batches",
+            "primaryLinks": ["p_workflow_integrations", "mp_dashboard"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 4,
+            "type": "trust_or_release",
+            "title": "Changelog: Library Audit Helpers",
+            "slug": "/changelog/2026-11",
+            "primaryLinks": ["rel_index", "mp_dashboard"],
+            "mentions": { "adobe": false }
+          }
+        ]
+      },
+      {
+        "month": "2026-12",
+        "theme": "Year-End Proof + Roadmap",
+        "items": [
+          {
+            "week": 1,
+            "type": "money",
+            "title": "The ContextEmbed Method: A Repeatable System for Self-Describing Files",
+            "slug": "/blog/contextembed-method-self-describing-files",
+            "primaryLinks": ["t_methodology", "mp_pricing"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 2,
+            "type": "support",
+            "title": "What to Store in Your Context Profile (and What Not To)",
+            "slug": "/blog/what-to-store-in-context-profile",
+            "primaryLinks": ["t_compliance", "t_methodology"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 3,
+            "type": "support",
+            "title": "How to Prove What Metadata Was Embedded (Audit Trail Walkthrough)",
+            "slug": "/blog/audit-trail-walkthrough",
+            "primaryLinks": ["t_audit_trail", "mp_dashboard"],
+            "mentions": { "adobe": true, "note": "One neutral mention in 'professional workflow' context." }
+          },
+          {
+            "week": 4,
+            "type": "trust_or_release",
+            "title": "Roadmap: What We're Building Next",
+            "slug": "/blog/roadmap-next",
+            "primaryLinks": ["rel_index", "mp_integrations"],
+            "mentions": { "adobe": false }
+          }
+        ]
+      },
+      {
+        "month": "2027-01",
+        "theme": "Scale + Operational Excellence",
+        "items": [
+          {
+            "week": 1,
+            "type": "money",
+            "title": "For Enterprise: Standardize Metadata Across Teams Without Rework",
+            "slug": "/blog/enterprise-standardize-metadata-without-rework",
+            "primaryLinks": ["mp_for_enterprise", "p_workflow_integrations"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 2,
+            "type": "support",
+            "title": "Operational Guide: Metadata SLAs for Creative Teams",
+            "slug": "/blog/metadata-slas-creative-teams",
+            "primaryLinks": ["t_compliance", "p_rights_provenance"],
+            "mentions": { "adobe": false }
+          },
+          {
+            "week": 3,
+            "type": "support",
+            "title": "How to Run ContextEmbed in a Monthly Production Cycle",
+            "slug": "/blog/monthly-production-cycle-contextembed",
+            "primaryLinks": ["mp_dashboard", "s_export_workflows"],
+            "mentions": { "adobe": true, "note": "Mention as an example pipeline stage." }
+          },
+          {
+            "week": 4,
+            "type": "trust_or_release",
+            "title": "Changelog: Performance and Batch Stability",
+            "slug": "/changelog/2027-01",
+            "primaryLinks": ["rel_index", "mp_pricing"],
+            "mentions": { "adobe": false }
+          }
+        ]
+      }
+    ]
+  }
+}

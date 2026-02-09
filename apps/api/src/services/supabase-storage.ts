@@ -1,0 +1,305 @@
+/**
+ * Supabase Storage Service
+ * Handles persistent storage for thumbnails and previews
+ * 
+ * Storage buckets:
+ * - thumbnails: Low-res previews for dashboard (public, cached)
+ * - exports: Temporary export downloads (private, TTL)
+ */
+
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import sharp from 'sharp';
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+// Thumbnail settings
+const THUMBNAIL_SIZE = 400; // px (width)
+const THUMBNAIL_QUALITY = 80; // JPEG quality
+const PREVIEW_SIZE = 1200; // px (for larger preview if needed)
+
+// Bucket names
+export const BUCKETS = {
+  THUMBNAILS: 'thumbnails',
+  EXPORTS: 'exports',
+} as const;
+
+let supabaseClient: SupabaseClient | null = null;
+
+/**
+ * Get Supabase client
+ */
+function getClient(): SupabaseClient {
+  if (!supabaseClient) {
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+      throw new Error('Supabase credentials not configured');
+    }
+    supabaseClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+  }
+  return supabaseClient;
+}
+
+/**
+ * Initialize storage buckets
+ */
+export async function initSupabaseStorage(): Promise<void> {
+  const client = getClient();
+  
+  // Create thumbnails bucket (public)
+  const { error: thumbError } = await client.storage.createBucket(BUCKETS.THUMBNAILS, {
+    public: true,
+    fileSizeLimit: 1024 * 1024, // 1MB max
+    allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+  });
+  
+  if (thumbError && !thumbError.message.includes('already exists')) {
+    console.warn('Failed to create thumbnails bucket:', thumbError.message);
+  }
+  
+  // Create exports bucket (private, for temporary downloads)
+  const { error: exportError } = await client.storage.createBucket(BUCKETS.EXPORTS, {
+    public: false,
+    fileSizeLimit: 500 * 1024 * 1024, // 500MB max for zip exports
+  });
+  
+  if (exportError && !exportError.message.includes('already exists')) {
+    console.warn('Failed to create exports bucket:', exportError.message);
+  }
+  
+  console.log('📦 Supabase Storage initialized');
+}
+
+/**
+ * Generate and upload thumbnail from image buffer or path
+ */
+export async function uploadThumbnail(
+  source: Buffer | string,
+  projectId: string,
+  assetId: string,
+  format: 'jpeg' | 'png' | 'webp' = 'jpeg'
+): Promise<{ url: string; path: string }> {
+  const client = getClient();
+  
+  // Read source if it's a path
+  const imageBuffer = typeof source === 'string' 
+    ? await fs.readFile(source)
+    : source;
+  
+  // Generate thumbnail
+  let thumbnailBuffer: Buffer;
+  
+  if (format === 'jpeg') {
+    thumbnailBuffer = await sharp(imageBuffer)
+      .resize(THUMBNAIL_SIZE, null, { 
+        withoutEnlargement: true,
+        fit: 'inside',
+      })
+      .jpeg({ quality: THUMBNAIL_QUALITY })
+      .toBuffer();
+  } else if (format === 'png') {
+    thumbnailBuffer = await sharp(imageBuffer)
+      .resize(THUMBNAIL_SIZE, null, { 
+        withoutEnlargement: true,
+        fit: 'inside',
+      })
+      .png({ compressionLevel: 9 })
+      .toBuffer();
+  } else {
+    thumbnailBuffer = await sharp(imageBuffer)
+      .resize(THUMBNAIL_SIZE, null, { 
+        withoutEnlargement: true,
+        fit: 'inside',
+      })
+      .webp({ quality: THUMBNAIL_QUALITY })
+      .toBuffer();
+  }
+  
+  const storagePath = `${projectId}/${assetId}.${format}`;
+  const contentType = format === 'jpeg' ? 'image/jpeg' : format === 'png' ? 'image/png' : 'image/webp';
+  
+  // Upload to Supabase
+  const { error } = await client.storage
+    .from(BUCKETS.THUMBNAILS)
+    .upload(storagePath, thumbnailBuffer, {
+      contentType,
+      cacheControl: '31536000', // 1 year cache
+      upsert: true,
+    });
+  
+  if (error) {
+    throw new Error(`Failed to upload thumbnail: ${error.message}`);
+  }
+  
+  // Get public URL
+  const { data: urlData } = client.storage
+    .from(BUCKETS.THUMBNAILS)
+    .getPublicUrl(storagePath);
+  
+  return {
+    url: urlData.publicUrl,
+    path: storagePath,
+  };
+}
+
+/**
+ * Delete thumbnail
+ */
+export async function deleteThumbnail(
+  projectId: string,
+  assetId: string
+): Promise<void> {
+  const client = getClient();
+  
+  // Try all formats
+  const formats = ['jpeg', 'png', 'webp'];
+  const paths = formats.map(f => `${projectId}/${assetId}.${f}`);
+  
+  await client.storage
+    .from(BUCKETS.THUMBNAILS)
+    .remove(paths);
+}
+
+/**
+ * Delete all thumbnails for a project
+ */
+export async function deleteProjectThumbnails(projectId: string): Promise<void> {
+  const client = getClient();
+  
+  const { data: files } = await client.storage
+    .from(BUCKETS.THUMBNAILS)
+    .list(projectId);
+  
+  if (files && files.length > 0) {
+    const paths = files.map(f => `${projectId}/${f.name}`);
+    await client.storage
+      .from(BUCKETS.THUMBNAILS)
+      .remove(paths);
+  }
+}
+
+/**
+ * Upload export zip to Supabase (for download)
+ */
+export async function uploadExport(
+  zipPath: string,
+  exportId: string,
+  userId: string
+): Promise<{ url: string; expiresAt: Date }> {
+  const client = getClient();
+  
+  const zipBuffer = await fs.readFile(zipPath);
+  const storagePath = `${userId}/${exportId}.zip`;
+  
+  const { error } = await client.storage
+    .from(BUCKETS.EXPORTS)
+    .upload(storagePath, zipBuffer, {
+      contentType: 'application/zip',
+      upsert: true,
+    });
+  
+  if (error) {
+    throw new Error(`Failed to upload export: ${error.message}`);
+  }
+  
+  // Generate signed URL (24 hour expiry)
+  const expiresIn = 24 * 60 * 60; // 24 hours in seconds
+  const { data: signedData, error: signError } = await client.storage
+    .from(BUCKETS.EXPORTS)
+    .createSignedUrl(storagePath, expiresIn);
+  
+  if (signError || !signedData) {
+    throw new Error(`Failed to create signed URL: ${signError?.message}`);
+  }
+  
+  const expiresAt = new Date(Date.now() + expiresIn * 1000);
+  
+  return {
+    url: signedData.signedUrl,
+    expiresAt,
+  };
+}
+
+/**
+ * Delete export
+ */
+export async function deleteExport(
+  exportId: string,
+  userId: string
+): Promise<void> {
+  const client = getClient();
+  
+  const storagePath = `${userId}/${exportId}.zip`;
+  
+  await client.storage
+    .from(BUCKETS.EXPORTS)
+    .remove([storagePath]);
+}
+
+/**
+ * Clean up old exports (call periodically)
+ */
+export async function cleanupOldExports(maxAgeHours = 24): Promise<number> {
+  const client = getClient();
+  
+  const { data: folders } = await client.storage
+    .from(BUCKETS.EXPORTS)
+    .list();
+  
+  if (!folders) return 0;
+  
+  let deletedCount = 0;
+  const maxAge = maxAgeHours * 60 * 60 * 1000;
+  const now = Date.now();
+  
+  for (const folder of folders) {
+    const { data: files } = await client.storage
+      .from(BUCKETS.EXPORTS)
+      .list(folder.name);
+    
+    if (!files) continue;
+    
+    const oldFiles = files.filter(f => {
+      const fileAge = now - new Date(f.created_at).getTime();
+      return fileAge > maxAge;
+    });
+    
+    if (oldFiles.length > 0) {
+      const paths = oldFiles.map(f => `${folder.name}/${f.name}`);
+      await client.storage
+        .from(BUCKETS.EXPORTS)
+        .remove(paths);
+      deletedCount += oldFiles.length;
+    }
+  }
+  
+  return deletedCount;
+}
+
+/**
+ * Get thumbnail URL (public)
+ */
+export function getThumbnailUrl(projectId: string, assetId: string, format = 'jpeg'): string {
+  const client = getClient();
+  const storagePath = `${projectId}/${assetId}.${format}`;
+  
+  const { data } = client.storage
+    .from(BUCKETS.THUMBNAILS)
+    .getPublicUrl(storagePath);
+  
+  return data.publicUrl;
+}
+
+/**
+ * Check if Supabase Storage is available
+ */
+export async function isStorageAvailable(): Promise<boolean> {
+  try {
+    const client = getClient();
+    const { error } = await client.storage.listBuckets();
+    return !error;
+  } catch {
+    return false;
+  }
+}

@@ -37,23 +37,7 @@ export default function DashboardPage() {
         return;
       }
 
-      // Check if user has completed their profile onboarding
-      try {
-        const onboardingStatus = await userProfileApi.getOnboardingStatus(session.access_token);
-        
-        if (!onboardingStatus.onboardingCompleted) {
-          // Redirect to user onboarding - business profile setup
-          router.push('/dashboard/onboarding');
-          return;
-        }
-      } catch (onboardingError) {
-        console.error('Failed to check onboarding status:', onboardingError);
-        // If we can't check onboarding status, redirect to onboarding to be safe
-        router.push('/dashboard/onboarding');
-        return;
-      }
-
-      // User has completed onboarding, load their projects
+      // Load user's projects
       const data = await projectsApi.list(session.access_token);
       setProjects(data.projects);
     } catch (error) {

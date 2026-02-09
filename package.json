@@ -5,7 +5,7 @@
   "description": "Context-driven metadata embedding tool for images",
   "scripts": {
     "dev": "turbo dev",
-    "build": "pnpm --filter @contextembed/core build && pnpm --filter @contextembed/db build && turbo build",
+    "build": "pnpm --filter @contextembed/core build && pnpm --filter @contextembed/db build && pnpm --filter @contextembed/providers build && pnpm --filter @contextembed/metadata build && turbo build --filter=@contextembed/api --filter=@contextembed/web",
     "lint": "turbo lint",
     "test": "turbo test",
     "db:generate": "pnpm --filter @contextembed/db db:generate",

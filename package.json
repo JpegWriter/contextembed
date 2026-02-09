@@ -5,6 +5,7 @@
   "description": "Context-driven metadata embedding tool for images",
   "scripts": {
     "dev": "turbo dev",
+    "prebuild": "rimraf packages/*/dist packages/*/*.tsbuildinfo",
     "build": "pnpm --filter @contextembed/core build && pnpm --filter @contextembed/db build && pnpm --filter @contextembed/providers build && pnpm --filter @contextembed/metadata build && turbo build --filter=@contextembed/api --filter=@contextembed/web",
     "lint": "turbo lint",
     "test": "turbo test",

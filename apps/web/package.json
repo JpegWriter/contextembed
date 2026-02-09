@@ -10,25 +10,25 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@contextembed/core": "workspace:*",
     "@supabase/auth-helpers-nextjs": "^0.8.7",
     "@supabase/supabase-js": "^2.39.0",
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "autoprefixer": "^10.4.16",
     "next": "^14.0.4",
+    "postcss": "^8.4.32",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-hot-toast": "^2.4.1",
     "swr": "^2.2.4",
     "clsx": "^2.0.0",
-    "lucide-react": "^0.303.0"
+    "lucide-react": "^0.303.0",
+    "tailwindcss": "^3.3.6"
   },
   "devDependencies": {
-    "@contextembed/core": "workspace:*",
-    "@types/node": "^20.10.0",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "autoprefixer": "^10.4.16",
-    "postcss": "^8.4.32",
-    "tailwindcss": "^3.3.6",
     "typescript": "^5.3.0"
   }
 }

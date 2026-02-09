@@ -1,0 +1,57 @@
+# Render Blueprint
+# https://render.com/docs/blueprint-spec
+
+services:
+  # API Server
+  - type: web
+    name: contextembed-api
+    runtime: node
+    region: frankfurt
+    plan: starter
+    rootDir: apps/api
+    buildCommand: cd ../.. && pnpm install && pnpm build --filter=@contextembed/api...
+    startCommand: node dist/index.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false
+      - key: STORAGE_PROVIDER
+        value: supabase
+      - key: VISION_MODEL
+        value: gpt-4o
+      - key: LLM_MODEL
+        value: gpt-4o
+
+  # Next.js Web App
+  - type: web
+    name: contextembed-web
+    runtime: node
+    region: frankfurt
+    plan: starter
+    rootDir: apps/web
+    buildCommand: cd ../.. && pnpm install && pnpm build --filter=@contextembed/web
+    startCommand: pnpm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: contextembed-api
+          property: host
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false

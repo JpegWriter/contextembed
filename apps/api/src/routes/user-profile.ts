@@ -83,6 +83,7 @@ userProfileRouter.get('/onboarding-status', asyncHandler(async (req, res) => {
   
   res.json({ 
     onboardingCompleted: completed,
+    redirectTo: completed ? null : '/dashboard/onboarding',
   });
 }));
 

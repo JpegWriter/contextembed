@@ -200,19 +200,25 @@ export class MetadataSynthesizer {
           : `${profile.rights.website}/rights`)
       : metadata.webStatement;
 
+    // Resolve the best available creator name (creatorName → studioName → metadata)
+    const resolvedCreator = profile.rights.creatorName || profile.rights.studioName || metadata.creator || '';
+    const resolvedStudio = profile.rights.studioName || profile.rights.creatorName || '';
+
     return {
       ...metadata,
       // Core attribution
-      creator: profile.rights.creatorName,
-      copyright: this.interpolateCopyright(profile.rights.copyrightTemplate),
-      credit: profile.rights.creditTemplate,
-      source: profile.rights.studioName || profile.rights.creatorName,
+      creator: resolvedCreator,
+      copyright: profile.rights.copyrightTemplate
+        ? this.interpolateCopyright(profile.rights.copyrightTemplate)
+        : metadata.copyright,
+      credit: profile.rights.creditTemplate || resolvedCreator,
+      source: resolvedStudio || resolvedCreator,
       // Rights & licensing
       usageTerms: profile.rights.usageTermsTemplate || metadata.usageTerms,
       webStatement: webStatement || metadata.webStatement,
       copyrightStatus: 'copyrighted' as const,
       // Licensor (from profile)
-      licensorName: profile.rights.creatorName || metadata.licensorName,
+      licensorName: resolvedCreator || metadata.licensorName,
       licensorEmail: profile.rights.email || metadata.licensorEmail,
       licensorUrl: profile.rights.website || metadata.licensorUrl,
     };

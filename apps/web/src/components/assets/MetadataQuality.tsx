@@ -34,6 +34,7 @@ export interface MetadataQualityData {
     copyrightNotice?: string;
     rightsUsageTerms?: string;
     rightsUrl?: string;
+    source?: string;
   };
   location?: {
     locationMode?: 'none' | 'fromProfile' | 'fromExifOnly';
@@ -81,17 +82,31 @@ export function calculateMetadataStrength(
     };
   }
 
-  // 1. Provenance - Author/creator embedded
-  const provenance = !!(
-    metadata.attribution?.creator &&
-    metadata.attribution?.creditLine
+  // 1. Provenance - Author/creator traceable (from metadata or profile)
+  const hasCreator = !!(
+    metadata.attribution?.creator || 
+    metadata.attribution?.source || 
+    onboarding?.creatorName
   );
+  const hasCredit = !!(
+    metadata.attribution?.creditLine || 
+    metadata.attribution?.source ||
+    onboarding?.brandName
+  );
+  const provenance = hasCreator && hasCredit;
 
-  // 2. Rights - Complete rights fields
-  const rights = !!(
-    metadata.attribution?.copyrightNotice &&
-    (metadata.attribution?.rightsUsageTerms || metadata.attribution?.rightsUrl)
+  // 2. Rights - Complete rights fields (from metadata or profile)
+  const hasCopyright = !!(
+    metadata.attribution?.copyrightNotice || 
+    onboarding?.creatorName ||
+    onboarding?.brandName
   );
+  const hasUsage = !!(
+    metadata.attribution?.rightsUsageTerms || 
+    metadata.attribution?.rightsUrl ||
+    onboarding?.website
+  );
+  const rights = hasCopyright && hasUsage;
 
   // 3. Contextual - Description with substance
   const contextual = !!(
@@ -434,7 +449,11 @@ interface ProvenancePreviewProps {
 
 export function ProvenancePreview({ metadata, onboarding }: ProvenancePreviewProps) {
   const preview = useMemo(() => {
-    const creator = metadata?.attribution?.creator || onboarding?.creatorName || 'Unknown Creator';
+    const creator = metadata?.attribution?.creator 
+      || metadata?.attribution?.source
+      || onboarding?.creatorName 
+      || onboarding?.brandName
+      || 'Unknown Creator';
     const niche = onboarding?.niche || onboarding?.industry || '';
     const location = [
       metadata?.location?.city,

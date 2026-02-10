@@ -17,6 +17,7 @@ import {
   jobRepository,
   assetRepository,
   onboardingProfileRepository,
+  userProfileRepository,
   visionResultRepository,
   metadataResultRepository,
   embedResultRepository,
@@ -280,6 +281,81 @@ async function processJob(jobId: string): Promise<void> {
 }
 
 /**
+ * Resolve onboarding profile: try project-level, fall back to user profile
+ */
+async function resolveProfile(projectId: string): Promise<any> {
+  // Try project-level onboarding profile first
+  const profile = await onboardingProfileRepository.findByProjectId(projectId);
+  if (profile) return profile;
+
+  // Fall back to user profile defaults
+  const project = await projectRepository.findById(projectId);
+  if (!project) throw new Error('Project not found');
+
+  const userProfile = await userProfileRepository.findByUserId(project.userId);
+  if (!userProfile) {
+    throw new Error('No onboarding profile or user profile found. Complete onboarding first.');
+  }
+
+  // Build a synthetic OnboardingProfile-compatible object from user profile
+  return {
+    id: userProfile.id,
+    projectId,
+    version: 1,
+    projectName: project.name,
+    primaryGoal: project.goal,
+    websiteUrl: userProfile.website || undefined,
+    confirmedContext: {
+      brandName: userProfile.businessName || '',
+      tagline: userProfile.tagline || undefined,
+      industry: userProfile.industry || undefined,
+      niche: userProfile.niche || undefined,
+      services: userProfile.services ? userProfile.services.split(',').map((s: string) => s.trim()) : undefined,
+      targetAudience: userProfile.targetAudience || undefined,
+      brandVoice: userProfile.brandVoice || undefined,
+      location: (userProfile.city || userProfile.state || userProfile.country) ? {
+        city: userProfile.city || undefined,
+        state: userProfile.state || undefined,
+        country: userProfile.country || undefined,
+        isStrict: false,
+      } : undefined,
+      yearsExperience: userProfile.yearsExperience ? parseInt(userProfile.yearsExperience) || undefined : undefined,
+      credentials: userProfile.credentials ? userProfile.credentials.split(',').map((s: string) => s.trim()) : undefined,
+      specializations: userProfile.specializations ? userProfile.specializations.split(',').map((s: string) => s.trim()) : undefined,
+      awardsRecognition: userProfile.awardsRecognition ? userProfile.awardsRecognition.split(',').map((s: string) => s.trim()) : undefined,
+      clientTypes: userProfile.clientTypes || undefined,
+      keyDifferentiator: userProfile.keyDifferentiator || undefined,
+      pricePoint: userProfile.pricePoint || undefined,
+      brandStory: userProfile.brandStory || undefined,
+      serviceArea: userProfile.serviceArea ? userProfile.serviceArea.split(',').map((s: string) => s.trim()) : undefined,
+      defaultEventType: userProfile.defaultEventType || undefined,
+      typicalDeliverables: userProfile.typicalDeliverables ? userProfile.typicalDeliverables.split(',').map((s: string) => s.trim()) : undefined,
+    },
+    rights: {
+      creatorName: userProfile.creatorName || '',
+      copyrightTemplate: userProfile.copyrightTemplate || `© ${new Date().getFullYear()} ${userProfile.businessName || ''}. All rights reserved.`,
+      creditTemplate: userProfile.creditTemplate || userProfile.creatorName || '',
+      usageTermsTemplate: userProfile.usageTerms || undefined,
+      website: userProfile.website || undefined,
+      email: userProfile.contactEmail || undefined,
+    },
+    preferences: {
+      primaryLanguage: userProfile.primaryLanguage || 'en',
+      keywordStyle: userProfile.keywordStyle || 'mixed',
+      maxKeywords: userProfile.maxKeywords || 15,
+      locationBehavior: 'infer' as const,
+      overwriteOriginals: false,
+      includeReasoning: true,
+      outputFormat: 'copy' as const,
+    },
+    completenessScore: 100,
+    isComplete: true,
+    createdAt: userProfile.createdAt,
+    updatedAt: userProfile.updatedAt,
+  };
+}
+
+/**
  * Process full pipeline job
  */
 async function processFullPipeline(job: any): Promise<void> {
@@ -292,10 +368,7 @@ async function processFullPipeline(job: any): Promise<void> {
     throw new Error('Asset not found');
   }
   
-  const profile = await onboardingProfileRepository.findByProjectId(job.projectId);
-  if (!profile) {
-    throw new Error('Onboarding profile not found');
-  }
+  const profile = await resolveProfile(job.projectId);
   
   // Initialize providers
   const config = getDefaultProviderConfig();
@@ -483,10 +556,7 @@ async function processMetadataSynthesis(job: any): Promise<void> {
     throw new Error('Asset not found');
   }
   
-  const profile = await onboardingProfileRepository.findByProjectId(job.projectId);
-  if (!profile) {
-    throw new Error('Onboarding profile not found');
-  }
+  const profile = await resolveProfile(job.projectId);
   
   const latestVisionResult = await visionResultRepository.findLatestByAsset(asset.id);
   if (!latestVisionResult) {

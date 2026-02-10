@@ -75,7 +75,7 @@ const ReleasesSchema = z.object({
 const EntitiesSchema = z.object({
   brand: z.object({
     name: z.string().max(256),
-    url: z.string().url().nullish(),
+    url: z.string().url().or(z.literal('')).nullish(),
     id: z.string().max(64).nullish(),
   }).nullish(),
   creator: z.object({
@@ -138,12 +138,12 @@ export const SynthesizedMetadataSchema = z.object({
   city: z.string().max(FIELD_MAP.city.maxLength || 128).nullish(),
   state: z.string().max(FIELD_MAP.state.maxLength || 128).nullish(),
   country: z.string().max(FIELD_MAP.country.maxLength || 128).nullish(),
-  countryCode: z.string().max(3).nullish(),
+  countryCode: z.string().max(64).nullish(),
   
   // Workflow
   instructions: z.string().max(FIELD_MAP.instructions.maxLength || 256).nullish(),
   captionWriter: z.string().max(FIELD_MAP.captionWriter.maxLength || 128).nullish(),
-  category: z.string().max(3).nullish(),
+  category: z.string().max(64).nullish(),
   supplementalCategories: z.array(z.string().max(64)).max(10).nullish(),
   
   // Complex nested objects

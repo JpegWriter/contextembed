@@ -79,7 +79,11 @@ export default function ProjectPage() {
       ]);
 
       setProject(projectData.project);
-      setAssets(assetsData.assets);
+      setAssets(prev => {
+        const next = assetsData.assets;
+        if (JSON.stringify(prev) === JSON.stringify(next)) return prev;
+        return next;
+      });
       setJobStats(statsData.stats);
       
       // No per-project onboarding needed - user profile handles defaults
@@ -421,19 +425,19 @@ export default function ProjectPage() {
             <span>{stats.approved} Approved</span>
           </button>
           
-          {stats.failed > 0 && (
-            <button
-              onClick={() => setStatusFilter(statusFilter === 'failed' ? 'all' : 'failed')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                statusFilter === 'failed'
-                  ? 'bg-red-600/30 text-red-400 ring-2 ring-red-500'
-                  : 'bg-red-900/30 text-red-400 hover:bg-red-900/50'
-              }`}
-            >
-              <XCircle className="w-4 h-4" />
-              <span>{stats.failed} Failed</span>
-            </button>
-          )}
+          <button
+            onClick={() => setStatusFilter(statusFilter === 'failed' ? 'all' : 'failed')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+              stats.failed === 0 ? 'hidden' : ''
+            } ${
+              statusFilter === 'failed'
+                ? 'bg-red-600/30 text-red-400 ring-2 ring-red-500'
+                : 'bg-red-900/30 text-red-400 hover:bg-red-900/50'
+            }`}
+          >
+            <XCircle className="w-4 h-4" />
+            <span>{stats.failed} Failed</span>
+          </button>
         </div>
 
         {/* Action Buttons */}
@@ -453,17 +457,15 @@ export default function ProjectPage() {
             {selectedIds.size > 0 ? `Run Embed (${selectedIds.size})` : 'Run Embed'}
           </button>
 
-          {selectedIds.size > 0 && (
-            <button
-              onClick={() => setShowBatchContext(true)}
-              className="flex items-center gap-2.5 px-5 py-2.5 bg-gradient-to-r from-amber-600 to-amber-500 
-                hover:from-amber-500 hover:to-amber-400 text-white rounded-lg text-sm font-semibold 
-                transition-all shadow-lg shadow-amber-900/30"
-            >
-              <MessageSquarePlus className="w-4 h-4" />
-              Add Context
-            </button>
-          )}
+          <button
+            onClick={() => setShowBatchContext(true)}
+            className={`flex items-center gap-2.5 px-5 py-2.5 bg-gradient-to-r from-amber-600 to-amber-500 
+              hover:from-amber-500 hover:to-amber-400 text-white rounded-lg text-sm font-semibold 
+              transition-all shadow-lg shadow-amber-900/30 ${selectedIds.size === 0 ? 'hidden' : ''}`}
+          >
+            <MessageSquarePlus className="w-4 h-4" />
+            Add Context
+          </button>
 
           <button
             onClick={handleExport}
@@ -480,16 +482,14 @@ export default function ProjectPage() {
             Export Images
           </button>
 
-          {statusFilter !== 'all' && (
-            <button
-              onClick={() => setStatusFilter('all')}
-              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-400 
-                hover:text-white hover:bg-gray-800 rounded-lg transition-all"
-            >
-              <Filter className="w-4 h-4" />
-              Clear Filter
-            </button>
-          )}
+          <button
+            onClick={() => setStatusFilter('all')}
+            className={`flex items-center gap-2 px-4 py-2 text-sm text-gray-400 
+              hover:text-white hover:bg-gray-800 rounded-lg transition-all ${statusFilter === 'all' ? 'hidden' : ''}`}
+          >
+            <Filter className="w-4 h-4" />
+            Clear Filter
+          </button>
         </div>
 
         {/* Upload Zone - Compact, dark */}

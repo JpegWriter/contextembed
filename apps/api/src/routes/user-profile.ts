@@ -12,6 +12,12 @@ import { auditUrl } from '../services/url-auditor';
 
 export const userProfileRouter: IRouter = Router();
 
+// Helper: coerce arrays to comma-separated strings, numbers to strings
+const toStringField = z.preprocess(
+  (val) => Array.isArray(val) ? val.join(', ') : typeof val === 'number' ? String(val) : val,
+  z.string().optional(),
+);
+
 // Validation schemas
 const updateProfileSchema = z.object({
   // Business Identity
@@ -19,7 +25,7 @@ const updateProfileSchema = z.object({
   tagline: z.string().optional(),
   industry: z.string().optional(),
   niche: z.string().optional(),
-  services: z.string().optional(),
+  services: toStringField,
   targetAudience: z.string().optional(),
   brandVoice: z.string().optional(),
   
@@ -30,11 +36,11 @@ const updateProfileSchema = z.object({
   serviceArea: z.string().optional(),
   
   // Authority
-  yearsExperience: z.string().optional(),
-  credentials: z.string().optional(),
-  specializations: z.string().optional(),
-  awardsRecognition: z.string().optional(),
-  clientTypes: z.string().optional(),
+  yearsExperience: toStringField,
+  credentials: toStringField,
+  specializations: toStringField,
+  awardsRecognition: toStringField,
+  clientTypes: toStringField,
   keyDifferentiator: z.string().optional(),
   pricePoint: z.string().optional(),
   brandStory: z.string().optional(),
@@ -50,9 +56,12 @@ const updateProfileSchema = z.object({
   // Preferences
   primaryLanguage: z.string().optional(),
   keywordStyle: z.enum(['short', 'long', 'mixed']).optional(),
-  maxKeywords: z.number().min(5).max(30).optional(),
+  maxKeywords: z.preprocess(
+    (val) => typeof val === 'string' ? parseInt(val, 10) : val,
+    z.number().min(5).max(30).optional(),
+  ),
   defaultEventType: z.string().optional(),
-  typicalDeliverables: z.string().optional(),
+  typicalDeliverables: toStringField,
 });
 
 /**

@@ -408,10 +408,10 @@ Return a JSON object with ALL these fields:
   "licensorUrl": "${rights.website || ''}",
   
   "sublocation": "${sublocation}",
-  "city": "city per location rules",
-  "state": "state per location rules",
-  "country": "ALWAYS include country name if city is set",
-  "countryCode": "ISO 3166-1 alpha-2 (e.g., AT, GB, US)",
+  "city": "",
+  "state": "",
+  "country": "",
+  "countryCode": "",
   
   "releases": {
     "model": {

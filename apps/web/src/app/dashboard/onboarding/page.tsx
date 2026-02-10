@@ -456,10 +456,10 @@ function OnboardingContent() {
                 <div className="p-4 bg-emerald-900/20 border border-emerald-700/50 rounded-lg">
                   <h3 className="font-medium text-emerald-400 text-sm mb-2">Found information:</h3>
                   <ul className="text-xs space-y-1 text-emerald-300">
-                    {urlAudit.businessName && <li>ÔÇó Business: {urlAudit.businessName}</li>}
-                    {urlAudit.industry && <li>ÔÇó Industry: {urlAudit.industry}</li>}
-                    {urlAudit.tagline && <li>ÔÇó Tagline: {urlAudit.tagline}</li>}
-                    {urlAudit.location?.city && <li>ÔÇó Location: {urlAudit.location.city}</li>}
+                    {urlAudit.businessName && <li>• Business: {urlAudit.businessName}</li>}
+                    {urlAudit.industry && <li>• Industry: {urlAudit.industry}</li>}
+                    {urlAudit.tagline && <li>• Tagline: {urlAudit.tagline}</li>}
+                    {urlAudit.location?.city && <li>• Location: {urlAudit.location.city}</li>}
                   </ul>
                 </div>
               )}

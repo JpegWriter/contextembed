@@ -18,7 +18,7 @@ import {
   Filter,
 } from 'lucide-react';
 import { useSupabase } from '@/lib/supabase-provider';
-import { projectsApi, assetsApi, jobsApi, exportsApi } from '@/lib/api';
+import { projectsApi, assetsApi, jobsApi, exportsApi, userProfileApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { AssetGrid, type Asset } from '@/components/assets/AssetGrid';
@@ -61,6 +61,7 @@ export default function ProjectPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [showBatchUpload, setShowBatchUpload] = useState(false);
   const [batchUploadFiles, setBatchUploadFiles] = useState<File[]>([]);
+  const [userProfile, setUserProfile] = useState<any>(null);
 
   const loadData = useCallback(async () => {
     try {
@@ -77,6 +78,14 @@ export default function ProjectPage() {
         assetsApi.list(session.access_token, projectId),
         jobsApi.stats(session.access_token, projectId),
       ]);
+
+      // Fetch user profile once for quality signals (cached after first load)
+      if (!userProfile) {
+        try {
+          const profileData = await userProfileApi.get(session.access_token);
+          if (profileData?.profile) setUserProfile(profileData.profile);
+        } catch { /* non-critical */ }
+      }
 
       setProject(projectData.project);
       setAssets(prev => {
@@ -558,6 +567,17 @@ export default function ProjectPage() {
           />
           <MetadataSidebar
             asset={detailAsset}
+            onboarding={userProfile ? {
+              brandName: userProfile.businessName,
+              industry: userProfile.industry,
+              niche: userProfile.niche,
+              yearsExperience: userProfile.yearsExperience ? parseInt(userProfile.yearsExperience) : undefined,
+              credentials: userProfile.credentials?.split(',').map((s: string) => s.trim()).filter(Boolean),
+              specializations: userProfile.specializations?.split(',').map((s: string) => s.trim()).filter(Boolean),
+              serviceArea: userProfile.serviceArea?.split(',').map((s: string) => s.trim()).filter(Boolean),
+              creatorName: userProfile.creatorName,
+              website: userProfile.website,
+            } : undefined}
             onClose={() => {
               setSelectedAsset(null);
               setDetailAsset(null);

@@ -112,6 +112,11 @@ interface LegacyMetadataResult {
   city?: string;
   state?: string;
   country?: string;
+  eventAnchor?: {
+    eventId?: string;
+    eventName?: string;
+    eventDate?: string;
+  };
   confidence?: Record<string, number>;
   reasoning?: Record<string, string>;
 }
@@ -495,6 +500,7 @@ export function MetadataSidebar({
       },
       workflow: {
         jobId: asset.id,
+        instructions: legacyMeta.eventAnchor?.eventName || undefined,
         modelReleaseStatus: 'unknown',
         propertyReleaseStatus: 'unknown',
       },
@@ -681,9 +687,9 @@ export function MetadataSidebar({
                   <div className="px-3 py-3 border-b border-gray-800">
                     <ExplainWhy
                       visionApplied={!!vision}
-                      situationalApplied={!!(metadata.workflow?.instructions)}
+                      situationalApplied={!!(legacyMeta?.eventAnchor?.eventName || metadata.workflow?.instructions)}
                       userContextApplied={!!asset?.userComment}
-                      onboardingApplied={!!onboarding?.brandName}
+                      onboardingApplied={!!(onboarding?.brandName || onboarding?.creatorName)}
                       expanded
                     />
                   </div>
@@ -935,9 +941,9 @@ export function MetadataSidebar({
                   </h4>
                   <ExplainWhy
                     visionApplied={!!vision}
-                    situationalApplied={!!(metadata.workflow?.instructions)}
+                    situationalApplied={!!(legacyMeta?.eventAnchor?.eventName || metadata.workflow?.instructions)}
                     userContextApplied={!!asset?.userComment}
-                    onboardingApplied={!!onboarding?.brandName}
+                    onboardingApplied={!!(onboarding?.brandName || onboarding?.creatorName)}
                     expanded
                   />
                 </div>

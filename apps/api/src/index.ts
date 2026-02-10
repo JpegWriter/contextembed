@@ -72,6 +72,13 @@ app.get('/files/:assetId/thumbnail', async (req, res) => {
     }
     res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
     res.setHeader('Cache-Control', 'public, max-age=31536000');
+    
+    // If thumbnailPath is a URL (Supabase Storage), redirect to it
+    if (asset.thumbnailPath.startsWith('http://') || asset.thumbnailPath.startsWith('https://')) {
+      res.redirect(asset.thumbnailPath);
+      return;
+    }
+    
     res.sendFile(pathModule.resolve(asset.thumbnailPath));
   } catch (err) {
     res.status(500).send('Error');

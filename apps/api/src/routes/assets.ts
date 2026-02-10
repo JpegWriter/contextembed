@@ -16,6 +16,7 @@ import {
   visionResultRepository,
   metadataResultRepository,
   embedResultRepository,
+  userProfileRepository,
 } from '@contextembed/db';
 import { 
   validateImageType,
@@ -149,13 +150,16 @@ assetsRouter.post(
       throw createApiError('Project not found', 404);
     }
     
-    // Check if onboarding is complete
+    // Check if onboarding is complete (project-level or user-profile level)
     if (!project.onboardingCompleted) {
-      throw createApiError(
-        'Complete onboarding before uploading assets',
-        400,
-        'ONBOARDING_INCOMPLETE'
-      );
+      const profileComplete = await userProfileRepository.isOnboardingComplete(userId);
+      if (!profileComplete) {
+        throw createApiError(
+          'Complete onboarding before uploading assets',
+          400,
+          'ONBOARDING_INCOMPLETE'
+        );
+      }
     }
     
     const files = req.files as Express.Multer.File[];

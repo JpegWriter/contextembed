@@ -186,19 +186,35 @@ export class MetadataSynthesizer {
   }
   
   /**
-   * Apply rights info from profile to metadata
+   * Apply rights info from profile to metadata.
+   * Guarantees all attribution fields are populated from the user profile,
+   * regardless of what the LLM returned (or didn't return).
    */
   applyRightsInfo(
     metadata: SynthesizedMetadata,
     profile: OnboardingProfile
   ): SynthesizedMetadata {
+    const webStatement = profile.rights.website
+      ? (profile.rights.website.includes('/license') || profile.rights.website.includes('/rights')
+          ? profile.rights.website
+          : `${profile.rights.website}/rights`)
+      : metadata.webStatement;
+
     return {
       ...metadata,
+      // Core attribution
       creator: profile.rights.creatorName,
       copyright: this.interpolateCopyright(profile.rights.copyrightTemplate),
       credit: profile.rights.creditTemplate,
       source: profile.rights.studioName || profile.rights.creatorName,
-      usageTerms: profile.rights.usageTermsTemplate,
+      // Rights & licensing
+      usageTerms: profile.rights.usageTermsTemplate || metadata.usageTerms,
+      webStatement: webStatement || metadata.webStatement,
+      copyrightStatus: 'copyrighted' as const,
+      // Licensor (from profile)
+      licensorName: profile.rights.creatorName || metadata.licensorName,
+      licensorEmail: profile.rights.email || metadata.licensorEmail,
+      licensorUrl: profile.rights.website || metadata.licensorUrl,
     };
   }
   

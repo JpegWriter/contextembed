@@ -103,6 +103,12 @@ interface LegacyMetadataResult {
   creator?: string;
   copyright?: string;
   credit?: string;
+  source?: string;
+  usageTerms?: string;
+  webStatement?: string;
+  licensorName?: string;
+  licensorEmail?: string;
+  licensorUrl?: string;
   city?: string;
   state?: string;
   country?: string;
@@ -477,6 +483,9 @@ export function MetadataSidebar({
         creator: legacyMeta.creator,
         creditLine: legacyMeta.credit,
         copyrightNotice: legacyMeta.copyright,
+        rightsUsageTerms: legacyMeta.usageTerms,
+        rightsUrl: legacyMeta.webStatement,
+        source: legacyMeta.source,
       },
       location: {
         locationMode: (legacyMeta.city || legacyMeta.country) ? 'fromProfile' : 'none',

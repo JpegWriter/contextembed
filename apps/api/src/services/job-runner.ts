@@ -341,6 +341,7 @@ async function resolveProfile(projectId: string): Promise<any> {
     },
     rights: {
       creatorName: userProfile.creatorName || '',
+      studioName: userProfile.businessName || undefined,
       copyrightTemplate: userProfile.copyrightTemplate || `© ${new Date().getFullYear()} ${userProfile.businessName || ''}. All rights reserved.`,
       creditTemplate: userProfile.creditTemplate || userProfile.creatorName || '',
       usageTermsTemplate: userProfile.usageTerms || undefined,
@@ -499,7 +500,7 @@ async function processFullPipeline(job: any): Promise<void> {
     eventDate: project.createdAt?.toISOString()?.split('T')[0], // YYYY-MM-DD
   };
   
-  const synthesisOutput = await metadataSynthesizer.synthesize(
+  let synthesisOutput = await metadataSynthesizer.synthesize(
     visionOutput.analysis,
     profile as unknown as OnboardingProfile,
     asset.userComment || undefined,
@@ -509,6 +510,15 @@ async function processFullPipeline(job: any): Promise<void> {
   if (!synthesisOutput.success || !synthesisOutput.metadata) {
     throw new Error(synthesisOutput.error || 'Metadata synthesis failed');
   }
+  
+  // Apply profile rights to guarantee attribution fields are populated
+  // This ensures creator, copyright, credit, source, usageTerms come from
+  // the user profile — not left to LLM discretion
+  const rightsEnrichedMetadata = metadataSynthesizer.applyRightsInfo(
+    synthesisOutput.metadata,
+    profile as unknown as OnboardingProfile
+  );
+  synthesisOutput = { ...synthesisOutput, metadata: rightsEnrichedMetadata };
   
   // Get latest vision result for linking
   const latestVisionResult = await visionResultRepository.findLatestByAsset(asset.id);

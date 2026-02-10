@@ -1,115 +1,92 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { 
-  Save, 
-  Loader2, 
-  Building2, 
-  MapPin, 
-  Shield, 
+import { useState, useEffect, useCallback } from 'react';
+import {
+  Save,
+  Loader2,
+  Building2,
+  MapPin,
+  Shield,
   Globe,
   Sparkles,
-  AlertTriangle,
+  Award,
   RefreshCw,
   ExternalLink,
+  CheckCircle2,
+  User,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { projectsApi, onboardingApi } from '@/lib/api';
+import { userProfileApi } from '@/lib/api';
 import { useSupabase } from '@/lib/supabase-provider';
 
-interface ProfileData {
-  confirmedContext: {
-    brandName: string;
-    tagline?: string;
-    industry?: string;
-    niche?: string;
-    services?: string[];
-    targetAudience?: string;
-    brandVoice?: string;
-    location?: {
-      city?: string;
-      state?: string;
-      country?: string;
-      countryCode?: string;
-      isStrict?: boolean;
-    };
-    additionalContext?: string;
-  };
-  rights: {
-    creatorName: string;
-    studioName?: string;
-    copyrightTemplate: string;
-    creditTemplate: string;
-    usageTermsTemplate?: string;
-    website?: string;
-    email?: string;
-  };
-  outputPreferences: {
-    primaryLanguage: string;
-    keywordStyle: 'short' | 'long' | 'mixed';
-    maxKeywords: number;
-    locationBehavior: 'strict' | 'infer' | 'none';
-  };
-  websiteUrl?: string;
-  urlAuditResult?: {
-    fetchedAt: string;
-    success: boolean;
-    businessName?: string;
-    industry?: string;
-  };
-}
+/* ------------------------------------------------------------------ */
+/*  Helper Components                                                  */
+/* ------------------------------------------------------------------ */
 
-function CollapsibleSection({ 
-  title, 
-  icon: Icon, 
-  children, 
-  defaultOpen = true 
-}: { 
-  title: string; 
-  icon: React.ElementType; 
-  children: React.ReactNode; 
+function CollapsibleSection({
+  title,
+  icon: Icon,
+  children,
+  defaultOpen = true,
+  badge,
+}: {
+  title: string;
+  icon: React.ElementType;
+  children: React.ReactNode;
   defaultOpen?: boolean;
+  badge?: string;
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
-  
+
   return (
-    <div className="border border-gray-800 rounded bg-gray-900/50">
+    <div className="border border-gray-800 rounded-lg bg-gray-900/50 overflow-hidden">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-800/50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-gray-800/50 transition-colors"
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <Icon className="w-4 h-4 text-cyan-400" />
-          <span className="text-sm font-medium text-white uppercase tracking-wider">{title}</span>
+          <span className="text-sm font-semibold text-white uppercase tracking-wider">
+            {title}
+          </span>
+          {badge && (
+            <span className="px-2 py-0.5 text-[10px] font-medium bg-cyan-900/40 text-cyan-300 rounded-full border border-cyan-800/50">
+              {badge}
+            </span>
+          )}
         </div>
         <span className="text-gray-500 text-xs">{isOpen ? '−' : '+'}</span>
       </button>
-      {isOpen && <div className="px-4 pb-4 space-y-3">{children}</div>}
+      {isOpen && <div className="px-5 pb-5 space-y-4">{children}</div>}
     </div>
   );
 }
 
-function InputField({ 
-  label, 
-  value, 
-  onChange, 
+function InputField({
+  label,
+  value,
+  onChange,
   placeholder,
   multiline = false,
   hint,
-}: { 
-  label: string; 
-  value: string; 
-  onChange: (v: string) => void; 
+  required = false,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
   placeholder?: string;
   multiline?: boolean;
   hint?: string;
+  required?: boolean;
 }) {
-  const baseClasses = "w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 placeholder:text-gray-600 focus:border-cyan-600 focus:outline-none focus:ring-1 focus:ring-cyan-600/50";
-  
+  const baseClasses =
+    'w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 placeholder:text-gray-600 focus:border-cyan-600 focus:outline-none focus:ring-1 focus:ring-cyan-600/50';
+
   return (
     <div>
       <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">
         {label}
+        {required && <span className="text-red-400 ml-0.5">*</span>}
       </label>
       {multiline ? (
         <textarea
@@ -133,171 +110,416 @@ function InputField({
   );
 }
 
+function SelectField({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string }[];
+}) {
+  return (
+    <div>
+      <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">
+        {label}
+      </label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 focus:border-cyan-600 focus:outline-none"
+      >
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  AI Summary Component                                               */
+/* ------------------------------------------------------------------ */
+
+function AiSummary({ profile }: { profile: ProfileFields }) {
+  const parts: string[] = [];
+
+  if (profile.businessName) {
+    parts.push(
+      `**${profile.businessName}**${profile.tagline ? ` — ${profile.tagline}` : ''}`
+    );
+  }
+
+  const identityParts: string[] = [];
+  if (profile.industry) identityParts.push(profile.industry);
+  if (profile.niche) identityParts.push(`specializing in ${profile.niche}`);
+  if (profile.city || profile.state || profile.country) {
+    const loc = [profile.city, profile.state, profile.country]
+      .filter(Boolean)
+      .join(', ');
+    identityParts.push(`based in ${loc}`);
+  }
+  if (identityParts.length > 0) parts.push(identityParts.join(', ') + '.');
+
+  if (profile.services)
+    parts.push(`**Services:** ${profile.services}.`);
+
+  if (profile.targetAudience)
+    parts.push(`**Target Audience:** ${profile.targetAudience}.`);
+
+  if (profile.specializations)
+    parts.push(`**Specializations:** ${profile.specializations}.`);
+
+  if (profile.yearsExperience)
+    parts.push(`**Experience:** ${profile.yearsExperience} years.`);
+
+  if (profile.credentials)
+    parts.push(`**Credentials:** ${profile.credentials}.`);
+
+  if (profile.awardsRecognition)
+    parts.push(`**Awards:** ${profile.awardsRecognition}.`);
+
+  if (profile.keyDifferentiator)
+    parts.push(`**What Sets You Apart:** ${profile.keyDifferentiator}.`);
+
+  if (profile.brandVoice)
+    parts.push(`**Brand Voice:** ${profile.brandVoice}.`);
+
+  if (profile.brandStory)
+    parts.push(`**Brand Story:** ${profile.brandStory}`);
+
+  if (parts.length === 0) {
+    return (
+      <div className="px-5 py-8 bg-gray-900/50 border border-gray-800 rounded-lg text-center">
+        <Sparkles className="w-6 h-6 mx-auto mb-2 text-gray-600" />
+        <p className="text-sm text-gray-500">
+          Complete your profile fields below to see your AI-generated business summary.
+        </p>
+        <p className="text-xs text-gray-600 mt-1">
+          Or use the Website Analysis tool to auto-fill from your website.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="border border-cyan-900/50 rounded-lg bg-gradient-to-br from-cyan-950/30 to-gray-900/50 overflow-hidden">
+      <div className="px-5 py-3 border-b border-cyan-900/40 flex items-center gap-2">
+        <Sparkles className="w-4 h-4 text-cyan-400" />
+        <span className="text-xs font-semibold text-cyan-300 uppercase tracking-wider">
+          AI Business Summary
+        </span>
+        <span className="text-[10px] text-gray-600 ml-auto">
+          Generated from your profile data
+        </span>
+      </div>
+      <div className="px-5 py-4 space-y-1.5 text-sm text-gray-300 leading-relaxed">
+        {parts.map((part, i) => (
+          <p
+            key={i}
+            dangerouslySetInnerHTML={{
+              __html: part.replace(
+                /\*\*(.*?)\*\*/g,
+                '<strong class="text-white">$1</strong>'
+              ),
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Types                                                              */
+/* ------------------------------------------------------------------ */
+
+interface ProfileFields {
+  businessName: string;
+  tagline: string;
+  industry: string;
+  niche: string;
+  services: string;
+  targetAudience: string;
+  brandVoice: string;
+  city: string;
+  state: string;
+  country: string;
+  serviceArea: string;
+  yearsExperience: string;
+  credentials: string;
+  specializations: string;
+  awardsRecognition: string;
+  clientTypes: string;
+  keyDifferentiator: string;
+  pricePoint: string;
+  brandStory: string;
+  creatorName: string;
+  copyrightTemplate: string;
+  creditTemplate: string;
+  usageTerms: string;
+  website: string;
+  contactEmail: string;
+  primaryLanguage: string;
+  keywordStyle: string;
+  maxKeywords: number;
+  defaultEventType: string;
+  typicalDeliverables: string;
+}
+
+const EMPTY_PROFILE: ProfileFields = {
+  businessName: '',
+  tagline: '',
+  industry: '',
+  niche: '',
+  services: '',
+  targetAudience: '',
+  brandVoice: '',
+  city: '',
+  state: '',
+  country: '',
+  serviceArea: '',
+  yearsExperience: '',
+  credentials: '',
+  specializations: '',
+  awardsRecognition: '',
+  clientTypes: '',
+  keyDifferentiator: '',
+  pricePoint: '',
+  brandStory: '',
+  creatorName: '',
+  copyrightTemplate: '',
+  creditTemplate: '',
+  usageTerms: '',
+  website: '',
+  contactEmail: '',
+  primaryLanguage: 'en',
+  keywordStyle: 'mixed',
+  maxKeywords: 15,
+  defaultEventType: '',
+  typicalDeliverables: '',
+};
+
+/* ------------------------------------------------------------------ */
+/*  Main Page                                                          */
+/* ------------------------------------------------------------------ */
+
 export default function ProfilePage() {
-  const { supabase, loading: authLoading } = useSupabase();
+  const { supabase, user, loading: authLoading } = useSupabase();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [projects, setProjects] = useState<any[]>([]);
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-  const [profile, setProfile] = useState<ProfileData | null>(null);
-  const [hasChanges, setHasChanges] = useState(false);
+  const [auditing, setAuditing] = useState(false);
+  const [profile, setProfile] = useState<ProfileFields>(EMPTY_PROFILE);
+  const [original, setOriginal] = useState<ProfileFields>(EMPTY_PROFILE);
+  const [onboardingCompleted, setOnboardingCompleted] = useState(false);
+  const [urlAuditWebsite, setUrlAuditWebsite] = useState('');
+  const [auditUrl, setAuditUrl] = useState('');
 
-  const getToken = async () => {
-    const { data } = await supabase?.auth.getSession() || {};
+  const hasChanges = JSON.stringify(profile) !== JSON.stringify(original);
+
+  const getToken = useCallback(async () => {
+    const { data } = (await supabase?.auth.getSession()) || {};
     return data?.session?.access_token || '';
-  };
+  }, [supabase]);
 
-  // Fetch projects
+  /* ---- Load user-level profile ---- */
   useEffect(() => {
-    async function fetchProjects() {
-      try {
-        const token = await getToken();
-        const data = await projectsApi.list(token);
-        setProjects(data || []);
-        if (data && data.length > 0 && !selectedProjectId) {
-          setSelectedProjectId(data[0].id);
-        } else if (!data || data.length === 0) {
-          // No projects - stop loading
-          setLoading(false);
-        }
-      } catch (err) {
-        console.error('Failed to load projects:', err);
-        toast.error('Failed to load projects');
-        setLoading(false);
-      }
-    }
-    // Wait for auth to be ready
-    if (!authLoading && supabase) {
-      fetchProjects();
-    } else if (!authLoading && !supabase) {
-      // Auth finished but no supabase - stop loading
-      setLoading(false);
-    }
+    if (authLoading || !supabase) return;
+    loadProfile();
   }, [supabase, authLoading]);
 
-  // Fetch profile when project changes
-  useEffect(() => {
-    async function fetchProfile() {
-      if (!selectedProjectId || !supabase) return;
-      setLoading(true);
-      try {
-        const token = await getToken();
-        const data = await onboardingApi.getProfile(token, selectedProjectId);
-        if (data) {
-          setProfile({
-            confirmedContext: data.confirmedContext || {
-              brandName: '',
-            },
-            rights: data.rights || {
-              creatorName: '',
-              copyrightTemplate: '',
-              creditTemplate: '',
-            },
-            outputPreferences: data.outputPreferences || {
-              primaryLanguage: 'en',
-              keywordStyle: 'mixed',
-              maxKeywords: 25,
-              locationBehavior: 'strict',
-            },
-            websiteUrl: data.websiteUrl,
-            urlAuditResult: data.urlAuditResult,
-          });
-        }
-      } catch (err) {
-        console.error('Failed to load profile:', err);
-      } finally {
-        setLoading(false);
-      }
+  async function loadProfile() {
+    setLoading(true);
+    try {
+      const token = await getToken();
+      if (!token) return;
+
+      const res = await userProfileApi.get(token);
+      const p = res.profile || res;
+
+      const fields: ProfileFields = {
+        businessName: p.businessName || '',
+        tagline: p.tagline || '',
+        industry: p.industry || '',
+        niche: p.niche || '',
+        services: p.services || '',
+        targetAudience: p.targetAudience || '',
+        brandVoice: p.brandVoice || '',
+        city: p.city || '',
+        state: p.state || '',
+        country: p.country || '',
+        serviceArea: p.serviceArea || '',
+        yearsExperience: p.yearsExperience?.toString() || '',
+        credentials: p.credentials || '',
+        specializations: p.specializations || '',
+        awardsRecognition: p.awardsRecognition || '',
+        clientTypes: p.clientTypes || '',
+        keyDifferentiator: p.keyDifferentiator || '',
+        pricePoint: p.pricePoint || '',
+        brandStory: p.brandStory || '',
+        creatorName: p.creatorName || '',
+        copyrightTemplate: p.copyrightTemplate || '',
+        creditTemplate: p.creditTemplate || '',
+        usageTerms: p.usageTerms || '',
+        website: p.website || '',
+        contactEmail: p.contactEmail || '',
+        primaryLanguage: p.primaryLanguage || 'en',
+        keywordStyle: p.keywordStyle || 'mixed',
+        maxKeywords: p.maxKeywords ?? 15,
+        defaultEventType: p.defaultEventType || '',
+        typicalDeliverables: p.typicalDeliverables || '',
+      };
+
+      setProfile(fields);
+      setOriginal(fields);
+      setOnboardingCompleted(!!p.onboardingCompleted);
+      setUrlAuditWebsite(p.website || '');
+      setAuditUrl(p.website || '');
+    } catch (err) {
+      console.error('Failed to load profile:', err);
+      toast.error('Failed to load profile');
+    } finally {
+      setLoading(false);
     }
-    fetchProfile();
-  }, [selectedProjectId]);
+  }
 
-  const updateContext = (field: string, value: any) => {
-    if (!profile) return;
-    setProfile({
-      ...profile,
-      confirmedContext: {
-        ...profile.confirmedContext,
-        [field]: value,
-      },
-    });
-    setHasChanges(true);
-  };
-
-  const updateLocation = (field: string, value: any) => {
-    if (!profile) return;
-    setProfile({
-      ...profile,
-      confirmedContext: {
-        ...profile.confirmedContext,
-        location: {
-          ...profile.confirmedContext.location,
-          [field]: value,
-        },
-      },
-    });
-    setHasChanges(true);
-  };
-
-  const updateRights = (field: string, value: any) => {
-    if (!profile) return;
-    setProfile({
-      ...profile,
-      rights: {
-        ...profile.rights,
-        [field]: value,
-      },
-    });
-    setHasChanges(true);
-  };
-
-  const updatePreferences = (field: string, value: any) => {
-    if (!profile) return;
-    setProfile({
-      ...profile,
-      outputPreferences: {
-        ...profile.outputPreferences,
-        [field]: value,
-      },
-    });
-    setHasChanges(true);
-  };
-
-  const handleSave = async () => {
-    if (!selectedProjectId || !profile) return;
+  /* ---- Save profile ---- */
+  async function handleSave() {
     setSaving(true);
     try {
       const token = await getToken();
-      // Update all three sections
-      await Promise.all([
-        onboardingApi.updateContext(token, selectedProjectId, profile.confirmedContext),
-        onboardingApi.updateRights(token, selectedProjectId, profile.rights),
-        onboardingApi.updatePreferences(token, selectedProjectId, profile.outputPreferences),
-      ]);
+
+      const toArray = (str: string) =>
+        str
+          ? str.split(',').map((s) => s.trim()).filter(Boolean)
+          : undefined;
+
+      await userProfileApi.update(token, {
+        businessName: profile.businessName || undefined,
+        tagline: profile.tagline || undefined,
+        industry: profile.industry || undefined,
+        niche: profile.niche || undefined,
+        services: toArray(profile.services),
+        targetAudience: profile.targetAudience || undefined,
+        brandVoice: profile.brandVoice || undefined,
+        city: profile.city || undefined,
+        state: profile.state || undefined,
+        country: profile.country || undefined,
+        serviceArea: profile.serviceArea || undefined,
+        yearsExperience: profile.yearsExperience
+          ? Number(profile.yearsExperience)
+          : undefined,
+        credentials: profile.credentials || undefined,
+        specializations: toArray(profile.specializations),
+        awardsRecognition: profile.awardsRecognition || undefined,
+        clientTypes: profile.clientTypes || undefined,
+        keyDifferentiator: profile.keyDifferentiator || undefined,
+        pricePoint: profile.pricePoint || undefined,
+        brandStory: profile.brandStory || undefined,
+        creatorName: profile.creatorName || undefined,
+        copyrightTemplate: profile.copyrightTemplate || undefined,
+        creditTemplate: profile.creditTemplate || undefined,
+        usageTerms: profile.usageTerms || undefined,
+        website: profile.website || undefined,
+        contactEmail: profile.contactEmail || undefined,
+        primaryLanguage: profile.primaryLanguage || undefined,
+        keywordStyle: profile.keywordStyle || undefined,
+        maxKeywords: profile.maxKeywords,
+        defaultEventType: profile.defaultEventType || undefined,
+        typicalDeliverables: toArray(profile.typicalDeliverables),
+      });
+
+      setOriginal({ ...profile });
       toast.success('Profile saved');
-      setHasChanges(false);
     } catch (err) {
+      console.error('Save failed:', err);
       toast.error('Failed to save profile');
     } finally {
       setSaving(false);
     }
-  };
+  }
 
-  // Keyboard shortcut for save
+  /* ---- URL Audit (webscrape) ---- */
+  async function handleUrlAudit() {
+    if (!auditUrl) return;
+    setAuditing(true);
+    try {
+      const token = await getToken();
+      const res = await userProfileApi.urlAudit(token, auditUrl);
+      const audit = res.audit;
+
+      if (audit?.success) {
+        const fs = audit.fieldSuggestions || {};
+
+        setProfile((prev) => ({
+          ...prev,
+          businessName: audit.businessName || prev.businessName,
+          tagline: audit.tagline || prev.tagline,
+          industry: fs.industry || audit.industry || prev.industry,
+          niche: fs.niche || prev.niche,
+          services: fs.services || prev.services,
+          targetAudience: fs.targetAudience || prev.targetAudience,
+          brandVoice: fs.brandVoice || prev.brandVoice,
+          city: audit.location?.city || prev.city,
+          state: audit.location?.state || prev.state,
+          country: audit.location?.country || prev.country,
+          specializations: fs.specializations || prev.specializations,
+          keyDifferentiator: fs.keyDifferentiator || prev.keyDifferentiator,
+          awardsRecognition: fs.awards || prev.awardsRecognition,
+          credentials: fs.credentials || prev.credentials,
+          defaultEventType: fs.defaultEventType || prev.defaultEventType,
+          website: auditUrl,
+          contactEmail: audit.contactInfo?.email || prev.contactEmail,
+          creatorName: audit.businessName || prev.creatorName,
+          copyrightTemplate: audit.businessName
+            ? `© {year} ${audit.businessName}. All Rights Reserved.`
+            : prev.copyrightTemplate,
+          creditTemplate: audit.businessName
+            ? `Photo by ${audit.businessName}`
+            : prev.creditTemplate,
+        }));
+
+        setUrlAuditWebsite(auditUrl);
+        toast.success('Website analyzed! Fields updated with detected info.');
+      } else {
+        toast.error('Could not extract business info from that URL');
+      }
+    } catch (err) {
+      console.error('URL audit error:', err);
+      toast.error(
+        err instanceof Error ? err.message : 'Failed to analyze website'
+      );
+    } finally {
+      setAuditing(false);
+    }
+  }
+
+  /* ---- Field updater ---- */
+  function updateField<K extends keyof ProfileFields>(
+    field: K,
+    value: ProfileFields[K]
+  ) {
+    setProfile((prev) => ({ ...prev, [field]: value }));
+  }
+
+  /* ---- Keyboard shortcut ---- */
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 's') {
         e.preventDefault();
-        if (hasChanges && !saving) {
-          handleSave();
-        }
+        if (hasChanges && !saving) handleSave();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [hasChanges, saving, profile, selectedProjectId]);
+  }, [hasChanges, saving, profile]);
 
-  if (loading && !profile) {
+  /* ---- Loading ---- */
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
         <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
@@ -305,300 +527,370 @@ export default function ProfilePage() {
     );
   }
 
-  if (!loading && projects.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center">
-          <AlertTriangle className="w-10 h-10 mx-auto mb-3 text-amber-500/70" />
-          <p className="text-sm text-gray-400">No projects found.</p>
-          <p className="text-xs text-gray-500 mt-1">Create a project first to configure your profile.</p>
-        </div>
-      </div>
-    );
-  }
-
+  /* ---- Render ---- */
   return (
-    <div className="p-6 max-w-4xl">
+    <div className="p-6 max-w-4xl mx-auto pb-24">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-lg font-bold text-white">User Context</h1>
+          <div className="flex items-center gap-2.5">
+            <User className="w-5 h-5 text-cyan-400" />
+            <h1 className="text-lg font-bold text-white">Your Profile</h1>
+            {onboardingCompleted && (
+              <span className="flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium bg-emerald-900/40 text-emerald-400 rounded-full border border-emerald-800/50">
+                <CheckCircle2 className="w-3 h-3" />
+                Onboarding Complete
+              </span>
+            )}
+          </div>
           <p className="text-xs text-gray-500 mt-0.5">
-            Brand & attribution settings applied to all processed images
+            Business defaults applied to every project &amp; metadata embed
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          {/* Project Selector */}
-          <select
-            value={selectedProjectId || ''}
-            onChange={(e) => setSelectedProjectId(e.target.value)}
-            className="px-3 py-1.5 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 focus:border-cyan-600 focus:outline-none"
-          >
-            {projects.map((p) => (
-              <option key={p.id} value={p.id}>{p.name}</option>
-            ))}
-          </select>
-          
-          <button
-            onClick={handleSave}
-            disabled={!hasChanges || saving}
-            className="flex items-center gap-2 px-4 py-1.5 bg-cyan-600 text-white rounded text-sm font-medium
-              hover:bg-cyan-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors border border-cyan-500"
-          >
-            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-            Save
-            <span className="text-cyan-200 text-xs opacity-70">⌘S</span>
-          </button>
-        </div>
+        <button
+          onClick={handleSave}
+          disabled={!hasChanges || saving}
+          className="flex items-center gap-2 px-5 py-2 bg-cyan-600 text-white rounded-lg text-sm font-medium
+            hover:bg-cyan-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors border border-cyan-500"
+        >
+          {saving ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Save className="w-4 h-4" />
+          )}
+          Save Changes
+          <kbd className="ml-1 text-cyan-200 text-[10px] opacity-60 font-mono">
+            Ctrl+S
+          </kbd>
+        </button>
       </div>
 
-      {!profile ? (
-        <div className="text-center py-12 text-gray-500">
-          <AlertTriangle className="w-10 h-10 mx-auto mb-3 text-amber-500/70" />
-          <p className="text-sm">No profile found. Complete onboarding first.</p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {/* URL Audit Status */}
-          {profile.websiteUrl && (
-            <div className="flex items-center justify-between px-4 py-3 bg-gray-900 border border-gray-800 rounded">
-              <div className="flex items-center gap-3">
-                <Globe className="w-4 h-4 text-gray-500" />
-                <div>
-                  <a 
-                    href={profile.websiteUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-sm text-cyan-400 hover:underline flex items-center gap-1"
-                  >
-                    {profile.websiteUrl}
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                  {profile.urlAuditResult && (
-                    <p className="text-[10px] text-gray-600">
-                      Last audited: {new Date(profile.urlAuditResult.fetchedAt).toLocaleDateString()}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <button className="flex items-center gap-1.5 px-2 py-1 text-xs text-gray-400 hover:text-gray-200 border border-gray-700 rounded hover:bg-gray-800 transition-colors">
-                <RefreshCw className="w-3 h-3" />
-                Re-audit
-              </button>
+      <div className="space-y-5">
+        {/* AI Summary */}
+        <AiSummary profile={profile} />
+
+        {/* Website Audit */}
+        <div className="border border-gray-800 rounded-lg bg-gray-900/50 p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <Globe className="w-4 h-4 text-cyan-400" />
+            <span className="text-xs font-semibold text-white uppercase tracking-wider">
+              Website Analysis
+            </span>
+          </div>
+          <p className="text-xs text-gray-500 mb-3">
+            Enter your website URL and we&apos;ll scrape it to auto-fill your
+            profile fields with AI-detected business context.
+          </p>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={auditUrl}
+              onChange={(e) => setAuditUrl(e.target.value)}
+              placeholder="https://yourwebsite.com"
+              className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 placeholder:text-gray-600 focus:border-cyan-600 focus:outline-none focus:ring-1 focus:ring-cyan-600/50"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleUrlAudit();
+              }}
+            />
+            <button
+              onClick={handleUrlAudit}
+              disabled={auditing || !auditUrl}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-40 transition-colors"
+            >
+              {auditing ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <RefreshCw className="w-4 h-4" />
+              )}
+              {auditing ? 'Analyzing...' : 'Analyze'}
+            </button>
+          </div>
+          {urlAuditWebsite && (
+            <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+              <span>Last analyzed:</span>
+              <a
+                href={
+                  urlAuditWebsite.startsWith('http')
+                    ? urlAuditWebsite
+                    : `https://${urlAuditWebsite}`
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-cyan-400 hover:underline flex items-center gap-1"
+              >
+                {urlAuditWebsite}
+                <ExternalLink className="w-3 h-3" />
+              </a>
             </div>
           )}
+        </div>
 
-          {/* Brand Context */}
-          <CollapsibleSection title="Brand Context" icon={Building2}>
-            <div className="grid grid-cols-2 gap-3">
-              <InputField
-                label="Brand Name"
-                value={profile.confirmedContext.brandName || ''}
-                onChange={(v) => updateContext('brandName', v)}
-                placeholder="Your Company Name"
-              />
-              <InputField
-                label="Tagline"
-                value={profile.confirmedContext.tagline || ''}
-                onChange={(v) => updateContext('tagline', v)}
-                placeholder="Your brand tagline"
-              />
-              <InputField
-                label="Industry"
-                value={profile.confirmedContext.industry || ''}
-                onChange={(v) => updateContext('industry', v)}
-                placeholder="Photography, Real Estate, etc."
-              />
-              <InputField
-                label="Niche"
-                value={profile.confirmedContext.niche || ''}
-                onChange={(v) => updateContext('niche', v)}
-                placeholder="Wedding, Commercial, etc."
-              />
-            </div>
+        {/* Business Identity */}
+        <CollapsibleSection title="Business Identity" icon={Building2} badge="Core">
+          <div className="grid grid-cols-2 gap-3">
             <InputField
-              label="Target Audience"
-              value={profile.confirmedContext.targetAudience || ''}
-              onChange={(v) => updateContext('targetAudience', v)}
-              placeholder="Who are your ideal clients?"
+              label="Business / Brand Name"
+              value={profile.businessName}
+              onChange={(v) => updateField('businessName', v)}
+              placeholder="Your Company Name"
+              required
             />
             <InputField
-              label="Brand Voice"
-              value={profile.confirmedContext.brandVoice || ''}
-              onChange={(v) => updateContext('brandVoice', v)}
-              placeholder="Professional, Friendly, Luxury, etc."
+              label="Tagline"
+              value={profile.tagline}
+              onChange={(v) => updateField('tagline', v)}
+              placeholder="Your brand tagline"
             />
             <InputField
-              label="Additional Context"
-              value={profile.confirmedContext.additionalContext || ''}
-              onChange={(v) => updateContext('additionalContext', v)}
-              placeholder="Any other context for the AI to consider..."
-              multiline
-              hint="This context will be included in every metadata generation prompt"
+              label="Industry"
+              value={profile.industry}
+              onChange={(v) => updateField('industry', v)}
+              placeholder="Photography, Real Estate, etc."
             />
-          </CollapsibleSection>
+            <InputField
+              label="Niche"
+              value={profile.niche}
+              onChange={(v) => updateField('niche', v)}
+              placeholder="Wedding, Family, Commercial, etc."
+            />
+          </div>
+          <InputField
+            label="Services"
+            value={profile.services}
+            onChange={(v) => updateField('services', v)}
+            placeholder="Wedding Photography, Portrait Sessions, ..."
+            hint="Comma-separated list"
+          />
+          <InputField
+            label="Target Audience"
+            value={profile.targetAudience}
+            onChange={(v) => updateField('targetAudience', v)}
+            placeholder="Engaged couples, growing families, businesses..."
+          />
+          <InputField
+            label="Brand Voice"
+            value={profile.brandVoice}
+            onChange={(v) => updateField('brandVoice', v)}
+            placeholder="Professional, Warm, Luxury, Authentic..."
+          />
+        </CollapsibleSection>
 
-          {/* Location */}
-          <CollapsibleSection title="Default Location" icon={MapPin}>
-            <div className="grid grid-cols-3 gap-3">
-              <InputField
-                label="City"
-                value={profile.confirmedContext.location?.city || ''}
-                onChange={(v) => updateLocation('city', v)}
-                placeholder="London"
-              />
-              <InputField
-                label="State/Province"
-                value={profile.confirmedContext.location?.state || ''}
-                onChange={(v) => updateLocation('state', v)}
-                placeholder="England"
-              />
-              <InputField
-                label="Country"
-                value={profile.confirmedContext.location?.country || ''}
-                onChange={(v) => updateLocation('country', v)}
-                placeholder="United Kingdom"
-              />
-            </div>
-            <div className="flex items-center gap-2 mt-2">
-              <input
-                type="checkbox"
-                id="strictLocation"
-                checked={profile.confirmedContext.location?.isStrict ?? true}
-                onChange={(e) => updateLocation('isStrict', e.target.checked)}
-                className="w-4 h-4 rounded border-gray-700 bg-gray-800 text-cyan-500 focus:ring-cyan-500"
-              />
-              <label htmlFor="strictLocation" className="text-xs text-gray-400">
-                Strict mode: Only use this location, never infer from image content
+        {/* Location */}
+        <CollapsibleSection title="Default Location" icon={MapPin}>
+          <div className="grid grid-cols-3 gap-3">
+            <InputField
+              label="City"
+              value={profile.city}
+              onChange={(v) => updateField('city', v)}
+              placeholder="London"
+            />
+            <InputField
+              label="State / Province"
+              value={profile.state}
+              onChange={(v) => updateField('state', v)}
+              placeholder="England"
+            />
+            <InputField
+              label="Country"
+              value={profile.country}
+              onChange={(v) => updateField('country', v)}
+              placeholder="United Kingdom"
+            />
+          </div>
+          <InputField
+            label="Service Area"
+            value={profile.serviceArea}
+            onChange={(v) => updateField('serviceArea', v)}
+            placeholder="Greater London, South East England..."
+            hint="Where you primarily operate"
+          />
+        </CollapsibleSection>
+
+        {/* Authority & E-E-A-T */}
+        <CollapsibleSection title="Authority & E-E-A-T" icon={Award} badge="SEO">
+          <div className="grid grid-cols-2 gap-3">
+            <InputField
+              label="Years of Experience"
+              value={profile.yearsExperience}
+              onChange={(v) => updateField('yearsExperience', v)}
+              placeholder="10"
+            />
+            <InputField
+              label="Price Point"
+              value={profile.pricePoint}
+              onChange={(v) => updateField('pricePoint', v)}
+              placeholder="Premium, Mid-range, Budget..."
+            />
+          </div>
+          <InputField
+            label="Credentials & Certifications"
+            value={profile.credentials}
+            onChange={(v) => updateField('credentials', v)}
+            placeholder="MPA Certified, Canon Ambassador..."
+            hint="Comma-separated list"
+          />
+          <InputField
+            label="Specializations"
+            value={profile.specializations}
+            onChange={(v) => updateField('specializations', v)}
+            placeholder="Natural light portraiture, Candid documentary..."
+            hint="Comma-separated list"
+          />
+          <InputField
+            label="Awards & Recognition"
+            value={profile.awardsRecognition}
+            onChange={(v) => updateField('awardsRecognition', v)}
+            placeholder="Best of Wedding 2024, ISPWP Award..."
+          />
+          <InputField
+            label="Client Types"
+            value={profile.clientTypes}
+            onChange={(v) => updateField('clientTypes', v)}
+            placeholder="Families, Corporations, Magazines..."
+          />
+          <InputField
+            label="Key Differentiator"
+            value={profile.keyDifferentiator}
+            onChange={(v) => updateField('keyDifferentiator', v)}
+            placeholder="What makes you unique?"
+            multiline
+          />
+          <InputField
+            label="Brand Story"
+            value={profile.brandStory}
+            onChange={(v) => updateField('brandStory', v)}
+            placeholder="Tell your story — this enriches AI-generated descriptions..."
+            multiline
+            hint="Used to add depth and authenticity to metadata narratives"
+          />
+        </CollapsibleSection>
+
+        {/* Rights & Attribution */}
+        <CollapsibleSection title="Rights & Attribution" icon={Shield} badge="IPTC">
+          <div className="grid grid-cols-2 gap-3">
+            <InputField
+              label="Creator Name"
+              value={profile.creatorName}
+              onChange={(v) => updateField('creatorName', v)}
+              placeholder="John Smith"
+              required
+            />
+            <InputField
+              label="Website"
+              value={profile.website}
+              onChange={(v) => updateField('website', v)}
+              placeholder="https://yourwebsite.com"
+            />
+          </div>
+          <InputField
+            label="Copyright Template"
+            value={profile.copyrightTemplate}
+            onChange={(v) => updateField('copyrightTemplate', v)}
+            placeholder="© {year} {businessName}. All Rights Reserved."
+            hint="Use {year}, {businessName}, {creatorName} as placeholders"
+          />
+          <InputField
+            label="Credit Line Template"
+            value={profile.creditTemplate}
+            onChange={(v) => updateField('creditTemplate', v)}
+            placeholder="Photo by {creatorName}"
+          />
+          <InputField
+            label="Usage Terms"
+            value={profile.usageTerms}
+            onChange={(v) => updateField('usageTerms', v)}
+            placeholder="Licensed for editorial use only..."
+            multiline
+          />
+          <InputField
+            label="Contact Email"
+            value={profile.contactEmail}
+            onChange={(v) => updateField('contactEmail', v)}
+            placeholder="contact@example.com"
+          />
+        </CollapsibleSection>
+
+        {/* Output Preferences */}
+        <CollapsibleSection
+          title="Output Preferences"
+          icon={Sparkles}
+          defaultOpen={false}
+        >
+          <div className="grid grid-cols-2 gap-3">
+            <SelectField
+              label="Primary Language"
+              value={profile.primaryLanguage}
+              onChange={(v) => updateField('primaryLanguage', v)}
+              options={[
+                { value: 'en', label: 'English' },
+                { value: 'de', label: 'German' },
+                { value: 'fr', label: 'French' },
+                { value: 'es', label: 'Spanish' },
+                { value: 'it', label: 'Italian' },
+                { value: 'pt', label: 'Portuguese' },
+                { value: 'nl', label: 'Dutch' },
+                { value: 'ja', label: 'Japanese' },
+              ]}
+            />
+            <SelectField
+              label="Keyword Style"
+              value={profile.keywordStyle}
+              onChange={(v) => updateField('keywordStyle', v)}
+              options={[
+                { value: 'short', label: 'Short (single words)' },
+                { value: 'long', label: 'Long (phrases)' },
+                { value: 'mixed', label: 'Mixed' },
+              ]}
+            />
+            <div>
+              <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">
+                Max Keywords
               </label>
-            </div>
-          </CollapsibleSection>
-
-          {/* Rights & Attribution */}
-          <CollapsibleSection title="Rights & Attribution" icon={Shield}>
-            <div className="grid grid-cols-2 gap-3">
-              <InputField
-                label="Creator Name"
-                value={profile.rights.creatorName || ''}
-                onChange={(v) => updateRights('creatorName', v)}
-                placeholder="John Smith"
-              />
-              <InputField
-                label="Studio Name"
-                value={profile.rights.studioName || ''}
-                onChange={(v) => updateRights('studioName', v)}
-                placeholder="Smith Photography"
+              <input
+                type="number"
+                min={5}
+                max={50}
+                value={profile.maxKeywords}
+                onChange={(e) =>
+                  updateField('maxKeywords', parseInt(e.target.value) || 15)
+                }
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 focus:border-cyan-600 focus:outline-none"
               />
             </div>
             <InputField
-              label="Copyright Template"
-              value={profile.rights.copyrightTemplate || ''}
-              onChange={(v) => updateRights('copyrightTemplate', v)}
-              placeholder="© {year} {creator}. All rights reserved."
-              hint="Use {year}, {creator}, {studio} as placeholders"
+              label="Default Event Type"
+              value={profile.defaultEventType}
+              onChange={(v) => updateField('defaultEventType', v)}
+              placeholder="Wedding, Family Session..."
             />
-            <InputField
-              label="Credit Line Template"
-              value={profile.rights.creditTemplate || ''}
-              onChange={(v) => updateRights('creditTemplate', v)}
-              placeholder="Photo by {creator} / {studio}"
-            />
-            <InputField
-              label="Usage Terms"
-              value={profile.rights.usageTermsTemplate || ''}
-              onChange={(v) => updateRights('usageTermsTemplate', v)}
-              placeholder="Licensed for editorial use only..."
-              multiline
-            />
-            <div className="grid grid-cols-2 gap-3">
-              <InputField
-                label="Website"
-                value={profile.rights.website || ''}
-                onChange={(v) => updateRights('website', v)}
-                placeholder="https://yourwebsite.com"
-              />
-              <InputField
-                label="Contact Email"
-                value={profile.rights.email || ''}
-                onChange={(v) => updateRights('email', v)}
-                placeholder="contact@yourwebsite.com"
-              />
-            </div>
-          </CollapsibleSection>
+          </div>
+          <InputField
+            label="Typical Deliverables"
+            value={profile.typicalDeliverables}
+            onChange={(v) => updateField('typicalDeliverables', v)}
+            placeholder="Digital gallery, prints, albums..."
+            hint="Comma-separated list"
+          />
+        </CollapsibleSection>
+      </div>
 
-          {/* Output Preferences */}
-          <CollapsibleSection title="Output Preferences" icon={Sparkles} defaultOpen={false}>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">
-                  Primary Language
-                </label>
-                <select
-                  value={profile.outputPreferences.primaryLanguage}
-                  onChange={(e) => updatePreferences('primaryLanguage', e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 focus:border-cyan-600 focus:outline-none"
-                >
-                  <option value="en">English</option>
-                  <option value="de">German</option>
-                  <option value="fr">French</option>
-                  <option value="es">Spanish</option>
-                  <option value="it">Italian</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">
-                  Keyword Style
-                </label>
-                <select
-                  value={profile.outputPreferences.keywordStyle}
-                  onChange={(e) => updatePreferences('keywordStyle', e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 focus:border-cyan-600 focus:outline-none"
-                >
-                  <option value="short">Short (single words)</option>
-                  <option value="long">Long (phrases)</option>
-                  <option value="mixed">Mixed</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">
-                  Max Keywords
-                </label>
-                <input
-                  type="number"
-                  min={5}
-                  max={50}
-                  value={profile.outputPreferences.maxKeywords}
-                  onChange={(e) => updatePreferences('maxKeywords', parseInt(e.target.value))}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 focus:border-cyan-600 focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">
-                  Location Behavior
-                </label>
-                <select
-                  value={profile.outputPreferences.locationBehavior}
-                  onChange={(e) => updatePreferences('locationBehavior', e.target.value)}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 focus:border-cyan-600 focus:outline-none"
-                >
-                  <option value="strict">Strict (profile only)</option>
-                  <option value="infer">Infer from images</option>
-                  <option value="none">No location</option>
-                </select>
-              </div>
-            </div>
-          </CollapsibleSection>
-        </div>
-      )}
-
-      {/* Keyboard hint */}
-      {hasChanges && (
-        <div className="fixed bottom-6 right-6 px-4 py-2 bg-gray-800 border border-gray-700 rounded shadow-xl">
-          <p className="text-xs text-gray-400">
-            Unsaved changes • Press <kbd className="px-1.5 py-0.5 bg-gray-700 rounded text-[10px] font-mono">⌘S</kbd> to save
-          </p>
-        </div>
-      )}
+      {/* Unsaved changes toast */}
+      <div
+        className={`fixed bottom-6 right-6 px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg shadow-xl transition-all duration-300 ${
+          hasChanges
+            ? 'opacity-100 translate-y-0'
+            : 'opacity-0 translate-y-4 pointer-events-none'
+        }`}
+      >
+        <p className="text-xs text-gray-400">
+          Unsaved changes • Press{' '}
+          <kbd className="px-1.5 py-0.5 bg-gray-700 rounded text-[10px] font-mono">
+            Ctrl+S
+          </kbd>{' '}
+          to save
+        </p>
+      </div>
     </div>
   );
 }

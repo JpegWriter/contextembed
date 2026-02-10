@@ -90,3 +90,29 @@ healthRouter.get('/queue', async (req, res) => {
     });
   }
 });
+
+/**
+ * Debug endpoint - show recent failed jobs
+ */
+healthRouter.get('/debug/failed-jobs', async (req, res) => {
+  try {
+    const failedJobs = await prisma.job.findMany({
+      where: { status: 'failed' },
+      orderBy: { updatedAt: 'desc' },
+      take: 10,
+      select: {
+        id: true,
+        type: true,
+        status: true,
+        error: true,
+        assetId: true,
+        projectId: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+    res.json({ failedJobs });
+  } catch (error) {
+    res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
+  }
+});

@@ -74,6 +74,18 @@ assetsRouter.get('/project/:projectId', asyncHandler(async (req, res) => {
     projectId, 
     status as any
   );
+
+  // For failed assets, fetch the latest job error
+  const failedAssetIds = assets.filter(a => a.status === 'failed').map(a => a.id);
+  const jobErrors: Record<string, string> = {};
+  if (failedAssetIds.length > 0) {
+    const failedJobs = await jobRepository.findByProject(projectId, 'failed');
+    for (const j of failedJobs) {
+      if (j.assetId && j.error && failedAssetIds.includes(j.assetId)) {
+        jobErrors[j.assetId] = j.error;
+      }
+    }
+  }
   
   res.json({
     assets: assets.map(a => ({
@@ -88,6 +100,7 @@ assetsRouter.get('/project/:projectId', asyncHandler(async (req, res) => {
       height: a.height,
       userComment: a.userComment,
       createdAt: a.createdAt,
+      ...(a.status === 'failed' && jobErrors[a.id] ? { jobError: jobErrors[a.id] } : {}),
     })),
     total: assets.length,
   });

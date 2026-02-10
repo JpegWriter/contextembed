@@ -41,6 +41,7 @@ export interface Asset {
   userComment?: string;
   createdAt: string;
   metadata?: AssetMetadata;
+  jobError?: string;
 }
 
 interface AssetGridProps {
@@ -283,6 +284,18 @@ export function AssetGrid({
                     <span className="text-[10px] text-cyan-300 mt-2 font-medium uppercase tracking-wider">
                       {asset.status === 'pending' ? 'Queued' : asset.status === 'analyzing' ? 'AI Analyzing' : 'Processing'}
                     </span>
+                  </div>
+                )}
+
+                {/* Failed Overlay - Shows error message */}
+                {asset.status === 'failed' && (
+                  <div className="absolute inset-0 bg-red-950/60 flex flex-col items-center justify-center z-10 p-2">
+                    <XCircle className="w-6 h-6 text-red-400 mb-1" />
+                    {asset.jobError && (
+                      <p className="text-[8px] text-red-300 text-center leading-tight line-clamp-3" title={asset.jobError}>
+                        {asset.jobError.length > 80 ? asset.jobError.slice(0, 80) + '...' : asset.jobError}
+                      </p>
+                    )}
                   </div>
                 )}
 

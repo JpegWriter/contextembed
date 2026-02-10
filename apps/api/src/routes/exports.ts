@@ -25,6 +25,7 @@ import { AuthenticatedRequest } from '../middleware/auth';
 import { createFolderExportTarget } from '../services/folder-export';
 import { processFileForExport, generateExportManifest } from '../services/export-processor';
 import { createExifToolWriter } from '@contextembed/metadata';
+import { downloadEmbeddedFile, isStorageAvailable } from '../services/supabase-storage';
 
 export const exportsRouter: IRouter = Router();
 
@@ -34,6 +35,39 @@ const EXPORT_DIR = process.env.STORAGE_LOCAL_PATH
 
 // Ensure export directory exists
 fs.mkdirSync(EXPORT_DIR, { recursive: true });
+
+/**
+ * Resolve the embedded file path — local first, then download from Supabase if needed
+ */
+async function resolveEmbeddedFilePath(
+  embedResult: { embeddedPath: string; embeddedStorageUrl?: string | null },
+  projectId: string,
+  assetId: string,
+): Promise<string | null> {
+  // 1. Try local file first
+  if (embedResult.embeddedPath && fs.existsSync(embedResult.embeddedPath)) {
+    return embedResult.embeddedPath;
+  }
+  
+  // 2. Try downloading from Supabase
+  if (embedResult.embeddedStorageUrl) {
+    try {
+      // Create a local temp path for the downloaded file
+      const ext = path.extname(embedResult.embeddedPath) || '.jpg';
+      const localPath = path.join(EXPORT_DIR, 'cache', projectId, `${assetId}${ext}`);
+      
+      const downloaded = await downloadEmbeddedFile(embedResult.embeddedStorageUrl, localPath);
+      if (downloaded) {
+        console.log(`☁️ Downloaded embedded file from Supabase: ${assetId}`);
+        return localPath;
+      }
+    } catch (err) {
+      console.warn(`Failed to download embedded file for ${assetId}:`, err);
+    }
+  }
+  
+  return null;
+}
 
 // Progress tracking for SSE
 interface ExportProgress {
@@ -230,7 +264,8 @@ exportsRouter.post('/', asyncHandler(async (req, res) => {
     
     let filesAdded = 0;
     
-    await new Promise<void>((resolve, reject) => {
+    await new Promise<void>(async (resolve, reject) => {
+      try {
       const output = fs.createWriteStream(zipPath);
       const archive = archiver('zip', { zlib: { level: 9 } });
       
@@ -245,8 +280,13 @@ exportsRouter.post('/', asyncHandler(async (req, res) => {
         const embedResult = asset.embedResults[0];
         console.log(`Asset ${asset.id}: embedResult=${!!embedResult}, path=${embedResult?.embeddedPath}`);
         
-        // Use embedded file if available, otherwise use original
-        if (embedResult && embedResult.embeddedPath && fs.existsSync(embedResult.embeddedPath)) {
+        // Resolve embedded file (local or Supabase)
+        let resolvedPath: string | null = null;
+        if (embedResult) {
+          resolvedPath = await resolveEmbeddedFilePath(embedResult, exportRecord.projectId, asset.id);
+        }
+        
+        if (resolvedPath) {
           // Generate intelligent filename from metadata
           const metadata = assetMetadata.get(asset.id);
           
@@ -265,8 +305,8 @@ exportsRouter.post('/', asyncHandler(async (req, res) => {
             smartFilename = asset.originalFilename.replace(/\.[^.]+$/, '_embedded$&');
           }
           
-          console.log(`Adding embedded file: ${embedResult.embeddedPath} as ${smartFilename}`);
-          archive.file(embedResult.embeddedPath, { name: smartFilename });
+          console.log(`Adding embedded file: ${resolvedPath} as ${smartFilename}`);
+          archive.file(resolvedPath, { name: smartFilename });
           filesAdded++;
         } else if (asset.storagePath && fs.existsSync(asset.storagePath)) {
           // Fallback to original file (without embedded metadata)
@@ -276,7 +316,7 @@ exportsRouter.post('/', asyncHandler(async (req, res) => {
           filesAdded++;
           console.log(`Warning: Asset ${asset.id} has no embed result or file missing, using original`);
         } else {
-          console.log(`Warning: Asset ${asset.id} - no files found`);
+          console.log(`Warning: Asset ${asset.id} - no files found locally or in Supabase`);
         }
       }
       
@@ -286,6 +326,9 @@ exportsRouter.post('/', asyncHandler(async (req, res) => {
       }
       
       archive.finalize();
+      } catch (err) {
+        reject(err);
+      }
     });
     
     // Update export record
@@ -351,8 +394,68 @@ exportsRouter.get('/:id/download', asyncHandler(async (req, res) => {
     throw createApiError('Export not ready', 400);
   }
   
+  // If local file is missing (e.g. after Render deploy), try to rebuild the ZIP
   if (!fs.existsSync(exportRecord.outputPath)) {
-    throw createApiError('Export file not found', 404);
+    console.log(`⚠️ Export file missing locally, attempting rebuild: ${exportRecord.outputPath}`);
+    
+    // Get the export's assets (findById includes exportAssets relation but TS type is narrow)
+    const exportAssets = (exportRecord as any).exportAssets || [];
+    if (exportAssets.length === 0) {
+      throw createApiError('Export file not found and no assets to rebuild', 404);
+    }
+    
+    try {
+      const zipPath = exportRecord.outputPath;
+      const zipDir = path.dirname(zipPath);
+      fs.mkdirSync(zipDir, { recursive: true });
+      
+      let filesAdded = 0;
+      
+      await new Promise<void>(async (resolve, reject) => {
+        const output = fs.createWriteStream(zipPath);
+        const archive = archiver('zip', { zlib: { level: 9 } });
+        
+        output.on('close', resolve);
+        archive.on('error', reject);
+        archive.pipe(output);
+        
+        for (const ea of exportAssets) {
+          const asset = ea.asset;
+          if (!asset) continue;
+          
+          // Get embed result
+          const embedResults = await embedResultRepository.findByAsset(asset.id);
+          const embedResult = embedResults[0];
+          
+          if (embedResult) {
+            const resolvedPath = await resolveEmbeddedFilePath(
+              embedResult,
+              exportRecord.projectId,
+              asset.id,
+            );
+            
+            if (resolvedPath) {
+              const ext = path.extname(asset.originalFilename);
+              const smartFilename = asset.originalFilename.replace(/\.[^.]+$/, '_embedded$&');
+              archive.file(resolvedPath, { name: smartFilename });
+              filesAdded++;
+            }
+          }
+        }
+        
+        if (filesAdded === 0) {
+          reject(new Error('No files available to rebuild export'));
+          return;
+        }
+        
+        archive.finalize();
+      });
+      
+      console.log(`✅ Rebuilt export ZIP with ${filesAdded} files`);
+    } catch (err) {
+      console.error('Failed to rebuild export:', err);
+      throw createApiError('Export file not found. Please re-export your images.', 404);
+    }
   }
   
   res.download(exportRecord.outputPath, `contextembed_export_${id}.zip`);
@@ -482,11 +585,19 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
       
       // Determine source file (embedded if available, otherwise original)
       const embedResult = asset.embedResults[0];
-      const sourcePath = embedResult?.embeddedPath && fs.existsSync(embedResult.embeddedPath)
-        ? embedResult.embeddedPath
-        : asset.storagePath;
+      let sourcePath: string | null = null;
       
-      if (!sourcePath || !fs.existsSync(sourcePath)) {
+      // Try embedded file (local → Supabase)
+      if (embedResult) {
+        sourcePath = await resolveEmbeddedFilePath(embedResult, projectId, asset.id);
+      }
+      
+      // Fallback to original local file
+      if (!sourcePath && asset.storagePath && fs.existsSync(asset.storagePath)) {
+        sourcePath = asset.storagePath;
+      }
+      
+      if (!sourcePath) {
         exportedFiles.push({
           assetId: asset.id,
           originalFilename: asset.originalFilename,

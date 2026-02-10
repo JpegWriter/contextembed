@@ -24,6 +24,7 @@ const PREVIEW_SIZE = 1200; // px (for larger preview if needed)
 export const BUCKETS = {
   THUMBNAILS: 'thumbnails',
   EXPORTS: 'exports',
+  EMBEDDED: 'embedded-files',
 } as const;
 
 let supabaseClient: SupabaseClient | null = null;
@@ -66,6 +67,16 @@ export async function initSupabaseStorage(): Promise<void> {
   
   if (exportError && !exportError.message.includes('already exists')) {
     console.warn('Failed to create exports bucket:', exportError.message);
+  }
+  
+  // Create embedded-files bucket (private, for persistent embedded originals)
+  const { error: embeddedError } = await client.storage.createBucket(BUCKETS.EMBEDDED, {
+    public: false,
+    fileSizeLimit: 100 * 1024 * 1024, // 100MB max per file
+  });
+  
+  if (embeddedError && !embeddedError.message.includes('already exists')) {
+    console.warn('Failed to create embedded-files bucket:', embeddedError.message);
   }
   
   console.log('📦 Supabase Storage initialized');
@@ -275,6 +286,67 @@ export async function cleanupOldExports(maxAgeHours = 24): Promise<number> {
   }
   
   return deletedCount;
+}
+
+/**
+ * Upload embedded file to Supabase (for persistent storage across deploys)
+ */
+export async function uploadEmbeddedFile(
+  filePath: string,
+  projectId: string,
+  assetId: string,
+): Promise<string> {
+  const client = getClient();
+  
+  const fileBuffer = await fs.readFile(filePath);
+  const ext = path.extname(filePath);
+  const storagePath = `${projectId}/${assetId}${ext}`;
+  
+  const { error } = await client.storage
+    .from(BUCKETS.EMBEDDED)
+    .upload(storagePath, fileBuffer, {
+      contentType: ext === '.png' ? 'image/png' : 'image/jpeg',
+      upsert: true,
+    });
+  
+  if (error) {
+    throw new Error(`Failed to upload embedded file: ${error.message}`);
+  }
+  
+  return storagePath;
+}
+
+/**
+ * Download embedded file from Supabase to a local temp path
+ */
+export async function downloadEmbeddedFile(
+  storagePath: string,
+  localDestPath: string,
+): Promise<boolean> {
+  try {
+    const client = getClient();
+    
+    const { data, error } = await client.storage
+      .from(BUCKETS.EMBEDDED)
+      .download(storagePath);
+    
+    if (error || !data) {
+      console.warn(`Failed to download embedded file ${storagePath}:`, error?.message);
+      return false;
+    }
+    
+    // Ensure directory exists
+    const dir = path.dirname(localDestPath);
+    await fs.mkdir(dir, { recursive: true });
+    
+    const buffer = Buffer.from(await data.arrayBuffer());
+    await fs.writeFile(localDestPath, buffer);
+    
+    return true;
+  } catch (err) {
+    console.warn(`Error downloading embedded file:`, err);
+    return false;
+  }
 }
 
 /**

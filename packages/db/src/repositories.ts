@@ -500,6 +500,7 @@ export const embedResultRepository = {
     assetId: string;
     metadataResultId: string;
     embeddedPath: string;
+    embeddedStorageUrl?: string | null;
     fieldsWritten: string[];
     exiftoolLogs: string;
     verified: boolean;

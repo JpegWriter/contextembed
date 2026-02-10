@@ -20,6 +20,8 @@ import {
   deleteThumbnail,
   isStorageAvailable,
   cleanupOldExports,
+  uploadEmbeddedFile,
+  downloadEmbeddedFile,
 } from './supabase-storage';
 
 // Temp storage for processing (Railway ephemeral is fine)
@@ -268,4 +270,6 @@ export {
   getThumbnailUrl,
   uploadExport,
   deleteExport,
+  uploadEmbeddedFile,
+  downloadEmbeddedFile,
 } from './supabase-storage';

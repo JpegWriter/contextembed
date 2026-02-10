@@ -326,14 +326,15 @@ model MetadataResult {
 }
 
 model EmbedResult {
-  id                String   @id @default(cuid())
-  assetId           String
-  metadataResultId  String
+  id                  String   @id @default(cuid())
+  assetId             String
+  metadataResultId    String
   
-  embeddedPath      String
-  fieldsWritten     String[]
-  exiftoolLogs      String
-  verified          Boolean  @default(false)
+  embeddedPath        String
+  embeddedStorageUrl  String?
+  fieldsWritten       String[]
+  exiftoolLogs        String
+  verified            Boolean  @default(false)
   verificationDetails Json?
   
   asset             Asset          @relation(fields: [assetId], references: [id], onDelete: Cascade)

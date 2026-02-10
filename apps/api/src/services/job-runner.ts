@@ -45,6 +45,7 @@ import {
   getDefaultProviderConfig,
 } from '@contextembed/providers';
 import { createExifToolWriter } from '@contextembed/metadata';
+import { uploadEmbeddedFile, isStorageAvailable } from './supabase-storage';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { Job } from 'bullmq';
@@ -584,6 +585,21 @@ async function processFullPipeline(job: any): Promise<void> {
     throw new Error(embedOutput.error || 'Embedding failed');
   }
   
+  // Upload embedded file to Supabase for persistence across deploys
+  let embeddedStorageUrl: string | null = null;
+  try {
+    if (await isStorageAvailable()) {
+      embeddedStorageUrl = await uploadEmbeddedFile(
+        embedOutput.outputPath!,
+        job.projectId,
+        asset.id,
+      );
+      console.log(`☁️ Embedded file uploaded to Supabase: ${embeddedStorageUrl}`);
+    }
+  } catch (err) {
+    console.warn('⚠️ Failed to upload embedded file to Supabase:', err);
+  }
+  
   // Get latest metadata result for linking
   const latestMetadataResult = await metadataResultRepository.findLatestByAsset(asset.id);
   
@@ -592,6 +608,7 @@ async function processFullPipeline(job: any): Promise<void> {
     assetId: asset.id,
     metadataResultId: latestMetadataResult!.id,
     embeddedPath: embedOutput.outputPath!,
+    embeddedStorageUrl,
     fieldsWritten: embedOutput.fieldsWritten,
     exiftoolLogs: embedOutput.logs,
     verified: verifyResult?.verified || false,
@@ -757,10 +774,25 @@ async function processEmbed(job: any): Promise<void> {
     throw new Error(embedOutput.error || 'Embedding failed');
   }
   
+  // Upload embedded file to Supabase for persistence
+  let embeddedStorageUrl: string | null = null;
+  try {
+    if (await isStorageAvailable()) {
+      embeddedStorageUrl = await uploadEmbeddedFile(
+        embedOutput.outputPath!,
+        asset.projectId,
+        asset.id,
+      );
+    }
+  } catch (err) {
+    console.warn('⚠️ Failed to upload embedded file:', err);
+  }
+  
   await embedResultRepository.create({
     assetId: asset.id,
     metadataResultId: latestMetadataResult.id,
     embeddedPath: embedOutput.outputPath!,
+    embeddedStorageUrl,
     fieldsWritten: embedOutput.fieldsWritten,
     exiftoolLogs: embedOutput.logs,
     verified: verifyResult?.verified || false,

@@ -14,14 +14,16 @@
  */
 
 import { 
-  jobRepository,
+  projectRepository, 
   assetRepository,
   onboardingProfileRepository,
   userProfileRepository,
   visionResultRepository,
   metadataResultRepository,
   embedResultRepository,
-  projectRepository,
+  jobRepository,
+  ceImageRepository,
+  ceEventLogRepository,
 } from '@contextembed/db';
 import { 
   createVisionAnalyzer,
@@ -30,6 +32,12 @@ import {
   VisionAnalysis,
   OnboardingProfile,
   SynthesizedMetadata,
+  AuthorshipClassifier,
+  AuthorshipStatus,
+  MetadataEmbeddingRules,
+  ExportGuard,
+  CeEventType,
+  ImageSignals,
 } from '@contextembed/core';
 import { 
   createVisionProvider, 
@@ -369,6 +377,8 @@ async function processFullPipeline(job: any): Promise<void> {
   }
   
   const profile = await resolveProfile(job.projectId);
+  const project = await projectRepository.findById(job.projectId);
+  if (!project) throw new Error('Project not found');
   
   // Initialize providers
   const config = getDefaultProviderConfig();
@@ -380,11 +390,76 @@ async function processFullPipeline(job: any): Promise<void> {
   const metadataSynthesizer = createMetadataSynthesizer(llmProvider);
   const embedder = createEmbedder(metadataWriter);
   
+  // Authorship Integrity Engine components
+  const authorshipClassifier = new AuthorshipClassifier();
+  const metadataRules = new MetadataEmbeddingRules();
+  
   // Update progress: analyzing
   await assetRepository.update(asset.id, { status: 'analyzing' });
   await jobRepository.update(job.id, { progress: 10 });
   
+  // ─────────────────────────────────────────────
+  // Step 0: Authorship Classification (ON INGEST)
+  // ─────────────────────────────────────────────
+  
+  // Log image_ingested event
+  await ceEventLogRepository.create({
+    userId: project.userId,
+    projectId: job.projectId,
+    eventType: CeEventType.IMAGE_INGESTED,
+    details: {
+      assetId: asset.id,
+      filename: asset.originalFilename,
+      mimeType: asset.mimeType,
+      sha256: asset.hash,
+    },
+  });
+  
+  // Extract signals from existing metadata (basic EXIF check)
+  // Full EXIF extraction happens via vision analysis, but we check what we can now
+  const imageSignals: ImageSignals = {
+    exifPresent: false, // Will be updated after vision analysis
+    aiSignaturesFound: [],
+  };
+  
+  // Get user's creator name for matching
+  const userProfile = await userProfileRepository.findByUserId(project.userId);
+  const userCreatorName = userProfile?.creatorName || userProfile?.businessName || undefined;
+  
+  // Initial classification (may be refined after vision analysis)
+  const classification = authorshipClassifier.classify(imageSignals, userCreatorName);
+  
+  // Persist authorship state
+  const ceImageId = await ceImageRepository.upsertByAssetId({
+    assetId: asset.id,
+    userId: project.userId,
+    projectId: job.projectId,
+    sha256: asset.hash,
+    sourceType: 'upload',
+    authorshipStatus: classification.status,
+    authorshipEvidence: classification.evidence,
+    userDeclared: false,
+    syntheticConfidence: imageSignals.syntheticConfidence,
+    classifiedBy: 'system',
+  });
+  
+  // Log authorship_classified event
+  await ceEventLogRepository.create({
+    userId: project.userId,
+    projectId: job.projectId,
+    imageId: ceImageId.id,
+    eventType: CeEventType.AUTHORSHIP_CLASSIFIED,
+    details: {
+      assetId: asset.id,
+      authorshipStatus: classification.status,
+      reasonCodes: classification.evidence.reasonCodes,
+      needsUserDeclaration: classification.needsUserDeclaration,
+    },
+  });
+  
+  // ─────────────────────────────────────────────
   // Step 1: Vision Analysis
+  // ─────────────────────────────────────────────
   const analysisImagePath = asset.analysisPath || asset.storagePath;
   const imageBuffer = await fs.readFile(analysisImagePath);
   const imageBase64 = imageBuffer.toString('base64');
@@ -412,18 +487,16 @@ async function processFullPipeline(job: any): Promise<void> {
   
   await jobRepository.update(job.id, { progress: 40 });
   
+  // ─────────────────────────────────────────────
   // Step 2: Metadata Synthesis
+  // ─────────────────────────────────────────────
   await assetRepository.update(asset.id, { status: 'synthesizing' });
   
-  // Build event context from project (makes this enterprise-grade)
-  // Project becomes the event - all images in project are linked
-  const project = await projectRepository.findById(job.projectId);
+  // Build event context from project (project = event, all images linked)
   const eventContext = {
     eventId: job.projectId,
-    eventName: project?.name,
-    eventDate: project?.createdAt?.toISOString()?.split('T')[0], // YYYY-MM-DD
-    // storySequence could be derived from asset order in project
-    // galleryId could be added later for sub-galleries
+    eventName: project.name,
+    eventDate: project.createdAt?.toISOString()?.split('T')[0], // YYYY-MM-DD
   };
   
   const synthesisOutput = await metadataSynthesizer.synthesize(
@@ -455,22 +528,45 @@ async function processFullPipeline(job: any): Promise<void> {
   
   await jobRepository.update(job.id, { progress: 70 });
   
-  // Step 3: Embed
+  // ─────────────────────────────────────────────
+  // Step 3: Authorship-Aware Metadata Embedding
+  // ─────────────────────────────────────────────
   await assetRepository.update(asset.id, { status: 'embedding' });
+  
+  // Log metadata_embed_requested
+  await ceEventLogRepository.create({
+    userId: project.userId,
+    projectId: job.projectId,
+    imageId: ceImageId.id,
+    eventType: CeEventType.METADATA_EMBED_REQUESTED,
+    details: { assetId: asset.id, authorshipStatus: classification.status },
+  });
   
   const outputPath = embedder.generateOutputPath(asset.storagePath);
   
-  // Enrich metadata with userContext (preserved verbatim from user input)
+  // Apply authorship-aware metadata filtering
+  // This removes fields not permitted by the authorship status
+  const { filtered: filteredMeta, removedFields } = metadataRules.filterMetadata(
+    synthesisOutput.metadata as Record<string, unknown>,
+    classification.status,
+    userCreatorName
+  );
+  
+  // Enrich with userContext (preserved verbatim from user input)
   const enrichedMetadata = {
-    ...synthesisOutput.metadata,
+    ...filteredMeta,
     userContext: asset.userComment || undefined,
   };
+  
+  if (removedFields.length > 0) {
+    console.log(`🔒 Authorship guard removed fields for ${classification.status}: ${removedFields.join(', ')}`);
+  }
   
   // Pass the source hash for audit trail
   const { embedResult: embedOutput, verifyResult } = await embedder.embedAndVerify(
     asset.storagePath,
     outputPath,
-    enrichedMetadata,
+    enrichedMetadata as SynthesizedMetadata,
     asset.hash  // Source file hash for audit
   );
   
@@ -493,6 +589,21 @@ async function processFullPipeline(job: any): Promise<void> {
   });
   
   await jobRepository.update(job.id, { progress: 90 });
+  
+  // Log metadata_embed_completed
+  await ceEventLogRepository.create({
+    userId: project.userId,
+    projectId: job.projectId,
+    imageId: ceImageId.id,
+    eventType: CeEventType.METADATA_EMBED_COMPLETED,
+    details: {
+      assetId: asset.id,
+      authorshipStatus: classification.status,
+      fieldsWritten: embedOutput.fieldsWritten.length,
+      removedByAuthorship: removedFields,
+      verified: verifyResult?.verified || false,
+    },
+  });
   
   // Step 4: Complete
   await assetRepository.update(asset.id, { status: 'completed' });

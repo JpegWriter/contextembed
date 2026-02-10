@@ -13,6 +13,10 @@ import {
   Check,
   Award,
   AlertTriangle,
+  Shield,
+  ShieldCheck,
+  ShieldAlert,
+  Bot,
 } from 'lucide-react';
 import { assetsApi } from '@/lib/api';
 import { calculateMetadataStrength, type MetadataQualityData } from './MetadataQuality';
@@ -42,6 +46,8 @@ export interface Asset {
   createdAt: string;
   metadata?: AssetMetadata;
   jobError?: string;
+  authorshipStatus?: 'VERIFIED_ORIGINAL' | 'DECLARED_BY_USER' | 'UNVERIFIED' | 'SYNTHETIC_AI';
+  needsDeclaration?: boolean;
 }
 
 interface AssetGridProps {
@@ -251,6 +257,38 @@ export function AssetGrid({
                 <div className="absolute bottom-6 left-1 z-20 bg-amber-600 text-white 
                   p-0.5 rounded" title="Has context">
                   <MessageSquarePlus className="w-2.5 h-2.5" />
+                </div>
+              )}
+
+              {/* Authorship Status Badge - bottom left (above context) */}
+              {asset.authorshipStatus && (
+                <div 
+                  className={`absolute ${hasContext ? 'bottom-11' : 'bottom-6'} left-1 z-20 
+                    px-1 py-0.5 rounded text-[8px] font-bold flex items-center gap-0.5 ${
+                    asset.authorshipStatus === 'VERIFIED_ORIGINAL'
+                      ? 'bg-emerald-900/80 text-emerald-400 border border-emerald-700/50'
+                      : asset.authorshipStatus === 'DECLARED_BY_USER'
+                      ? 'bg-blue-900/80 text-blue-400 border border-blue-700/50'
+                      : asset.authorshipStatus === 'SYNTHETIC_AI'
+                      ? 'bg-purple-900/80 text-purple-400 border border-purple-700/50'
+                      : 'bg-gray-800/80 text-gray-400 border border-gray-600/50'
+                  }`}
+                  title={{
+                    VERIFIED_ORIGINAL: 'Verified Original — EXIF matches user profile',
+                    DECLARED_BY_USER: 'Declared by User — not machine-verified',
+                    UNVERIFIED: 'Unverified — no authorship claims permitted',
+                    SYNTHETIC_AI: 'AI-Generated — synthetic content detected',
+                  }[asset.authorshipStatus]}
+                >
+                  {asset.authorshipStatus === 'VERIFIED_ORIGINAL' ? (
+                    <ShieldCheck className="w-2.5 h-2.5" />
+                  ) : asset.authorshipStatus === 'DECLARED_BY_USER' ? (
+                    <Shield className="w-2.5 h-2.5" />
+                  ) : asset.authorshipStatus === 'SYNTHETIC_AI' ? (
+                    <Bot className="w-2.5 h-2.5" />
+                  ) : (
+                    <ShieldAlert className="w-2.5 h-2.5" />
+                  )}
                 </div>
               )}
 

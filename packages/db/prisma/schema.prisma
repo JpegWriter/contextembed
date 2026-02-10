@@ -659,3 +659,107 @@ enum GrowthImageGovernance {
   blocked     // Blocked by policy
   warning     // Allowed with warning
 }
+
+// ============================================
+// Authorship Integrity Engine
+// ============================================
+
+/// Finite state machine for authorship classification.
+/// Exactly ONE state per image. Assigned ON INGEST. Immutable unless re-ingested.
+enum AuthorshipStatus {
+  VERIFIED_ORIGINAL   // EXIF present + creator matches CE user
+  DECLARED_BY_USER    // User self-declared, not machine-verified
+  UNVERIFIED          // Default / conflicting / no evidence
+  SYNTHETIC_AI        // AI-generated content detected
+}
+
+/// Current truth state for each image in the Authorship Integrity Engine.
+model CeImage {
+  id                    String           @id @default(cuid())
+  userId                String
+  projectId             String?
+  assetId               String?          @unique  // Links to Asset model
+  
+  // File identity
+  sha256                String           // Content hash for deduplication
+  sourceType            String           @default("upload") // upload | api | wp | dam
+  
+  // Authorship state (finite state machine)
+  authorshipStatus      AuthorshipStatus @default(UNVERIFIED)
+  authorshipEvidence    Json             @default("{}") // Structured evidence summary
+  userDeclared          Boolean          @default(false)
+  syntheticConfidence   Float?           // 0-1 AI detection confidence
+  
+  // Classification metadata
+  classifiedAt          DateTime?
+  classifiedBy          String?          // "system" | "user"
+  
+  // Relations
+  events                CeEventLog[]
+  
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+  
+  @@index([userId])
+  @@index([projectId])
+  @@index([assetId])
+  @@index([authorshipStatus])
+  @@index([sha256])
+  @@map("ce_images")
+}
+
+/// One record per export attempt. Tracks validation, blocking, and completion.
+model CeExport {
+  id                    String           @id @default(cuid())
+  userId                String
+  projectId             String?
+  
+  // Export details
+  exportType            String           // metadata | case_study | wp_post | aeo_block
+  status                String           @default("started") // started | validated | blocked | completed | failed
+  reasonCodes           String[]         // e.g. ["LANGUAGE_VIOLATION", "AUTHORSHIP_CLAIM_BLOCKED"]
+  payloadHash           String?          // For deduplication
+  resultRefs            Json?            // { wp_post_id, wp_url, file_paths, etc. }
+  
+  // Relations
+  events                CeEventLog[]
+  
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+  
+  @@index([userId])
+  @@index([projectId])
+  @@index([status])
+  @@index([exportType])
+  @@map("ce_exports")
+}
+
+/// Append-only audit trail for all governance-significant actions.
+model CeEventLog {
+  id                    String           @id @default(cuid())
+  userId                String
+  projectId             String?
+  imageId               String?          // FK to CeImage
+  exportId              String?          // FK to CeExport
+  
+  // Event classification
+  eventType             String           // image_ingested, authorship_classified, etc.
+  eventVersion          Int              @default(1)
+  
+  // Structured event data (small, never raw EXIF dumps)
+  details               Json             @default("{}")
+  
+  // Relations
+  ceImage               CeImage?         @relation(fields: [imageId], references: [id], onDelete: SetNull)
+  ceExport              CeExport?        @relation(fields: [exportId], references: [id], onDelete: SetNull)
+  
+  createdAt             DateTime         @default(now())
+  
+  @@index([userId])
+  @@index([projectId])
+  @@index([imageId])
+  @@index([exportId])
+  @@index([eventType])
+  @@index([createdAt])
+  @@map("ce_event_log")
+}

@@ -642,3 +642,163 @@ export const growthImageRepository = {
   },
 };
 
+// ============================================
+// Authorship Integrity Engine — CE Image Repository
+// ============================================
+
+export const ceImageRepository = {
+  async findById(id: string) {
+    return prisma.ceImage.findUnique({ where: { id } });
+  },
+
+  async findByAssetId(assetId: string) {
+    return prisma.ceImage.findUnique({ where: { assetId } });
+  },
+
+  async findByProject(projectId: string) {
+    return prisma.ceImage.findMany({
+      where: { projectId },
+      orderBy: { createdAt: 'desc' },
+    });
+  },
+
+  async findByUser(userId: string) {
+    return prisma.ceImage.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    });
+  },
+
+  async upsertByAssetId(data: {
+    assetId: string;
+    userId: string;
+    projectId?: string;
+    sha256: string;
+    sourceType?: string;
+    authorshipStatus: 'VERIFIED_ORIGINAL' | 'DECLARED_BY_USER' | 'UNVERIFIED' | 'SYNTHETIC_AI';
+    authorshipEvidence: any;
+    userDeclared: boolean;
+    syntheticConfidence?: number;
+    classifiedBy?: string;
+  }) {
+    const { assetId, ...rest } = data;
+    return prisma.ceImage.upsert({
+      where: { assetId },
+      create: {
+        assetId,
+        ...rest,
+        classifiedAt: new Date(),
+      },
+      update: {
+        ...rest,
+        classifiedAt: new Date(),
+      },
+    });
+  },
+
+  async updateAuthorshipStatus(id: string, data: {
+    authorshipStatus: 'VERIFIED_ORIGINAL' | 'DECLARED_BY_USER' | 'UNVERIFIED' | 'SYNTHETIC_AI';
+    authorshipEvidence: any;
+    userDeclared: boolean;
+    classifiedBy?: string;
+  }) {
+    return prisma.ceImage.update({
+      where: { id },
+      data: {
+        ...data,
+        classifiedAt: new Date(),
+      },
+    });
+  },
+};
+
+// ============================================
+// Authorship Integrity Engine — CE Export Repository
+// ============================================
+
+export const ceExportRepository = {
+  async findById(id: string) {
+    return prisma.ceExport.findUnique({ where: { id } });
+  },
+
+  async findByProject(projectId: string) {
+    return prisma.ceExport.findMany({
+      where: { projectId },
+      orderBy: { createdAt: 'desc' },
+    });
+  },
+
+  async create(data: {
+    userId: string;
+    projectId?: string;
+    exportType: string;
+    payloadHash?: string;
+  }) {
+    return prisma.ceExport.create({ data });
+  },
+
+  async updateStatus(id: string, data: {
+    status: string;
+    reasonCodes?: string[];
+    resultRefs?: any;
+  }) {
+    return prisma.ceExport.update({
+      where: { id },
+      data,
+    });
+  },
+};
+
+// ============================================
+// Authorship Integrity Engine — CE Event Log Repository
+// ============================================
+
+export const ceEventLogRepository = {
+  async create(data: {
+    userId: string;
+    projectId?: string;
+    imageId?: string;
+    exportId?: string;
+    eventType: string;
+    details?: any;
+  }) {
+    return prisma.ceEventLog.create({
+      data: {
+        ...data,
+        details: data.details || {},
+      },
+    });
+  },
+
+  async findByImage(imageId: string, limit = 50) {
+    return prisma.ceEventLog.findMany({
+      where: { imageId },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
+  },
+
+  async findByExport(exportId: string, limit = 50) {
+    return prisma.ceEventLog.findMany({
+      where: { exportId },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
+  },
+
+  async findByProject(projectId: string, limit = 100) {
+    return prisma.ceEventLog.findMany({
+      where: { projectId },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
+  },
+
+  async findByUser(userId: string, limit = 100) {
+    return prisma.ceEventLog.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
+  },
+};

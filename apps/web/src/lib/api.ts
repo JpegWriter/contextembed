@@ -379,3 +379,42 @@ export const governanceApi = {
       method: 'POST',
     }),
 };
+
+// Authorship Integrity Engine
+export const authorshipApi = {
+  // Get authorship status for all assets in a project
+  getProjectAuthorship: (token: string, projectId: string) =>
+    fetchWithAuth(`/authorship/project/${projectId}`, { token }),
+  
+  // Get authorship status for a specific asset
+  getAssetAuthorship: (token: string, assetId: string) =>
+    fetchWithAuth(`/authorship/asset/${assetId}`, { token }),
+  
+  // User declaration (confirm/decline creator status)
+  declare: (token: string, assetId: string, declared: boolean) =>
+    fetchWithAuth(`/authorship/declare/${assetId}`, {
+      token,
+      method: 'POST',
+      body: JSON.stringify({ declared }),
+    }),
+  
+  // Get audit trail for a project
+  getAuditTrail: (token: string, projectId: string, limit?: number) =>
+    fetchWithAuth(`/authorship/audit/${projectId}?limit=${limit || 100}`, { token }),
+  
+  // Get audit trail for a specific image
+  getImageAudit: (token: string, imageId: string) =>
+    fetchWithAuth(`/authorship/audit/image/${imageId}`, { token }),
+  
+  // Validate export against authorship rules
+  validateExport: (token: string, assetIds: string[], exportType: string, textContent?: string[]) =>
+    fetchWithAuth('/authorship/validate-export', {
+      token,
+      method: 'POST',
+      body: JSON.stringify({ assetIds, exportType, textContent }),
+    }),
+  
+  // Get metadata permissions for an asset
+  getPermissions: (token: string, assetId: string) =>
+    fetchWithAuth(`/authorship/permissions/${assetId}`, { token }),
+};

@@ -17,6 +17,7 @@ import {
   metadataResultRepository,
   embedResultRepository,
   userProfileRepository,
+  ceImageRepository,
 } from '@contextembed/db';
 import { 
   validateImageType,
@@ -86,6 +87,18 @@ assetsRouter.get('/project/:projectId', asyncHandler(async (req, res) => {
       }
     }
   }
+
+  // Fetch authorship status for all assets
+  const ceImages = await ceImageRepository.findByProject(projectId);
+  const authorshipMap: Record<string, { status: string; needsDeclaration: boolean }> = {};
+  for (const img of ceImages) {
+    if (img.assetId) {
+      authorshipMap[img.assetId] = {
+        status: img.authorshipStatus,
+        needsDeclaration: !img.userDeclared && img.authorshipStatus === 'UNVERIFIED',
+      };
+    }
+  }
   
   res.json({
     assets: assets.map(a => ({
@@ -101,6 +114,10 @@ assetsRouter.get('/project/:projectId', asyncHandler(async (req, res) => {
       userComment: a.userComment,
       createdAt: a.createdAt,
       ...(a.status === 'failed' && jobErrors[a.id] ? { jobError: jobErrors[a.id] } : {}),
+      ...(authorshipMap[a.id] ? { 
+        authorshipStatus: authorshipMap[a.id].status,
+        needsDeclaration: authorshipMap[a.id].needsDeclaration,
+      } : {}),
     })),
     total: assets.length,
   });

@@ -17,6 +17,7 @@ import { exportsRouter } from './routes/exports';
 import { healthRouter } from './routes/health';
 import { growthRouter } from './routes/growth';
 import { userProfileRouter } from './routes/user-profile';
+import { authorshipRouter } from './routes/authorship';
 import iaRouter from './routes/ia';
 import copilotRouter from './routes/copilot';
 import { errorHandler } from './middleware/error-handler';
@@ -93,6 +94,7 @@ app.use('/assets', authMiddleware, assetsRouter);
 app.use('/jobs', authMiddleware, jobsRouter);
 app.use('/exports', optionalAuthMiddleware, exportsRouter); // Optional auth for download with token
 app.use('/growth', authMiddleware, growthRouter); // Growth image governance
+app.use('/authorship', authMiddleware, authorshipRouter); // Authorship Integrity Engine
 app.use('/copilot', copilotRouter); // Copilot AI assistant (has own auth)
 
 // Admin routes (consider adding admin auth middleware)

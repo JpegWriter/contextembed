@@ -27,6 +27,9 @@ export * from './pipeline/metadata-synthesizer';
 export * from './pipeline/embedder';
 export * from './pipeline/pipeline-orchestrator';
 
+// Authorship Integrity Engine
+export * from './authorship';
+
 // Utilities
 export * from './utils/hash';
 export * from './utils/validators';

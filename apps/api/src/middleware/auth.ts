@@ -6,10 +6,19 @@ import { Request, Response, NextFunction } from 'express';
 import { createClient } from '@supabase/supabase-js';
 import { userRepository } from '@contextembed/db';
 
-const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+if (!supabaseUrl) {
+  console.error('FATAL: Neither SUPABASE_URL nor NEXT_PUBLIC_SUPABASE_URL is set');
+}
+if (!supabaseServiceKey) {
+  console.error('FATAL: SUPABASE_SERVICE_ROLE_KEY is not set');
+}
+
+const supabase = supabaseUrl && supabaseServiceKey
+  ? createClient(supabaseUrl, supabaseServiceKey)
+  : null;
 
 export interface AuthenticatedRequest extends Request {
   userId: string;
@@ -22,6 +31,12 @@ export async function authMiddleware(
   next: NextFunction
 ): Promise<void> {
   try {
+    if (!supabase) {
+      console.error('Auth error: Supabase client not initialized. Check SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY env vars.');
+      res.status(500).json({ error: 'Server configuration error: Supabase not configured' });
+      return;
+    }
+
     const authHeader = req.headers.authorization;
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -35,6 +50,7 @@ export async function authMiddleware(
     const { data: { user }, error } = await supabase.auth.getUser(token);
     
     if (error || !user) {
+      console.error('Auth token verification failed:', error?.message || 'No user returned');
       res.status(401).json({ error: 'Invalid or expired token' });
       return;
     }
@@ -65,8 +81,12 @@ export async function authMiddleware(
     
     next();
   } catch (error) {
-    console.error('Auth middleware error:', error);
-    res.status(500).json({ error: 'Authentication failed' });
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Auth middleware error:', message, error);
+    res.status(500).json({ 
+      error: 'Authentication failed', 
+      detail: message,
+    });
   }
 }
 

@@ -55,10 +55,20 @@ healthRouter.get('/', async (req, res) => {
   
   const allHealthy = Object.values(checks).every(c => c.status === 'ok');
   
+  // Environment variable presence check (values redacted)
+  const envStatus = {
+    DATABASE_URL: !!process.env.DATABASE_URL,
+    SUPABASE_URL: !!(process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL),
+    SUPABASE_SERVICE_ROLE_KEY: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+    OPENAI_API_KEY: !!process.env.OPENAI_API_KEY,
+    CORS_ORIGIN: process.env.CORS_ORIGIN || '(not set, using localhost:3000)',
+  };
+
   res.status(allHealthy ? 200 : 503).json({
     status: allHealthy ? 'healthy' : 'degraded',
     timestamp: new Date().toISOString(),
     checks,
+    env: envStatus,
   });
 });
 

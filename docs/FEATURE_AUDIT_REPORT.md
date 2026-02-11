@@ -1,5 +1,5 @@
 # ContextEmbed™ Unique Feature Audit Report
-## Audit Date: February 11, 2026
+## Audit Date: February 11, 2026 (Updated after v2.2 patch)
 
 ---
 
@@ -8,7 +8,7 @@
 | Feature | Verdict | Implementation | Metadata Written | Risk |
 |---------|---------|----------------|------------------|------|
 | **Proof-First Metadata™** | ✅ **REAL** | Full | 12+ XMP fields | LOW |
-| **Visual Authenticity Governance** | ⚠️ **PARTIAL** | Policy only | None in exports | MEDIUM |
+| **Visual Authenticity Governance** | ✅ **REAL** | Full (v2.2) | 7 XMP fields + manifest | LOW |
 | **AEO-Ready Metadata** | ⚠️ **PARTIAL** | Intent fields | Limited | MEDIUM |
 
 ---
@@ -103,9 +103,9 @@ Embedded By                     : ContextEmbed.com
 
 # Feature 2: Visual Authenticity Governance
 
-## Verdict: ⚠️ PARTIAL
+## Verdict: ✅ REAL (Updated v2.2)
 
-The governance **policy engine is fully implemented**, but **governance status is NOT embedded into exported files**.
+The governance feature is **fully implemented** with policy engine, database tracking, AND **portable proof embedded in exported files and manifest**.
 
 ### What IS Implemented ✅
 
@@ -118,6 +118,9 @@ The governance **policy engine is fully implemented**, but **governance status i
 | Decision Audit Log | [packages/db/prisma/schema.prisma](packages/db/prisma/schema.prisma#L797) | ✅ Complete |
 | Role Update + Recheck | [apps/api/src/routes/growth.ts](apps/api/src/routes/growth.ts#L75-L170) | ✅ Complete |
 | Frontend Policy UI | [apps/web/src/app/dashboard/projects/[projectId]/settings/page.tsx](apps/web/src/app/dashboard/projects/[projectId]/settings/page.tsx) | ✅ Complete |
+| **GovernanceAttestation Type** | [packages/metadata/src/iptc-contract.ts](packages/metadata/src/iptc-contract.ts#L37-L77) | ✅ **NEW v2.2** |
+| **XMP Governance Tags** | [packages/metadata/src/authoritative-writer.ts](packages/metadata/src/authoritative-writer.ts#L514-L550) | ✅ **NEW v2.2** |
+| **Manifest Governance** | [packages/metadata/src/manifest-generator.ts](packages/metadata/src/manifest-generator.ts#L116-L140) | ✅ **NEW v2.2** |
 
 ### Database Tables
 
@@ -131,38 +134,51 @@ The governance **policy engine is fully implemented**, but **governance status i
 | `growth_images` | `governanceReason` | Human-readable reason |
 | `growth_images` | `decisionLog` | Full audit trail (JSON) |
 
-### What is MISSING ❌
+### XMP Fields Written (v2.2)
 
-| Gap | Impact |
-|-----|--------|
-| **Governance field NOT in IPTC contract** | Exported files don't declare AI status |
-| **No XMP-contextembed:AIGenerated field** | Third parties can't verify authenticity |
-| **No XMP-contextembed:GovernanceStatus field** | No machine-readable policy proof |
-| **Manifest doesn't include governance** | Manifest lacks AI/governance attestation |
+| XMP Field | Purpose | Written to File |
+|-----------|---------|-----------------|
+| `XMP-contextembed:AIGenerated` | true/false/unknown | ✅ YES |
+| `XMP-contextembed:AIConfidence` | 0.00-1.00 confidence | ✅ YES |
+| `XMP-contextembed:GovernanceStatus` | approved/blocked/warning/pending | ✅ YES |
+| `XMP-contextembed:GovernancePolicy` | deny_ai_proof/conditional/allow | ✅ YES |
+| `XMP-contextembed:GovernanceReason` | Human-readable reason | ✅ YES |
+| `XMP-contextembed:GovernanceCheckedAt` | ISO timestamp | ✅ YES |
+| `XMP-contextembed:GovernanceDecisionRef` | Export/audit reference | ✅ YES |
 
-### Risk Assessment
+### Manifest Governance Attestation (v2.2)
 
-**MEDIUM RISK**: The governance system works internally for blocking/approving images, but the **marketing claim that images "carry embedded proof"** is **not fully accurate** for the governance aspect specifically.
-
-The Proof-First fields (BusinessName, JobType, etc.) ARE embedded, but the explicit "this is NOT AI-generated" attestation is NOT written to the file.
-
-### Recommended Fix
-
-Add to `authoritative-writer.ts`:
-```typescript
-tags['XMP-contextembed:AIGenerated'] = 'false'; // or 'true'
-tags['XMP-contextembed:GovernanceStatus'] = 'approved';
-tags['XMP-contextembed:GovernancePolicy'] = 'deny_ai_proof';
+```json
+{
+  "governanceAttestation": {
+    "aiGenerated": false,
+    "aiConfidence": null,
+    "status": "approved",
+    "policy": "conditional",
+    "reason": "Export approved under conditional policy",
+    "checkedAt": "2026-02-11T10:30:00.000Z",
+    "decisionRef": "export-adv-1707650000000"
+  }
+}
 ```
 
-And add to manifest:
-```typescript
-governanceAttestation: {
-  aiGenerated: false,
-  status: 'approved',
-  policy: 'deny_ai_proof',
-  checkedAt: '2026-02-11T...'
-}
+### Inspectable Output
+
+**ExifTool verification command**:
+```bash
+exiftool -XMP-contextembed:AIGenerated \
+         -XMP-contextembed:GovernanceStatus \
+         -XMP-contextembed:GovernancePolicy \
+         -XMP-contextembed:GovernanceCheckedAt \
+         exported_image.jpg
+```
+
+Expected output:
+```
+AI Generated                    : false
+Governance Status               : approved
+Governance Policy               : conditional
+Governance Checked At           : 2026-02-11T10:30:00.000Z
 ```
 
 ---
@@ -228,11 +244,11 @@ OnboardingProfile.confirmedContext
         ↓
 MetadataResult.result (synthesized)
         ↓
-authoritative-writer.ts (buildExifToolTags)
+authoritative-writer.ts (buildExifToolTags + governance tags)
         ↓
 ExifTool write (actual embedding)
         ↓
-manifest-generator.ts (portable truth)
+manifest-generator.ts (portable truth + governanceAttestation)
         ↓
 Export ZIP (user download)
 ```
@@ -244,17 +260,17 @@ Export ZIP (user download)
 | User has no businessName | Profile incomplete | LOW (falls back to creatorName) |
 | No onboarding context | First-time user | LOW (uses defaults) |
 | ExifTool write fails | authoritative-writer.ts | LOW (captured in logs) |
-| Governance not in export | authoritative-writer.ts | **MEDIUM** (claim gap) |
+| ~~Governance not in export~~ | ~~authoritative-writer.ts~~ | ✅ **FIXED v2.2** |
 | AEO prompts missing | job-runner.ts synthesis | **MEDIUM** (claim gap) |
 
 ---
 
 # Final Recommendations
 
-## Immediate (Before Next Marketing Push)
+## ✅ Completed (v2.2 Patch)
 
-1. **Add governance fields to XMP namespace** and write to exported files
-2. **Add governance attestation to manifest.json**
+1. ~~**Add governance fields to XMP namespace**~~ ✅ 7 fields added
+2. ~~**Add governance attestation to manifest.json**~~ ✅ governanceAttestation per image
 3. **Clarify AEO claims** to focus on intent fields + EEAT structure
 
 ## Near-Term

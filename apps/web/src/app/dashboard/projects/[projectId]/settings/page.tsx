@@ -16,6 +16,7 @@ import {
 import { useSupabase } from '@/lib/supabase-provider';
 import { projectsApi, governanceApi } from '@/lib/api';
 import toast from 'react-hot-toast';
+import { WordPressSettings } from '@/components/dashboard/WordPressSettings';
 
 type VisualAuthenticityPolicy = 'conditional' | 'deny_ai_proof' | 'allow';
 
@@ -70,6 +71,7 @@ export default function ProjectSettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [selectedPolicy, setSelectedPolicy] = useState<VisualAuthenticityPolicy>('conditional');
+  const [authToken, setAuthToken] = useState<string>('');
 
   const loadProject = useCallback(async () => {
     try {
@@ -83,6 +85,7 @@ export default function ProjectSettingsPage() {
       const data = await projectsApi.get(session.access_token, projectId);
       setProject(data.project);
       setSelectedPolicy(data.project.visualAuthenticityPolicy || 'conditional');
+      setAuthToken(session.access_token);
     } catch (error: any) {
       if (error?.message?.includes('token') || error?.message?.includes('Unauthorized')) {
         router.push('/login');
@@ -339,6 +342,11 @@ export default function ProjectSettingsPage() {
           </div>
         </div>
       </section>
+
+      {/* WordPress Integration */}
+      {authToken && (
+        <WordPressSettings projectId={projectId} token={authToken} />
+      )}
     </div>
   );
 }

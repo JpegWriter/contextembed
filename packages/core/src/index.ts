@@ -4,6 +4,7 @@ export * from './types/onboarding';
 export * from './types/pipeline';
 export * from './types/metadata';
 export * from './types/export';
+export * from './types/wordpress';
 
 // Schemas (Zod validators)
 export * from './schemas/vision';

@@ -110,6 +110,7 @@ model Project {
   jobs                      Job[]
   exports                   Export[]
   growthImages              GrowthImage[]
+  wordpressConfig           WordPressConfig?
   
   createdAt                 DateTime @default(now())
   updatedAt                 DateTime @updatedAt
@@ -763,4 +764,37 @@ model CeEventLog {
   @@index([eventType])
   @@index([createdAt])
   @@map("ce_event_log")
+}
+
+// ============================================
+// WordPress Integration Config (per-project)
+// ============================================
+
+model WordPressConfig {
+  id                    String   @id @default(cuid())
+  projectId             String   @unique
+  
+  // Connection
+  siteUrl               String              // e.g. https://example.com
+  authMethod            String   @default("application_password") // application_password | basic_auth
+  username              String
+  encryptedPassword     String              // AES-256 encrypted app password
+  
+  // Behavior
+  autoInjectAltText     Boolean  @default(true)
+  altStrategy           String   @default("seo_optimized") // seo_optimized | accessibility_focused | hybrid
+  
+  // Status
+  lastHealthCheck       DateTime?
+  lastHealthStatus      Boolean?
+  lastError             String?
+  
+  // Relations
+  project               Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  @@index([projectId])
+  @@map("wordpress_configs")
 }

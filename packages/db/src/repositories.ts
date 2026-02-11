@@ -803,3 +803,79 @@ export const ceEventLogRepository = {
     });
   },
 };
+
+// ============================================
+// WordPress Config Repository
+// ============================================
+
+export const wordpressConfigRepository = {
+  async findByProjectId(projectId: string) {
+    return prisma.wordPressConfig.findUnique({
+      where: { projectId },
+    });
+  },
+
+  async upsert(
+    projectId: string,
+    data: {
+      siteUrl: string;
+      authMethod?: string;
+      username: string;
+      encryptedPassword: string;
+      autoInjectAltText?: boolean;
+      altStrategy?: string;
+    },
+  ) {
+    return prisma.wordPressConfig.upsert({
+      where: { projectId },
+      create: {
+        projectId,
+        siteUrl: data.siteUrl,
+        authMethod: data.authMethod || 'application_password',
+        username: data.username,
+        encryptedPassword: data.encryptedPassword,
+        autoInjectAltText: data.autoInjectAltText ?? true,
+        altStrategy: data.altStrategy || 'seo_optimized',
+      },
+      update: {
+        siteUrl: data.siteUrl,
+        authMethod: data.authMethod || 'application_password',
+        username: data.username,
+        encryptedPassword: data.encryptedPassword,
+        autoInjectAltText: data.autoInjectAltText ?? true,
+        altStrategy: data.altStrategy || 'seo_optimized',
+      },
+    });
+  },
+
+  async updateToggle(projectId: string, autoInjectAltText: boolean) {
+    return prisma.wordPressConfig.update({
+      where: { projectId },
+      data: { autoInjectAltText },
+    });
+  },
+
+  async updateStrategy(projectId: string, altStrategy: string) {
+    return prisma.wordPressConfig.update({
+      where: { projectId },
+      data: { altStrategy },
+    });
+  },
+
+  async updateHealthStatus(projectId: string, healthy: boolean, error?: string) {
+    return prisma.wordPressConfig.update({
+      where: { projectId },
+      data: {
+        lastHealthCheck: new Date(),
+        lastHealthStatus: healthy,
+        lastError: error || null,
+      },
+    });
+  },
+
+  async delete(projectId: string) {
+    return prisma.wordPressConfig.delete({
+      where: { projectId },
+    });
+  },
+};

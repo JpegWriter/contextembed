@@ -418,3 +418,63 @@ export const authorshipApi = {
   getPermissions: (token: string, assetId: string) =>
     fetchWithAuth(`/authorship/permissions/${assetId}`, { token }),
 };
+
+// WordPress Integration
+export const wordpressApi = {
+  // Get WP config for project (password masked)
+  getConfig: (token: string, projectId: string) =>
+    fetchWithAuth(`/wordpress/${projectId}/config`, { token }),
+
+  // Create/update WP config
+  saveConfig: (token: string, projectId: string, config: {
+    siteUrl: string;
+    authMethod: string;
+    username: string;
+    password: string;
+    autoInjectAltText: boolean;
+    altStrategy: string;
+  }) =>
+    fetchWithAuth(`/wordpress/${projectId}/config`, {
+      token,
+      method: 'PUT',
+      body: JSON.stringify(config),
+    }),
+
+  // Delete WP config
+  deleteConfig: (token: string, projectId: string) =>
+    fetchWithAuth(`/wordpress/${projectId}/config`, {
+      token,
+      method: 'DELETE',
+    }),
+
+  // Test WP connection
+  testConnection: (token: string, projectId: string) =>
+    fetchWithAuth(`/wordpress/${projectId}/health`, {
+      token,
+      method: 'POST',
+    }),
+
+  // Toggle auto-inject
+  toggleAutoInject: (token: string, projectId: string, enabled: boolean) =>
+    fetchWithAuth(`/wordpress/${projectId}/toggle`, {
+      token,
+      method: 'PATCH',
+      body: JSON.stringify({ autoInjectAltText: enabled }),
+    }),
+
+  // Change alt text strategy
+  setStrategy: (token: string, projectId: string, strategy: string) =>
+    fetchWithAuth(`/wordpress/${projectId}/strategy`, {
+      token,
+      method: 'PATCH',
+      body: JSON.stringify({ altStrategy: strategy }),
+    }),
+
+  // Inject metadata into WP for a specific asset
+  injectMetadata: (token: string, projectId: string, assetId: string, wpMediaId: number) =>
+    fetchWithAuth(`/wordpress/${projectId}/inject/${assetId}`, {
+      token,
+      method: 'POST',
+      body: JSON.stringify({ wpMediaId }),
+    }),
+};

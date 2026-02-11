@@ -907,3 +907,243 @@ export const wordpressConfigRepository = {
     });
   },
 };
+
+// ============================================
+// SURVIVAL LAB Repositories
+// ============================================
+
+export const survivalPlatformRepository = {
+  async findAll() {
+    return prisma.survivalPlatform.findMany({
+      orderBy: { name: 'asc' },
+    });
+  },
+
+  async findById(id: string) {
+    return prisma.survivalPlatform.findUnique({ where: { id } });
+  },
+
+  async findBySlug(slug: string) {
+    return prisma.survivalPlatform.findUnique({ where: { slug } });
+  },
+
+  async upsert(data: { slug: string; name: string; category: string; freeTier: boolean; notes?: string }) {
+    return prisma.survivalPlatform.upsert({
+      where: { slug: data.slug },
+      create: data,
+      update: data,
+    });
+  },
+};
+
+export const survivalBaselineRepository = {
+  async findByUser(userId: string) {
+    return prisma.survivalBaselineImage.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    });
+  },
+
+  async findById(id: string) {
+    return prisma.survivalBaselineImage.findUnique({ where: { id } });
+  },
+
+  async findByIdWithReports(id: string) {
+    return prisma.survivalBaselineImage.findUnique({
+      where: { id },
+      include: { metadataReports: { where: { fileKind: 'baseline' } } },
+    });
+  },
+
+  async create(data: {
+    userId: string;
+    label: string;
+    originalFilename: string;
+    storagePath: string;
+    sha256: string;
+    bytes: bigint;
+    width: number;
+    height: number;
+  }) {
+    return prisma.survivalBaselineImage.create({ data });
+  },
+
+  async delete(id: string) {
+    return prisma.survivalBaselineImage.delete({ where: { id } });
+  },
+};
+
+export const survivalTestRunRepository = {
+  async findByUser(userId: string) {
+    return prisma.survivalTestRun.findMany({
+      where: { userId },
+      include: { platform: true, assets: true },
+      orderBy: { createdAt: 'desc' },
+    });
+  },
+
+  async findById(id: string) {
+    return prisma.survivalTestRun.findUnique({
+      where: { id },
+      include: { platform: true, assets: { include: { baselineImage: true } }, uploads: true },
+    });
+  },
+
+  async findByIdWithResults(id: string) {
+    return prisma.survivalTestRun.findUnique({
+      where: { id },
+      include: {
+        platform: true,
+        assets: {
+          include: {
+            baselineImage: {
+              include: { metadataReports: { where: { fileKind: 'baseline' } } },
+            },
+          },
+        },
+        uploads: {
+          include: {
+            baselineImage: true,
+            metadataReports: { where: { fileKind: 'scenario' } },
+            comparisons: true,
+          },
+        },
+      },
+    });
+  },
+
+  async create(data: {
+    userId: string;
+    platformId: string;
+    title: string;
+    accountType?: string;
+    status?: string;
+  }) {
+    return prisma.survivalTestRun.create({ data });
+  },
+
+  async updateStatus(id: string, status: string) {
+    return prisma.survivalTestRun.update({ where: { id }, data: { status } });
+  },
+
+  async delete(id: string) {
+    return prisma.survivalTestRun.delete({ where: { id } });
+  },
+};
+
+export const survivalTestRunAssetRepository = {
+  async attach(testRunId: string, baselineImageIds: string[]) {
+    const data = baselineImageIds.map(baselineImageId => ({
+      testRunId,
+      baselineImageId,
+    }));
+    return prisma.survivalTestRunAsset.createMany({
+      data,
+      skipDuplicates: true,
+    });
+  },
+
+  async detach(testRunId: string, baselineImageId: string) {
+    return prisma.survivalTestRunAsset.delete({
+      where: { testRunId_baselineImageId: { testRunId, baselineImageId } },
+    });
+  },
+};
+
+export const survivalScenarioUploadRepository = {
+  async findByTestRun(testRunId: string) {
+    return prisma.survivalScenarioUpload.findMany({
+      where: { testRunId },
+      include: { baselineImage: true, metadataReports: true, comparisons: true },
+      orderBy: { createdAt: 'asc' },
+    });
+  },
+
+  async findById(id: string) {
+    return prisma.survivalScenarioUpload.findUnique({
+      where: { id },
+      include: { baselineImage: true, metadataReports: true, comparisons: true },
+    });
+  },
+
+  async create(data: {
+    testRunId: string;
+    baselineImageId: string;
+    scenario: string;
+    originalFilename: string;
+    storagePath: string;
+    sha256: string;
+    bytes: bigint;
+    width: number;
+    height: number;
+  }) {
+    return prisma.survivalScenarioUpload.create({ data });
+  },
+};
+
+export const survivalMetadataReportRepository = {
+  async findByBaseline(baselineImageId: string) {
+    return prisma.survivalMetadataReport.findMany({
+      where: { baselineImageId },
+      orderBy: { createdAt: 'desc' },
+    });
+  },
+
+  async create(data: {
+    fileKind: string;
+    baselineImageId: string;
+    scenarioUploadId?: string;
+    exifPresent: boolean;
+    xmpPresent: boolean;
+    iptcPresent: boolean;
+    creatorValue?: string;
+    rightsValue?: string;
+    creditValue?: string;
+    descriptionValue?: string;
+    encodingOk?: boolean;
+    notes?: string;
+    rawJson?: object;
+  }) {
+    return prisma.survivalMetadataReport.create({
+      data: {
+        ...data,
+        rawJson: data.rawJson ?? {},
+      },
+    });
+  },
+};
+
+export const survivalComparisonRepository = {
+  async findByScenarioUpload(scenarioUploadId: string) {
+    return prisma.survivalComparison.findUnique({
+      where: { scenarioUploadId },
+    });
+  },
+
+  async findByTestRun(testRunId: string) {
+    return prisma.survivalComparison.findMany({
+      where: { scenarioUpload: { testRunId } },
+      include: { baselineImage: true, scenarioUpload: true },
+    });
+  },
+
+  async create(data: {
+    baselineImageId: string;
+    scenarioUploadId: string;
+    survivalScore: number;
+    creatorOk: boolean;
+    rightsOk: boolean;
+    creditOk: boolean;
+    descriptionOk: boolean;
+    dimsChanged: boolean;
+    filenameChanged: boolean;
+    fieldsMissing?: string[];
+  }) {
+    return prisma.survivalComparison.create({
+      data: {
+        ...data,
+        fieldsMissing: data.fieldsMissing ?? [],
+      },
+    });
+  },
+};

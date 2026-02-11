@@ -27,6 +27,7 @@ import { authMiddleware, optionalAuthMiddleware } from './middleware/auth';
 import { startJobRunner, stopJobRunner } from './services/job-runner';
 import { initStorage, stopCleanupScheduler } from './services/storage';
 import { closeDefaultExifToolWriter } from '@contextembed/metadata';
+import survivalLabRouter from './routes/survival-lab';
 
 const app = express();
 const PORT = process.env.API_PORT || 3001;
@@ -100,6 +101,7 @@ app.use('/authorship', authMiddleware, authorshipRouter); // Authorship Integrit
 app.use('/wordpress', authMiddleware, wordpressRouter); // WordPress alt text injection
 app.use('/alt-text', authMiddleware, altTextRouter);    // Alt Text Engine
 app.use('/copilot', copilotRouter); // Copilot AI assistant (has own auth)
+app.use('/survival', authMiddleware, survivalLabRouter); // Survival Lab - Metadata Study
 
 // Admin routes (consider adding admin auth middleware)
 app.use('/admin/ia', iaRouter);

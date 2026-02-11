@@ -798,3 +798,163 @@ model WordPressConfig {
   @@index([projectId])
   @@map("wordpress_configs")
 }
+
+// ============================================
+// SURVIVAL LAB - Metadata Survival Study
+// ============================================
+
+/// Platforms being tested for metadata preservation (e.g., WordPress, Instagram, etc.)
+model SurvivalPlatform {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  category    String   // CMS, Publishing, Proofing, Storage, Transfer, Social
+  freeTier    Boolean  @default(true)
+  notes       String?  @db.Text
+  
+  testRuns    SurvivalTestRun[]
+  
+  createdAt   DateTime @default(now())
+  
+  @@map("survival_platforms")
+}
+
+/// CE-embedded baseline images uploaded by users for testing
+model SurvivalBaselineImage {
+  id                String   @id @default(cuid())
+  userId            String
+  label             String   // CE_TEST_01 etc
+  originalFilename  String
+  storagePath       String   // Supabase Storage path to raw file
+  sha256            String
+  bytes             BigInt
+  width             Int
+  height            Int
+  
+  testRunAssets     SurvivalTestRunAsset[]
+  scenarioUploads   SurvivalScenarioUpload[]
+  metadataReports   SurvivalMetadataReport[]
+  comparisons       SurvivalComparison[]
+  
+  createdAt         DateTime @default(now())
+  
+  @@index([userId])
+  @@map("survival_baseline_images")
+}
+
+/// A test run for a specific platform
+model SurvivalTestRun {
+  id            String   @id @default(cuid())
+  userId        String
+  platformId    String
+  title         String   // "Phase 1 - Pixieset - Feb 2026"
+  accountType   String?  // free/paid + plan name
+  status        String   @default("draft") // draft, running, complete
+  
+  platform      SurvivalPlatform @relation(fields: [platformId], references: [id], onDelete: Cascade)
+  assets        SurvivalTestRunAsset[]
+  uploads       SurvivalScenarioUpload[]
+  
+  createdAt     DateTime @default(now())
+  
+  @@index([userId])
+  @@index([platformId])
+  @@map("survival_test_runs")
+}
+
+/// Links baseline images to a test run
+model SurvivalTestRunAsset {
+  id              String   @id @default(cuid())
+  testRunId       String
+  baselineImageId String
+  
+  testRun         SurvivalTestRun @relation(fields: [testRunId], references: [id], onDelete: Cascade)
+  baselineImage   SurvivalBaselineImage @relation(fields: [baselineImageId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime @default(now())
+  
+  @@unique([testRunId, baselineImageId])
+  @@index([testRunId])
+  @@index([baselineImageId])
+  @@map("survival_test_run_assets")
+}
+
+/// Files uploaded per scenario (downloaded original, preview, share-link, etc.)
+model SurvivalScenarioUpload {
+  id                String   @id @default(cuid())
+  testRunId         String
+  baselineImageId   String
+  scenario          String   // upload_original, download_original, download_preview, share_link_download, right_click_save, platform_export, other
+  originalFilename  String
+  storagePath       String
+  sha256            String
+  bytes             BigInt
+  width             Int
+  height            Int
+  
+  testRun           SurvivalTestRun @relation(fields: [testRunId], references: [id], onDelete: Cascade)
+  baselineImage     SurvivalBaselineImage @relation(fields: [baselineImageId], references: [id], onDelete: Cascade)
+  metadataReports   SurvivalMetadataReport[]
+  comparisons       SurvivalComparison[]
+  
+  createdAt         DateTime @default(now())
+  
+  @@index([testRunId])
+  @@index([baselineImageId])
+  @@map("survival_scenario_uploads")
+}
+
+/// Extracted metadata from baseline or scenario files
+model SurvivalMetadataReport {
+  id                String   @id @default(cuid())
+  fileKind          String   // baseline | scenario
+  baselineImageId   String
+  scenarioUploadId  String?
+  
+  exifPresent       Boolean
+  xmpPresent        Boolean
+  iptcPresent       Boolean
+  
+  creatorValue      String?
+  rightsValue       String?
+  creditValue       String?
+  descriptionValue  String?  @db.Text
+  
+  encodingOk        Boolean  @default(true)
+  notes             String?  @db.Text
+  rawJson           Json     @default("{}")
+  
+  baselineImage     SurvivalBaselineImage @relation(fields: [baselineImageId], references: [id], onDelete: Cascade)
+  scenarioUpload    SurvivalScenarioUpload? @relation(fields: [scenarioUploadId], references: [id], onDelete: Cascade)
+  
+  createdAt         DateTime @default(now())
+  
+  @@index([baselineImageId])
+  @@index([scenarioUploadId])
+  @@map("survival_metadata_reports")
+}
+
+/// Comparison between scenario upload and its baseline
+model SurvivalComparison {
+  id                String   @id @default(cuid())
+  baselineImageId   String
+  scenarioUploadId  String
+  
+  survivalScore     Int      // 0-100
+  creatorOk         Boolean
+  rightsOk          Boolean
+  creditOk          Boolean
+  descriptionOk     Boolean
+  dimsChanged       Boolean
+  filenameChanged   Boolean
+  fieldsMissing     Json     @default("[]") // list of missing fields
+  
+  baselineImage     SurvivalBaselineImage @relation(fields: [baselineImageId], references: [id], onDelete: Cascade)
+  scenarioUpload    SurvivalScenarioUpload @relation(fields: [scenarioUploadId], references: [id], onDelete: Cascade)
+  
+  createdAt         DateTime @default(now())
+  
+  @@unique([scenarioUploadId])
+  @@index([baselineImageId])
+  @@map("survival_comparisons")
+}

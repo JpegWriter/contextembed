@@ -518,3 +518,95 @@ export const altTextApi = {
       body: JSON.stringify(input),
     }),
 };
+
+// ============================================
+// Survival Lab - Metadata Survival Study
+// ============================================
+
+export const survivalLabApi = {
+  // Platforms
+  listPlatforms: (token: string) =>
+    fetchWithAuth('/survival/platforms', { token }),
+  
+  seedPlatforms: (token: string) =>
+    fetchWithAuth('/survival/platforms/seed', { token, method: 'POST' }),
+  
+  // Baselines
+  listBaselines: (token: string) =>
+    fetchWithAuth('/survival/baselines', { token }),
+  
+  uploadBaseline: async (token: string, file: File, label: string) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('label', label);
+    
+    const response = await fetch(`${API_URL}/survival/baselines/upload`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+    
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Upload failed' }));
+      throw new Error(error.error || 'Upload failed');
+    }
+    
+    return response.json();
+  },
+  
+  verifyBaseline: (token: string, id: string) =>
+    fetchWithAuth(`/survival/baselines/${id}/verify`, { token, method: 'POST' }),
+  
+  // Test Runs
+  listRuns: (token: string) =>
+    fetchWithAuth('/survival/runs', { token }),
+  
+  createRun: (token: string, data: { platformSlug: string; title: string; accountType?: string }) =>
+    fetchWithAuth('/survival/runs/create', {
+      token,
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  
+  getRun: (token: string, id: string) =>
+    fetchWithAuth(`/survival/runs/${id}`, { token }),
+  
+  attachBaselines: (token: string, runId: string, baselineIds: string[]) =>
+    fetchWithAuth(`/survival/runs/${runId}/attach-baselines`, {
+      token,
+      method: 'POST',
+      body: JSON.stringify({ baselineIds }),
+    }),
+  
+  uploadScenario: async (
+    token: string,
+    runId: string,
+    file: File,
+    baselineImageId: string,
+    scenario: string,
+  ) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('baselineImageId', baselineImageId);
+    formData.append('scenario', scenario);
+    
+    const response = await fetch(`${API_URL}/survival/runs/${runId}/upload-scenario`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+    
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ error: 'Upload failed' }));
+      throw new Error(error.error || 'Upload failed');
+    }
+    
+    return response.json();
+  },
+  
+  getResults: (token: string, runId: string) =>
+    fetchWithAuth(`/survival/runs/${runId}/results`, { token }),
+  
+  exportCsv: (token: string, runId: string) =>
+    `${API_URL}/survival/runs/${runId}/export.csv?token=${token}`,
+};

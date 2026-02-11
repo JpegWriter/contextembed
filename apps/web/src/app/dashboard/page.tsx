@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Plus, Folder, Clock, ArrowRight, Loader2, ImageIcon } from 'lucide-react';
+import { Plus, Folder, Clock, ArrowRight, Loader2, ImageIcon, BadgeCheck } from 'lucide-react';
 import { useSupabase } from '@/lib/supabase-provider';
 import { projectsApi, userProfileApi, assetsApi } from '@/lib/api';
 import toast from 'react-hot-toast';
@@ -17,6 +17,9 @@ interface Project {
   onboardingCompleted: boolean;
   createdAt: string;
   coverAssetId?: string;
+  totalAssets?: number;
+  embeddedCount?: number;
+  isVerified?: boolean;
 }
 
 export default function DashboardPage() {
@@ -141,7 +144,7 @@ export default function DashboardPage() {
           </button>
         </div>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
           {projects.map(project => (
             <Link
               key={project.id}
@@ -149,35 +152,49 @@ export default function DashboardPage() {
               className="block bg-steel-950 border border-steel-700/50 hover:border-brand-600/50 
                 hover:shadow-glow-green transition-all group overflow-hidden rounded-lg"
             >
-              {/* Cover Image - 4:3 aspect ratio with object-contain (no crop) */}
+              {/* Cover Image - smaller 4:3 aspect ratio */}
               <div className="relative w-full aspect-[4/3] bg-steel-900 overflow-hidden">
                 {project.coverAssetId ? (
-                  <div className="absolute inset-0 flex items-center justify-center p-2">
+                  <div className="absolute inset-0 flex items-center justify-center p-1">
                     <Image
                       src={assetsApi.getFileUrl(project.coverAssetId, 'thumbnail')}
                       alt={project.name}
                       fill
                       className="object-contain group-hover:scale-[1.02] transition-transform duration-300"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                     />
                   </div>
                 ) : (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-steel-600">
-                    <ImageIcon className="h-10 w-10" />
-                    <span className="text-[10px] uppercase tracking-wider font-mono">No cover yet</span>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 text-steel-600">
+                    <ImageIcon className="h-8 w-8" />
+                    <span className="text-[9px] uppercase tracking-wider font-mono">No cover yet</span>
+                  </div>
+                )}
+                
+                {/* Verified Badge - top right corner */}
+                {project.isVerified && (
+                  <div className="absolute top-1.5 right-1.5 bg-emerald-500/90 rounded-full p-1 shadow-lg">
+                    <BadgeCheck className="h-3.5 w-3.5 text-white" />
                   </div>
                 )}
               </div>
               
-              {/* Content - separate section below image */}
-              <div className="p-4 border-t border-steel-800/50">
-                <h3 className="text-sm font-bold text-white mb-0.5 truncate">{project.name}</h3>
-                <div className="flex items-center justify-between text-[10px] text-steel-600">
+              {/* Content - compact section below image */}
+              <div className="p-2.5 border-t border-steel-800/50">
+                <div className="flex items-start justify-between gap-1">
+                  <h3 className="text-xs font-bold text-white truncate flex-1">{project.name}</h3>
+                  {project.isVerified && (
+                    <span className="text-[8px] px-1 py-0.5 bg-emerald-900/50 text-emerald-400 rounded uppercase font-mono shrink-0">
+                      Verified
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center justify-between text-[9px] text-steel-600 mt-1">
                   <span className="flex items-center gap-1 font-mono">
-                    <Clock className="h-3 w-3" />
+                    <Clock className="h-2.5 w-2.5" />
                     {new Date(project.createdAt).toLocaleDateString()}
                   </span>
-                  <ArrowRight className="h-3 w-3 group-hover:text-brand-400 transition-colors" />
+                  <ArrowRight className="h-2.5 w-2.5 group-hover:text-brand-400 transition-colors" />
                 </div>
               </div>
             </Link>

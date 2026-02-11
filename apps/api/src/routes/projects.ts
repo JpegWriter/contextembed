@@ -19,16 +19,29 @@ projectsRouter.get('/', asyncHandler(async (req, res) => {
   
   const projects = await projectRepository.findByUserWithCover(userId);
   
+  // Get asset counts for each project (for verified badge)
+  const projectsWithCounts = await Promise.all(
+    projects.map(async (p) => {
+      const assetCounts = await assetRepository.countByStatus(p.id);
+      const totalAssets = Object.values(assetCounts).reduce((sum, n) => sum + n, 0);
+      const embeddedCount = (assetCounts.completed || 0) + (assetCounts.approved || 0);
+      return {
+        id: p.id,
+        name: p.name,
+        goal: p.goal,
+        onboardingCompleted: p.onboardingCompleted,
+        createdAt: p.createdAt,
+        updatedAt: p.updatedAt,
+        coverAssetId: p.coverAssetId,
+        totalAssets,
+        embeddedCount,
+        isVerified: totalAssets > 0 && embeddedCount === totalAssets,
+      };
+    })
+  );
+  
   res.json({
-    projects: projects.map(p => ({
-      id: p.id,
-      name: p.name,
-      goal: p.goal,
-      onboardingCompleted: p.onboardingCompleted,
-      createdAt: p.createdAt,
-      updatedAt: p.updatedAt,
-      coverAssetId: p.coverAssetId,
-    })),
+    projects: projectsWithCounts,
   });
 }));
 

@@ -294,21 +294,21 @@ function CollapsibleSection({
   const [isOpen, setIsOpen] = useState(defaultOpen);
   
   return (
-    <div className="border-b border-gray-800">
+    <div className="border-b border-steel-800">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between py-2 px-3 hover:bg-gray-800/50 
+        className="w-full flex items-center justify-between py-2 px-3 hover:bg-steel-800/50 
           transition-colors"
       >
         <div className="flex items-center gap-2">
-          <Icon className="w-3.5 h-3.5 text-gray-500" />
-          <span className="font-medium text-xs uppercase tracking-wider text-gray-300">{title}</span>
+          <Icon className="w-3.5 h-3.5 text-steel-500" />
+          <span className="font-medium text-xs uppercase tracking-wider text-steel-300">{title}</span>
           {badge}
         </div>
         {isOpen ? (
-          <ChevronDown className="w-3.5 h-3.5 text-gray-500" />
+          <ChevronDown className="w-3.5 h-3.5 text-steel-500" />
         ) : (
-          <ChevronRight className="w-3.5 h-3.5 text-gray-500" />
+          <ChevronRight className="w-3.5 h-3.5 text-steel-500" />
         )}
       </button>
       {isOpen && (
@@ -346,10 +346,10 @@ function MetadataField({
   const isEmpty = !value || (Array.isArray(value) && value.length === 0);
   
   return (
-    <div className="group py-1 border-b border-gray-800/50">
+    <div className="group py-1 border-b border-steel-800/50">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">
+          <span className="text-[10px] font-medium text-steel-500 uppercase tracking-wider">
             {label}
           </span>
           <ProvenanceBadge source={provenance} />
@@ -363,15 +363,15 @@ function MetadataField({
                 navigator.clipboard.writeText(displayValue);
                 toast.success('Copied');
               }}
-              className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-gray-700 
+              className="opacity-0 group-hover:opacity-100 p-0.5 hover:bg-steel-700 
                 rounded transition-all"
             >
-              <Copy className="w-3 h-3 text-gray-500" />
+              <Copy className="w-3 h-3 text-steel-500" />
             </button>
           )}
         </div>
       </div>
-      <div className={`text-xs mt-0.5 ${isEmpty ? 'text-gray-600 italic' : 'text-gray-200'} ${multiline ? '' : 'truncate'}`}>
+      <div className={`text-xs mt-0.5 ${isEmpty ? 'text-steel-600 italic' : 'text-steel-200'} ${multiline ? '' : 'truncate'}`}>
         {multiline ? (
           <p className="whitespace-pre-wrap leading-relaxed">{displayValue}</p>
         ) : (
@@ -385,26 +385,26 @@ function MetadataField({
 function KeywordsList({ keywords, validation }: { keywords?: string[]; validation?: FieldValidation }) {
   if (!keywords || keywords.length === 0) {
     return (
-      <div className="py-1 border-b border-gray-800/50">
+      <div className="py-1 border-b border-steel-800/50">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">
+          <span className="text-[10px] font-medium text-steel-500 uppercase tracking-wider">
             Keywords
           </span>
           {validation && <ValidationBadge validation={validation} />}
         </div>
-        <p className="text-xs text-gray-600 italic mt-0.5">No keywords</p>
+        <p className="text-xs text-steel-600 italic mt-0.5">No keywords</p>
       </div>
     );
   }
   
   return (
-    <div className="py-1.5 border-b border-gray-800/50">
+    <div className="py-1.5 border-b border-steel-800/50">
       <div className="flex items-center justify-between mb-1.5">
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">
+          <span className="text-[10px] font-medium text-steel-500 uppercase tracking-wider">
             Keywords
           </span>
-          <span className="text-[10px] text-gray-600 font-mono">{keywords.length}</span>
+          <span className="text-[10px] text-steel-600 font-mono">{keywords.length}</span>
         </div>
         {validation && <ValidationBadge validation={validation} />}
       </div>
@@ -446,10 +446,10 @@ function MetadataHealth({ stats, assetStatus }: { stats: ValidationStats; assetS
   const percentage = Math.round((checks.filter(c => c.ok).length / checks.length) * 100);
   
   return (
-    <div className="mb-3 p-2 bg-gray-800 border border-gray-700 rounded">
+    <div className="mb-3 p-2 bg-steel-800 border border-steel-700 rounded">
       {/* Compact header with percentage */}
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">Embed Status</span>
+        <span className="text-xs font-medium text-steel-400 uppercase tracking-wider">Embed Status</span>
         <span className={`text-sm font-bold font-mono ${
           percentage === 100 ? 'text-green-400' : 
           percentage >= 70 ? 'text-amber-400' : 'text-red-400'
@@ -465,9 +465,9 @@ function MetadataHealth({ stats, assetStatus }: { stats: ValidationStats; assetS
             {check.ok ? (
               <CheckCircle2 className="w-3 h-3 text-green-500" />
             ) : (
-              <XCircle className="w-3 h-3 text-gray-600" />
+              <XCircle className="w-3 h-3 text-steel-600" />
             )}
-            <span className={check.ok ? 'text-gray-300' : 'text-gray-500'}>
+            <span className={check.ok ? 'text-steel-300' : 'text-steel-500'}>
               {check.label}
             </span>
           </div>
@@ -624,14 +624,14 @@ export function MetadataSidebar({
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 w-full max-w-md bg-gray-900 
-      z-50 flex flex-col border-l border-gray-700">
+    <div className="fixed inset-y-0 right-0 w-full max-w-md bg-steel-900 
+      z-50 flex flex-col border-l border-steel-700">
       
       {/* Header - Compact file info */}
-      <div className="flex items-start justify-between px-3 py-2 border-b border-gray-800 bg-gray-900">
+      <div className="flex items-start justify-between px-3 py-2 border-b border-steel-800 bg-steel-900">
         <div className="flex-1 min-w-0">
           <h2 className="text-sm font-bold text-white truncate font-mono">{asset.originalFilename}</h2>
-          <div className="flex items-center gap-2 text-xs text-gray-400 font-mono mt-0.5">
+          <div className="flex items-center gap-2 text-xs text-steel-400 font-mono mt-0.5">
             <span>{asset.width}×{asset.height}</span>
             <span>•</span>
             <span>{(asset.size / 1024 / 1024).toFixed(2)} MB</span>
@@ -639,20 +639,20 @@ export function MetadataSidebar({
             <span className={`uppercase font-medium ${
               asset.status === 'approved' ? 'text-green-400' :
               asset.status === 'completed' ? 'text-emerald-400' :
-              asset.status === 'failed' ? 'text-red-400' : 'text-gray-400'
+              asset.status === 'failed' ? 'text-red-400' : 'text-steel-400'
             }`}>{asset.status}</span>
           </div>
         </div>
         <button 
           onClick={onClose} 
-          className="p-1 hover:bg-gray-800 rounded text-gray-400 hover:text-white transition-colors"
+          className="p-1 hover:bg-steel-800 rounded text-steel-400 hover:text-white transition-colors"
         >
           <X className="w-4 h-4" />
         </button>
       </div>
 
       {/* Tabs - Segmented control style */}
-      <div className="flex border-b border-gray-800 bg-gray-900/50">
+      <div className="flex border-b border-steel-800 bg-steel-900/50">
         {[
           { id: 'metadata', label: 'Fields', icon: FileText },
           { id: 'quality', label: 'Quality', icon: Shield },
@@ -665,8 +665,8 @@ export function MetadataSidebar({
             className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium
               transition-colors border-b-2 -mb-px uppercase tracking-wider
               ${activeTab === tab.id 
-                ? 'border-brand-500 text-brand-400 bg-gray-800/50' 
-                : 'border-transparent text-gray-500 hover:text-gray-300'
+                ? 'border-brand-500 text-brand-400 bg-steel-800/50' 
+                : 'border-transparent text-steel-500 hover:text-steel-300'
               }`}
           >
             <tab.icon className="w-3.5 h-3.5" />
@@ -680,21 +680,21 @@ export function MetadataSidebar({
         {activeTab === 'metadata' && (
           <div>
             {!isCompleted ? (
-              <div className="text-center py-12 text-gray-500">
+              <div className="text-center py-12 text-steel-500">
                 <AlertTriangle className="w-10 h-10 mx-auto mb-3 text-amber-500/70" />
-                <p className="font-medium text-sm text-gray-400">Not Yet Processed</p>
-                <p className="text-xs mt-1 text-gray-600">Run embed to generate metadata</p>
+                <p className="font-medium text-sm text-steel-400">Not Yet Processed</p>
+                <p className="text-xs mt-1 text-steel-600">Run embed to generate metadata</p>
               </div>
             ) : (
               <>
                 {/* Before/After Toggle */}
-                <div className="px-3 py-2 border-b border-gray-800 flex items-center justify-between">
+                <div className="px-3 py-2 border-b border-steel-800 flex items-center justify-between">
                   <button
                     onClick={() => setShowDiffView(!showDiffView)}
                     className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium transition-colors ${
                       showDiffView 
                         ? 'bg-brand-900/40 text-brand-400 border border-brand-700/50' 
-                        : 'text-gray-500 hover:text-gray-300'
+                        : 'text-steel-500 hover:text-steel-300'
                     }`}
                   >
                     <ArrowLeftRight className="w-3.5 h-3.5" />
@@ -705,7 +705,7 @@ export function MetadataSidebar({
                     className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
                       showExplainWhy 
                         ? 'bg-purple-900/40 text-purple-400 border border-purple-700/50' 
-                        : 'text-gray-500 hover:text-gray-300'
+                        : 'text-steel-500 hover:text-steel-300'
                     }`}
                     title="Why was this metadata generated?"
                   >
@@ -716,7 +716,7 @@ export function MetadataSidebar({
 
                 {/* Diff View */}
                 {showDiffView && (
-                  <div className="px-3 py-3 border-b border-gray-800 bg-gray-800/30">
+                  <div className="px-3 py-3 border-b border-steel-800 bg-steel-800/30">
                     <MetadataDiffView 
                       original={asset?.originalMetadata || undefined}
                       generated={legacyMeta || undefined}
@@ -726,7 +726,7 @@ export function MetadataSidebar({
 
                 {/* Explain Why Panel */}
                 {showExplainWhy && (
-                  <div className="px-3 py-3 border-b border-gray-800">
+                  <div className="px-3 py-3 border-b border-steel-800">
                     <ExplainWhy
                       visionApplied={!!vision}
                       situationalApplied={!!(legacyMeta?.eventAnchor?.eventName || metadata.workflow?.instructions)}
@@ -744,13 +744,13 @@ export function MetadataSidebar({
                 <button
                   onClick={copyAllMetadata}
                   className="w-full mx-3 mb-2 flex items-center justify-center gap-1.5 py-1.5 
-                    border border-gray-700 rounded text-xs text-gray-400
-                    hover:bg-gray-800 hover:text-gray-200 transition-colors"
+                    border border-steel-700 rounded text-xs text-steel-400
+                    hover:bg-steel-800 hover:text-steel-200 transition-colors"
                   style={{ width: 'calc(100% - 1.5rem)' }}
                 >
                   <Copy className="w-3 h-3" />
                   Copy All
-                  <span className="text-gray-600 text-[10px] ml-1">⌘C</span>
+                  <span className="text-steel-600 text-[10px] ml-1">⌘C</span>
                 </button>
 
                 {/* DESCRIPTIVE Section */}
@@ -788,7 +788,7 @@ export function MetadataSidebar({
                   />
                   <button
                     onClick={() => copySection('descriptive')}
-                    className="text-[10px] text-gray-500 hover:text-brand-400 mt-1.5 flex items-center gap-1"
+                    className="text-[10px] text-steel-500 hover:text-brand-400 mt-1.5 flex items-center gap-1"
                   >
                     <Copy className="w-3 h-3" /> Copy
                   </button>
@@ -796,7 +796,7 @@ export function MetadataSidebar({
 
                 {/* ALT TEXT ENGINE */}
                 {asset && projectId && (
-                  <div className="px-3 py-3 border-b border-gray-800">
+                  <div className="px-3 py-3 border-b border-steel-800">
                     <AltTextPreview
                       projectId={projectId}
                       assetId={asset.id}
@@ -836,7 +836,7 @@ export function MetadataSidebar({
                   />
                   <button
                     onClick={() => copySection('attribution')}
-                    className="text-[10px] text-gray-500 hover:text-brand-400 mt-1.5 flex items-center gap-1"
+                    className="text-[10px] text-steel-500 hover:text-brand-400 mt-1.5 flex items-center gap-1"
                   >
                     <Copy className="w-3 h-3" /> Copy
                   </button>
@@ -849,7 +849,7 @@ export function MetadataSidebar({
                   badge={
                     <span className={`text-xs px-1.5 py-0.5 rounded ${
                       metadata.location?.locationMode === 'none' 
-                        ? 'bg-gray-100 text-gray-600' 
+                        ? 'bg-steel-100 text-steel-600' 
                         : 'bg-green-100 text-green-700'
                     }`}>
                       {metadata.location?.locationMode || 'none'}
@@ -857,7 +857,7 @@ export function MetadataSidebar({
                   }
                 >
                   <div className="py-2 mb-2">
-                    <span className="text-xs font-medium text-gray-500 uppercase">Mode</span>
+                    <span className="text-xs font-medium text-steel-500 uppercase">Mode</span>
                     <p className="text-sm capitalize">{metadata.location?.locationMode || 'none'}</p>
                   </div>
                   
@@ -886,14 +886,14 @@ export function MetadataSidebar({
                   )}
                   
                   {metadata.location?.locationMode === 'none' && (
-                    <p className="text-sm text-gray-400 italic py-2">
+                    <p className="text-sm text-steel-400 italic py-2">
                       No location data (safe mode)
                     </p>
                   )}
                   
                   <button
                     onClick={() => copySection('location')}
-                    className="text-[10px] text-gray-500 hover:text-brand-400 mt-1.5 flex items-center gap-1"
+                    className="text-[10px] text-steel-500 hover:text-brand-400 mt-1.5 flex items-center gap-1"
                   >
                     <Copy className="w-3 h-3" /> Copy
                   </button>
@@ -912,11 +912,11 @@ export function MetadataSidebar({
                     multiline
                   />
                   <div className="py-2">
-                    <span className="text-xs font-medium text-gray-500 uppercase">Model Release</span>
+                    <span className="text-xs font-medium text-steel-500 uppercase">Model Release</span>
                     <p className="text-sm capitalize">{metadata.workflow?.modelReleaseStatus || 'unknown'}</p>
                   </div>
                   <div className="py-2">
-                    <span className="text-xs font-medium text-gray-500 uppercase">Property Release</span>
+                    <span className="text-xs font-medium text-steel-500 uppercase">Property Release</span>
                     <p className="text-sm capitalize">{metadata.workflow?.propertyReleaseStatus || 'unknown'}</p>
                   </div>
                 </CollapsibleSection>
@@ -936,16 +936,16 @@ export function MetadataSidebar({
         {activeTab === 'quality' && (
           <div className="p-3 space-y-4">
             {!isCompleted ? (
-              <div className="text-center py-12 text-gray-500">
+              <div className="text-center py-12 text-steel-500">
                 <AlertTriangle className="w-10 h-10 mx-auto mb-3 text-amber-500/70" />
-                <p className="font-medium text-sm text-gray-400">Not Yet Processed</p>
-                <p className="text-xs mt-1 text-gray-600">Run embed to see quality metrics</p>
+                <p className="font-medium text-sm text-steel-400">Not Yet Processed</p>
+                <p className="text-xs mt-1 text-steel-600">Run embed to see quality metrics</p>
               </div>
             ) : (
               <>
                 {/* Metadata Strength Indicator */}
                 <div>
-                  <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2">
+                  <h4 className="text-[10px] font-medium text-steel-500 uppercase tracking-wider mb-2">
                     Metadata Strength
                   </h4>
                   <MetadataStrengthIndicator 
@@ -956,7 +956,7 @@ export function MetadataSidebar({
 
                 {/* Provenance Attribution Preview */}
                 <div>
-                  <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2">
+                  <h4 className="text-[10px] font-medium text-steel-500 uppercase tracking-wider mb-2">
                     Public Attribution
                   </h4>
                   <ProvenancePreview 
@@ -967,7 +967,7 @@ export function MetadataSidebar({
 
                 {/* Local Signal Indicator */}
                 <div>
-                  <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2">
+                  <h4 className="text-[10px] font-medium text-steel-500 uppercase tracking-wider mb-2">
                     Local SEO
                   </h4>
                   <LocalSignalIndicator 
@@ -978,7 +978,7 @@ export function MetadataSidebar({
 
                 {/* Outcome Statements */}
                 <div>
-                  <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2">
+                  <h4 className="text-[10px] font-medium text-steel-500 uppercase tracking-wider mb-2">
                     Achievements
                   </h4>
                   <OutcomeStatements 
@@ -989,7 +989,7 @@ export function MetadataSidebar({
 
                 {/* Context Applied (Explain Why) */}
                 <div>
-                  <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2">
+                  <h4 className="text-[10px] font-medium text-steel-500 uppercase tracking-wider mb-2">
                     How This Was Generated
                   </h4>
                   <ExplainWhy
@@ -1008,8 +1008,8 @@ export function MetadataSidebar({
         {activeTab === 'vision' && (
           <div className="p-3">
             {!vision ? (
-              <div className="text-center py-12 text-gray-600">
-                <Sparkles className="w-10 h-10 mx-auto mb-3 text-gray-700" />
+              <div className="text-center py-12 text-steel-600">
+                <Sparkles className="w-10 h-10 mx-auto mb-3 text-steel-700" />
                 <p className="text-sm">No AI analysis available</p>
               </div>
             ) : (
@@ -1019,7 +1019,7 @@ export function MetadataSidebar({
                   <div className="p-3 bg-gradient-to-br from-brand-900/20 to-steel-900/40 
                     border border-brand-700/30">
                     <h4 className="text-[10px] font-medium text-brand-400 uppercase tracking-wider mb-1.5">AI Summary</h4>
-                    <p className="text-xs text-gray-300 leading-relaxed">
+                    <p className="text-xs text-steel-300 leading-relaxed">
                       {vision.rawDescription || vision.naturalDescription}
                     </p>
                   </div>
@@ -1028,7 +1028,7 @@ export function MetadataSidebar({
                 {/* Subjects */}
                 {vision.subjects && vision.subjects.length > 0 && (
                   <div>
-                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Subjects</h4>
+                    <h4 className="text-[10px] font-medium text-steel-500 uppercase tracking-wider mb-1.5">Subjects</h4>
                     <div className="space-y-1.5">
                       {vision.subjects.map((s, i) => (
                         <div key={i} className="flex items-start gap-2 text-xs">
@@ -1036,11 +1036,11 @@ export function MetadataSidebar({
                             text-brand-400 text-[10px] font-mono shrink-0 uppercase">
                             {s.type}
                           </span>
-                          <span className="text-gray-300 flex-1">{s.description}</span>
+                          <span className="text-steel-300 flex-1">{s.description}</span>
                           <span className={`text-[9px] font-mono px-1 py-0.5 border shrink-0 ${
                             s.prominence === 'primary' ? 'bg-brand-900/30 text-brand-400 border-brand-700/50' :
                             s.prominence === 'secondary' ? 'bg-amber-900/30 text-amber-400 border-amber-700/50' :
-                            'bg-steel-800 text-gray-500 border-steel-700/50'
+                            'bg-steel-800 text-steel-500 border-steel-700/50'
                           }`}>{s.prominence}{s.count && s.count > 1 ? ` ×${s.count}` : ''}</span>
                         </div>
                       ))}
@@ -1051,7 +1051,7 @@ export function MetadataSidebar({
                 {/* Scene */}
                 {vision.scene && (
                   <div>
-                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Scene</h4>
+                    <h4 className="text-[10px] font-medium text-steel-500 uppercase tracking-wider mb-1.5">Scene</h4>
                     <div className="space-y-1.5">
                       <div className="flex flex-wrap gap-1">
                         <span className="px-1.5 py-0.5 bg-brand-900/30 border border-brand-700/50 text-brand-400 text-xs font-medium">
@@ -1068,7 +1068,7 @@ export function MetadataSidebar({
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-gray-400">{vision.scene.setting}</p>
+                      <p className="text-xs text-steel-400">{vision.scene.setting}</p>
                     </div>
                   </div>
                 )}
@@ -1076,7 +1076,7 @@ export function MetadataSidebar({
                 {/* Emotions / Mood */}
                 {((vision.emotions && vision.emotions.length > 0) || (vision.mood && vision.mood.length > 0)) && (
                   <div>
-                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Mood & Emotion</h4>
+                    <h4 className="text-[10px] font-medium text-steel-500 uppercase tracking-wider mb-1.5">Mood & Emotion</h4>
                     <div className="flex flex-wrap gap-1">
                       {(vision.emotions || vision.mood || []).map((m, i) => (
                         <span key={i} className="px-1.5 py-0.5 bg-pink-900/30 border border-pink-700/50
@@ -1091,7 +1091,7 @@ export function MetadataSidebar({
                 {/* Style Cues */}
                 {vision.styleCues && vision.styleCues.length > 0 && (
                   <div>
-                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Style</h4>
+                    <h4 className="text-[10px] font-medium text-steel-500 uppercase tracking-wider mb-1.5">Style</h4>
                     <div className="flex flex-wrap gap-1">
                       {vision.styleCues.map((s, i) => (
                         <span key={i} className="px-1.5 py-0.5 bg-violet-900/30 border border-violet-700/50
@@ -1106,11 +1106,11 @@ export function MetadataSidebar({
                 {/* Notable Objects */}
                 {((vision.notableObjects && vision.notableObjects.length > 0) || (vision.objects && vision.objects.length > 0)) && (
                   <div>
-                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Objects Detected</h4>
+                    <h4 className="text-[10px] font-medium text-steel-500 uppercase tracking-wider mb-1.5">Objects Detected</h4>
                     <div className="flex flex-wrap gap-1">
                       {(vision.notableObjects || vision.objects || []).map((o, i) => (
                         <span key={i} className="px-1.5 py-0.5 bg-steel-800 border border-steel-700/50 
-                          text-[10px] text-gray-300 font-mono">
+                          text-[10px] text-steel-300 font-mono">
                           {o}
                         </span>
                       ))}
@@ -1121,11 +1121,11 @@ export function MetadataSidebar({
                 {/* Color Palette */}
                 {((vision.colorPalette && vision.colorPalette.length > 0) || vision.colors?.dominant) && (
                   <div>
-                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Color Palette</h4>
+                    <h4 className="text-[10px] font-medium text-steel-500 uppercase tracking-wider mb-1.5">Color Palette</h4>
                     <div className="flex flex-wrap gap-1">
                       {(vision.colorPalette || vision.colors?.dominant || []).map((c, i) => (
                         <span key={i} className="px-1.5 py-0.5 bg-steel-800 border border-steel-700/50 
-                          text-xs capitalize text-gray-300">
+                          text-xs capitalize text-steel-300">
                           {c}
                         </span>
                       ))}
@@ -1136,7 +1136,7 @@ export function MetadataSidebar({
                 {/* Location Cues */}
                 {vision.locationCues && vision.locationCues.confidence !== 'none' && (
                   <div>
-                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Location Cues</h4>
+                    <h4 className="text-[10px] font-medium text-steel-500 uppercase tracking-wider mb-1.5">Location Cues</h4>
                     <div className="space-y-1.5">
                       <div className="flex items-center gap-2">
                         {vision.locationCues.possibleType && (
@@ -1147,7 +1147,7 @@ export function MetadataSidebar({
                         <span className={`text-[9px] font-mono px-1 py-0.5 border ${
                           vision.locationCues.confidence === 'high' ? 'bg-green-900/30 text-green-400 border-green-700/50' :
                           vision.locationCues.confidence === 'medium' ? 'bg-amber-900/30 text-amber-400 border-amber-700/50' :
-                          'bg-steel-800 text-gray-500 border-steel-700/50'
+                          'bg-steel-800 text-steel-500 border-steel-700/50'
                         }`}>{vision.locationCues.confidence} conf</span>
                       </div>
                       {vision.locationCues.landmarks && vision.locationCues.landmarks.length > 0 && (
@@ -1162,7 +1162,7 @@ export function MetadataSidebar({
                       {vision.locationCues.hints && vision.locationCues.hints.length > 0 && (
                         <div className="space-y-0.5">
                           {vision.locationCues.hints.map((h, i) => (
-                            <p key={i} className="text-[11px] text-gray-400">• {h}</p>
+                            <p key={i} className="text-[11px] text-steel-400">• {h}</p>
                           ))}
                         </div>
                       )}
@@ -1173,7 +1173,7 @@ export function MetadataSidebar({
                 {/* Text Found */}
                 {((vision.textFound && vision.textFound.length > 0)) && (
                   <div>
-                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Text Detected</h4>
+                    <h4 className="text-[10px] font-medium text-steel-500 uppercase tracking-wider mb-1.5">Text Detected</h4>
                     <div className="space-y-1">
                       {vision.textFound.map((t, i) => (
                         <div key={i} className="flex items-start gap-2 text-xs">
@@ -1181,7 +1181,7 @@ export function MetadataSidebar({
                             text-amber-400 text-[9px] font-mono shrink-0 uppercase">
                             {t.type}
                           </span>
-                          <span className="text-gray-300 font-mono">"{t.text}"</span>
+                          <span className="text-steel-300 font-mono">"{t.text}"</span>
                         </div>
                       ))}
                     </div>
@@ -1191,15 +1191,15 @@ export function MetadataSidebar({
                 {/* Composition */}
                 {vision.composition && (
                   <div>
-                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Composition</h4>
-                    <p className="text-xs text-gray-400">{vision.composition}</p>
+                    <h4 className="text-[10px] font-medium text-steel-500 uppercase tracking-wider mb-1.5">Composition</h4>
+                    <p className="text-xs text-steel-400">{vision.composition}</p>
                   </div>
                 )}
 
                 {/* Quality Issues */}
                 {vision.qualityIssues && vision.qualityIssues.length > 0 && (
                   <div>
-                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Quality Notes</h4>
+                    <h4 className="text-[10px] font-medium text-steel-500 uppercase tracking-wider mb-1.5">Quality Notes</h4>
                     <div className="space-y-0.5">
                       {vision.qualityIssues.map((q, i) => (
                         <div key={i} className="flex items-center gap-1.5 text-xs">
@@ -1219,65 +1219,65 @@ export function MetadataSidebar({
           <div className="p-3 space-y-3">
             {/* User Context */}
             <div>
-              <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">
+              <h4 className="text-[10px] font-medium text-steel-500 uppercase tracking-wider mb-1.5">
                 User Context
               </h4>
               <textarea
                 value={userContext}
                 onChange={(e) => setUserContext(e.target.value)}
                 placeholder="Add context: names, location, event details..."
-                className="w-full h-20 p-2 text-xs font-mono border border-gray-700 
-                  rounded bg-gray-800 text-gray-200 resize-none placeholder:text-gray-600
+                className="w-full h-20 p-2 text-xs font-mono border border-steel-700 
+                  rounded bg-steel-800 text-steel-200 resize-none placeholder:text-steel-600
                   focus:border-brand-600 focus:outline-none focus:ring-1 focus:ring-brand-600/50"
               />
               <button
                 onClick={handleSaveContext}
                 disabled={savingContext}
-                className="mt-1.5 flex items-center gap-1.5 px-2.5 py-1 bg-gray-700 text-gray-200 
-                  rounded text-xs font-medium hover:bg-gray-600 disabled:opacity-50 
-                  border border-gray-600 transition-colors"
+                className="mt-1.5 flex items-center gap-1.5 px-2.5 py-1 bg-steel-700 text-steel-200 
+                  rounded text-xs font-medium hover:bg-steel-600 disabled:opacity-50 
+                  border border-steel-600 transition-colors"
               >
                 {savingContext ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
                 Save
-                <span className="text-gray-500 text-[10px]">S</span>
+                <span className="text-steel-500 text-[10px]">S</span>
               </button>
             </div>
 
             {/* File Info */}
             <div>
-              <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">
+              <h4 className="text-[10px] font-medium text-steel-500 uppercase tracking-wider mb-1.5">
                 File Details
               </h4>
               <div className="space-y-0.5">
-                <div className="flex justify-between py-0.5 border-b border-gray-800/50">
-                  <span className="text-[10px] text-gray-500 uppercase">Filename</span>
-                  <span className="text-xs font-mono text-gray-200 truncate max-w-[60%]">{asset.originalFilename}</span>
+                <div className="flex justify-between py-0.5 border-b border-steel-800/50">
+                  <span className="text-[10px] text-steel-500 uppercase">Filename</span>
+                  <span className="text-xs font-mono text-steel-200 truncate max-w-[60%]">{asset.originalFilename}</span>
                 </div>
-                <div className="flex justify-between py-0.5 border-b border-gray-800/50">
-                  <span className="text-[10px] text-gray-500 uppercase">Dimensions</span>
-                  <span className="text-xs font-mono text-gray-200">{asset.width} × {asset.height}</span>
+                <div className="flex justify-between py-0.5 border-b border-steel-800/50">
+                  <span className="text-[10px] text-steel-500 uppercase">Dimensions</span>
+                  <span className="text-xs font-mono text-steel-200">{asset.width} × {asset.height}</span>
                 </div>
-                <div className="flex justify-between py-0.5 border-b border-gray-800/50">
-                  <span className="text-[10px] text-gray-500 uppercase">Size</span>
-                  <span className="text-xs font-mono text-gray-200">{(asset.size / 1024 / 1024).toFixed(2)} MB</span>
+                <div className="flex justify-between py-0.5 border-b border-steel-800/50">
+                  <span className="text-[10px] text-steel-500 uppercase">Size</span>
+                  <span className="text-xs font-mono text-steel-200">{(asset.size / 1024 / 1024).toFixed(2)} MB</span>
                 </div>
-                <div className="flex justify-between py-0.5 border-b border-gray-800/50">
-                  <span className="text-[10px] text-gray-500 uppercase">Type</span>
-                  <span className="text-xs font-mono text-gray-200">{asset.mimeType}</span>
+                <div className="flex justify-between py-0.5 border-b border-steel-800/50">
+                  <span className="text-[10px] text-steel-500 uppercase">Type</span>
+                  <span className="text-xs font-mono text-steel-200">{asset.mimeType}</span>
                 </div>
-                <div className="flex justify-between py-0.5 border-b border-gray-800/50">
-                  <span className="text-[10px] text-gray-500 uppercase">Status</span>
+                <div className="flex justify-between py-0.5 border-b border-steel-800/50">
+                  <span className="text-[10px] text-steel-500 uppercase">Status</span>
                   <span className={`text-xs font-mono uppercase ${
                     asset.status === 'completed' ? 'text-green-400' :
                     asset.status === 'approved' ? 'text-brand-400' :
-                    asset.status === 'failed' ? 'text-red-400' : 'text-gray-200'
+                    asset.status === 'failed' ? 'text-red-400' : 'text-steel-200'
                   }`}>
                     {asset.status}
                   </span>
                 </div>
                 <div className="flex justify-between py-0.5">
-                  <span className="text-[10px] text-gray-500 uppercase">Created</span>
-                  <span className="text-xs font-mono text-gray-200">
+                  <span className="text-[10px] text-steel-500 uppercase">Created</span>
+                  <span className="text-xs font-mono text-steel-200">
                     {new Date(asset.createdAt).toLocaleDateString()}
                   </span>
                 </div>
@@ -1288,7 +1288,7 @@ export function MetadataSidebar({
       </div>
 
       {/* Action Buttons - Pro tool style */}
-      <div className="px-3 py-2 border-t border-gray-800 bg-gray-900 space-y-2">
+      <div className="px-3 py-2 border-t border-steel-800 bg-steel-900 space-y-2">
         <button
           onClick={() => onApprove(asset.id)}
           disabled={!validationStats.allValid || asset.status === 'approved'}
@@ -1305,12 +1305,12 @@ export function MetadataSidebar({
           <button
             onClick={() => onReprocess(asset.id)}
             className="flex-1 flex items-center justify-center gap-1.5 py-2 
-              border border-gray-700 bg-gray-800 text-gray-200 rounded text-sm font-medium
-              hover:bg-gray-700 transition-colors"
+              border border-steel-700 bg-steel-800 text-steel-200 rounded text-sm font-medium
+              hover:bg-steel-700 transition-colors"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             Reprocess
-            <span className="text-gray-500 text-xs">R</span>
+            <span className="text-steel-500 text-xs">R</span>
           </button>
           <button
             onClick={() => onDownload(asset.id)}

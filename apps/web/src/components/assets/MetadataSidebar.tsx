@@ -44,14 +44,26 @@ import { AltTextPreview } from './AltTextPreview';
 // ===========================================
 
 interface VisionAnalysis {
-  subjects?: Array<{ type: string; description: string; prominence: string }>;
-  scene?: { type: string; setting: string; timeOfDay?: string };
-  mood?: string[];
-  style?: string;
-  objects?: string[];
-  textContent?: Array<{ text: string; type: string }>;
-  colors?: { dominant: string[]; palette?: string[] };
+  subjects?: Array<{ type: string; description: string; prominence: string; count?: number }>;
+  scene?: { type: string; setting: string; timeOfDay?: string; weather?: string };
+  emotions?: string[];
+  styleCues?: string[];
+  locationCues?: {
+    possibleType?: string;
+    landmarks?: string[];
+    hints?: string[];
+    confidence?: string;
+  };
+  notableObjects?: string[];
+  textFound?: Array<{ text: string; type: string; language?: string }>;
+  qualityIssues?: string[];
+  colorPalette?: string[];
   composition?: string;
+  rawDescription?: string;
+  // Legacy compat aliases
+  mood?: string[];
+  objects?: string[];
+  colors?: { dominant: string[]; palette?: string[] };
   naturalDescription?: string;
 }
 
@@ -236,7 +248,7 @@ function ProvenanceBadge({ source }: { source?: 'user' | 'exif' | 'ai_inferred' 
   if (!source) return null;
   
   const config = {
-    user: { label: 'USR', className: 'bg-blue-900/40 text-blue-400 border-blue-700/50' },
+    user: { label: 'USR', className: 'bg-brand-900/40 text-brand-400 border-brand-700/50' },
     exif: { label: 'EXF', className: 'bg-green-900/40 text-green-400 border-green-700/50' },
     ai_inferred: { label: 'AI', className: 'bg-purple-900/40 text-purple-400 border-purple-700/50' },
   };
@@ -1001,59 +1013,74 @@ export function MetadataSidebar({
                 <p className="text-sm">No AI analysis available</p>
               </div>
             ) : (
-              <div className="space-y-3">
-                {vision.naturalDescription && (
-                  <div className="p-3 bg-gradient-to-br from-purple-900/20 to-blue-900/20 
-                    border border-purple-700/30 rounded">
-                    <p className="text-xs italic text-gray-300 leading-relaxed">
-                      "{vision.naturalDescription}"
+              <div className="space-y-4">
+                {/* Raw Description — primary AI summary */}
+                {(vision.rawDescription || vision.naturalDescription) && (
+                  <div className="p-3 bg-gradient-to-br from-brand-900/20 to-steel-900/40 
+                    border border-brand-700/30">
+                    <h4 className="text-[10px] font-medium text-brand-400 uppercase tracking-wider mb-1.5">AI Summary</h4>
+                    <p className="text-xs text-gray-300 leading-relaxed">
+                      {vision.rawDescription || vision.naturalDescription}
                     </p>
                   </div>
                 )}
 
+                {/* Subjects */}
                 {vision.subjects && vision.subjects.length > 0 && (
                   <div>
                     <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Subjects</h4>
-                    <div className="space-y-1">
+                    <div className="space-y-1.5">
                       {vision.subjects.map((s, i) => (
                         <div key={i} className="flex items-start gap-2 text-xs">
-                          <span className="px-1.5 py-0.5 bg-blue-900/40 border border-blue-700/50
-                            text-blue-400 rounded text-[10px] font-mono shrink-0">
+                          <span className="px-1.5 py-0.5 bg-brand-900/40 border border-brand-700/50
+                            text-brand-400 text-[10px] font-mono shrink-0 uppercase">
                             {s.type}
                           </span>
-                          <span className="text-gray-400">{s.description}</span>
+                          <span className="text-gray-300 flex-1">{s.description}</span>
+                          <span className={`text-[9px] font-mono px-1 py-0.5 border shrink-0 ${
+                            s.prominence === 'primary' ? 'bg-brand-900/30 text-brand-400 border-brand-700/50' :
+                            s.prominence === 'secondary' ? 'bg-amber-900/30 text-amber-400 border-amber-700/50' :
+                            'bg-steel-800 text-gray-500 border-steel-700/50'
+                          }`}>{s.prominence}{s.count && s.count > 1 ? ` ×${s.count}` : ''}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
 
+                {/* Scene */}
                 {vision.scene && (
                   <div>
                     <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Scene</h4>
-                    <div className="flex flex-wrap gap-1">
-                      <span className="px-1.5 py-0.5 bg-gray-800 border border-gray-700 rounded text-xs text-gray-300">
-                        {vision.scene.type}
-                      </span>
-                      <span className="px-1.5 py-0.5 bg-gray-800 border border-gray-700 rounded text-xs text-gray-300">
-                        {vision.scene.setting}
-                      </span>
-                      {vision.scene.timeOfDay && (
-                        <span className="px-1.5 py-0.5 bg-gray-800 border border-gray-700 rounded text-xs text-gray-300">
-                          {vision.scene.timeOfDay}
+                    <div className="space-y-1.5">
+                      <div className="flex flex-wrap gap-1">
+                        <span className="px-1.5 py-0.5 bg-brand-900/30 border border-brand-700/50 text-brand-400 text-xs font-medium">
+                          {vision.scene.type}
                         </span>
-                      )}
+                        {vision.scene.timeOfDay && vision.scene.timeOfDay !== 'unknown' && (
+                          <span className="px-1.5 py-0.5 bg-amber-900/30 border border-amber-700/50 text-amber-400 text-xs">
+                            {vision.scene.timeOfDay}
+                          </span>
+                        )}
+                        {vision.scene.weather && (
+                          <span className="px-1.5 py-0.5 bg-sky-900/30 border border-sky-700/50 text-sky-400 text-xs">
+                            {vision.scene.weather}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-400">{vision.scene.setting}</p>
                     </div>
                   </div>
                 )}
 
-                {vision.mood && vision.mood.length > 0 && (
+                {/* Emotions / Mood */}
+                {((vision.emotions && vision.emotions.length > 0) || (vision.mood && vision.mood.length > 0)) && (
                   <div>
-                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Mood</h4>
+                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Mood & Emotion</h4>
                     <div className="flex flex-wrap gap-1">
-                      {vision.mood.map((m, i) => (
+                      {(vision.emotions || vision.mood || []).map((m, i) => (
                         <span key={i} className="px-1.5 py-0.5 bg-pink-900/30 border border-pink-700/50
-                          text-pink-400 rounded text-xs">
+                          text-pink-400 text-xs">
                           {m}
                         </span>
                       ))}
@@ -1061,13 +1088,29 @@ export function MetadataSidebar({
                   </div>
                 )}
 
-                {vision.objects && vision.objects.length > 0 && (
+                {/* Style Cues */}
+                {vision.styleCues && vision.styleCues.length > 0 && (
                   <div>
-                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Objects</h4>
+                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Style</h4>
                     <div className="flex flex-wrap gap-1">
-                      {vision.objects.map((o, i) => (
-                        <span key={i} className="px-1.5 py-0.5 bg-gray-800 border border-gray-700 
-                          rounded text-[10px] text-gray-400 font-mono">
+                      {vision.styleCues.map((s, i) => (
+                        <span key={i} className="px-1.5 py-0.5 bg-violet-900/30 border border-violet-700/50
+                          text-violet-400 text-xs">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Notable Objects */}
+                {((vision.notableObjects && vision.notableObjects.length > 0) || (vision.objects && vision.objects.length > 0)) && (
+                  <div>
+                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Objects Detected</h4>
+                    <div className="flex flex-wrap gap-1">
+                      {(vision.notableObjects || vision.objects || []).map((o, i) => (
+                        <span key={i} className="px-1.5 py-0.5 bg-steel-800 border border-steel-700/50 
+                          text-[10px] text-gray-300 font-mono">
                           {o}
                         </span>
                       ))}
@@ -1075,15 +1118,94 @@ export function MetadataSidebar({
                   </div>
                 )}
 
-                {vision.colors?.dominant && (
+                {/* Color Palette */}
+                {((vision.colorPalette && vision.colorPalette.length > 0) || vision.colors?.dominant) && (
                   <div>
-                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Colors</h4>
+                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Color Palette</h4>
                     <div className="flex flex-wrap gap-1">
-                      {vision.colors.dominant.map((c, i) => (
-                        <span key={i} className="px-1.5 py-0.5 bg-gray-800 border border-gray-700 
-                          rounded text-xs capitalize text-gray-300">
+                      {(vision.colorPalette || vision.colors?.dominant || []).map((c, i) => (
+                        <span key={i} className="px-1.5 py-0.5 bg-steel-800 border border-steel-700/50 
+                          text-xs capitalize text-gray-300">
                           {c}
                         </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Location Cues */}
+                {vision.locationCues && vision.locationCues.confidence !== 'none' && (
+                  <div>
+                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Location Cues</h4>
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2">
+                        {vision.locationCues.possibleType && (
+                          <span className="px-1.5 py-0.5 bg-teal-900/30 border border-teal-700/50 text-teal-400 text-xs">
+                            {vision.locationCues.possibleType}
+                          </span>
+                        )}
+                        <span className={`text-[9px] font-mono px-1 py-0.5 border ${
+                          vision.locationCues.confidence === 'high' ? 'bg-green-900/30 text-green-400 border-green-700/50' :
+                          vision.locationCues.confidence === 'medium' ? 'bg-amber-900/30 text-amber-400 border-amber-700/50' :
+                          'bg-steel-800 text-gray-500 border-steel-700/50'
+                        }`}>{vision.locationCues.confidence} conf</span>
+                      </div>
+                      {vision.locationCues.landmarks && vision.locationCues.landmarks.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          {vision.locationCues.landmarks.map((l, i) => (
+                            <span key={i} className="px-1.5 py-0.5 bg-teal-900/20 border border-teal-700/30 text-teal-300 text-[10px]">
+                              {l}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {vision.locationCues.hints && vision.locationCues.hints.length > 0 && (
+                        <div className="space-y-0.5">
+                          {vision.locationCues.hints.map((h, i) => (
+                            <p key={i} className="text-[11px] text-gray-400">• {h}</p>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Text Found */}
+                {((vision.textFound && vision.textFound.length > 0)) && (
+                  <div>
+                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Text Detected</h4>
+                    <div className="space-y-1">
+                      {vision.textFound.map((t, i) => (
+                        <div key={i} className="flex items-start gap-2 text-xs">
+                          <span className="px-1 py-0.5 bg-amber-900/30 border border-amber-700/50
+                            text-amber-400 text-[9px] font-mono shrink-0 uppercase">
+                            {t.type}
+                          </span>
+                          <span className="text-gray-300 font-mono">"{t.text}"</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Composition */}
+                {vision.composition && (
+                  <div>
+                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Composition</h4>
+                    <p className="text-xs text-gray-400">{vision.composition}</p>
+                  </div>
+                )}
+
+                {/* Quality Issues */}
+                {vision.qualityIssues && vision.qualityIssues.length > 0 && (
+                  <div>
+                    <h4 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1.5">Quality Notes</h4>
+                    <div className="space-y-0.5">
+                      {vision.qualityIssues.map((q, i) => (
+                        <div key={i} className="flex items-center gap-1.5 text-xs">
+                          <AlertTriangle className="w-3 h-3 text-amber-500 shrink-0" />
+                          <span className="text-amber-400/80">{q}</span>
+                        </div>
                       ))}
                     </div>
                   </div>

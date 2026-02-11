@@ -185,7 +185,7 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
         <div className="px-6 py-4 border-b border-steel-700/50 bg-steel-900/50">
           <div className="flex items-center gap-3">
             <Globe className="h-5 w-5 text-brand-400" />
-            <h2 className="text-lg font-semibold text-gray-900">WordPress Integration</h2>
+            <h2 className="text-lg font-semibold text-white">WordPress Integration</h2>
           </div>
         </div>
         <div className="p-6 flex items-center justify-center">
@@ -203,8 +203,8 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
           <div className="flex items-center gap-3">
             <Globe className="h-5 w-5 text-brand-400" />
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">WordPress Integration</h2>
-              <p className="text-sm text-gray-500">
+              <h2 className="text-lg font-semibold text-white">WordPress Integration</h2>
+              <p className="text-sm text-gray-400">
                 Automatically inject alt text into WordPress media library
               </p>
             </div>
@@ -212,13 +212,13 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
           {configured && (
             <div className="flex items-center gap-2">
               {config?.lastHealthStatus === true && (
-                <span className="flex items-center gap-1.5 text-xs font-medium text-green-700 bg-green-50 px-2.5 py-1 rounded-full">
+                <span className="flex items-center gap-1.5 text-xs font-medium text-green-400 bg-green-900/30 px-2.5 py-1 rounded-full border border-green-700/50">
                   <CheckCircle2 className="h-3.5 w-3.5" />
                   Connected
                 </span>
               )}
               {config?.lastHealthStatus === false && (
-                <span className="flex items-center gap-1.5 text-xs font-medium text-red-700 bg-red-50 px-2.5 py-1 rounded-full">
+                <span className="flex items-center gap-1.5 text-xs font-medium text-red-400 bg-red-900/30 px-2.5 py-1 rounded-full border border-red-700/50">
                   <XCircle className="h-3.5 w-3.5" />
                   Error
                 </span>
@@ -234,7 +234,7 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
           <div className="space-y-4">
             {/* Site URL */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-400 mb-1">
                 WordPress Site URL
               </label>
               <input
@@ -242,19 +242,19 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
                 value={siteUrl}
                 onChange={(e) => setSiteUrl(e.target.value)}
                 placeholder="https://your-site.com"
-                className="w-full px-3 py-2 border border-gray-300 rounded-none focus:ring-2 focus:ring-blue-500 focus:border-brand-500"
+                className="w-full px-3 py-2 border border-steel-700/50 bg-steel-900/50 text-gray-200 rounded-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
               />
             </div>
 
             {/* Auth Method */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-400 mb-1">
                 Authentication Method
               </label>
               <select
                 value={authMethod}
                 onChange={(e) => setAuthMethod(e.target.value as 'application_password' | 'basic_auth')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-none focus:ring-2 focus:ring-blue-500 focus:border-brand-500"
+                className="w-full px-3 py-2 border border-steel-700/50 bg-steel-900/50 text-gray-200 rounded-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
               >
                 <option value="application_password">Application Password (recommended)</option>
                 <option value="basic_auth">Basic Auth</option>
@@ -263,7 +263,7 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
 
             {/* Username */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-400 mb-1">
                 WordPress Username
               </label>
               <input
@@ -271,13 +271,13 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="admin"
-                className="w-full px-3 py-2 border border-gray-300 rounded-none focus:ring-2 focus:ring-blue-500 focus:border-brand-500"
+                className="w-full px-3 py-2 border border-steel-700/50 bg-steel-900/50 text-gray-200 rounded-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
               />
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-400 mb-1">
                 {authMethod === 'application_password' ? 'Application Password' : 'Password'}
               </label>
               <div className="relative">
@@ -286,7 +286,7 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={configured ? '••••••••••••' : 'xxxx xxxx xxxx xxxx xxxx xxxx'}
-                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-none focus:ring-2 focus:ring-blue-500 focus:border-brand-500"
+                  className="w-full px-3 py-2 pr-10 border border-steel-700/50 bg-steel-900/50 text-gray-200 rounded-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500"
                 />
                 <button
                   type="button"
@@ -325,7 +325,7 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
                       setAuthMethod(config.authMethod as 'application_password' | 'basic_auth');
                     }
                   }}
-                  className="px-4 py-2 text-gray-700 border border-gray-300 rounded-none hover:bg-steel-900/50 transition-colors"
+                  className="px-4 py-2 text-gray-300 border border-steel-700/50 rounded-none hover:bg-steel-800 transition-colors"
                 >
                   Cancel
                 </button>
@@ -340,7 +340,7 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
             {/* Connection Info */}
             <div className="flex items-center justify-between p-4 bg-steel-900/50 rounded-none">
               <div>
-                <p className="text-sm font-medium text-gray-900">{config?.siteUrl}</p>
+                <p className="text-sm font-medium text-white">{config?.siteUrl}</p>
                 <p className="text-xs text-gray-500 mt-0.5">
                   {config?.username} · {config?.authMethod === 'application_password' ? 'App Password' : 'Basic Auth'}
                 </p>
@@ -356,13 +356,13 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
                 </button>
                 <button
                   onClick={() => setEditing(true)}
-                  className="px-3 py-1.5 text-sm text-gray-700 border border-gray-300 rounded-none hover:bg-gray-100 transition-colors"
+                  className="px-3 py-1.5 text-sm text-gray-300 border border-steel-700/50 rounded-none hover:bg-steel-800 transition-colors"
                 >
                   Edit
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-none transition-colors"
+                  className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-900/30 rounded-none transition-colors"
                   title="Remove WordPress connection"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -373,7 +373,7 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
             {/* Auto-inject Toggle */}
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-900">Auto-inject alt text into WordPress</p>
+                <p className="text-sm font-medium text-white">Auto-inject alt text into WordPress</p>
                 <p className="text-xs text-gray-500 mt-0.5">
                   When enabled, alt text is automatically set when pushing media to WP
                 </p>
@@ -396,7 +396,7 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
 
             {/* Alt Text Strategy */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-sm font-medium text-gray-400 mb-3">
                 Alt Text Strategy
               </label>
               <div className="space-y-2">
@@ -417,10 +417,10 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <span className={`text-sm font-medium ${isSelected ? 'text-blue-900' : 'text-gray-900'}`}>
+                          <span className={`text-sm font-medium ${isSelected ? 'text-brand-400' : 'text-gray-200'}`}>
                             {option.label}
                           </span>
-                          <p className={`text-xs mt-0.5 ${isSelected ? 'text-blue-700' : 'text-gray-500'}`}>
+                          <p className={`text-xs mt-0.5 ${isSelected ? 'text-brand-500/70' : 'text-gray-500'}`}>
                             {option.description}
                           </p>
                         </div>
@@ -435,12 +435,12 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
             {/* Info */}
             <div className="flex items-start gap-3 p-4 bg-brand-900/20 border border-brand-700/50 rounded-none">
               <Info className="h-5 w-5 text-brand-400 mt-0.5 flex-shrink-0" />
-              <div className="text-sm text-blue-800">
-                <p className="font-medium">How it works</p>
-                <ul className="mt-1 space-y-1 list-disc list-inside text-blue-700 text-xs">
+              <div className="text-sm text-brand-300">
+                <p className="font-medium text-brand-400">How it works</p>
+                <ul className="mt-1 space-y-1 list-disc list-inside text-gray-400 text-xs">
                   <li>After ContextEmbed processes an image, generated alt text is stored</li>
                   <li>When you push media to WordPress, the alt text is automatically set via REST API</li>
-                  <li>The <code className="bg-blue-100 px-1 rounded">_wp_attachment_image_alt</code> field is updated</li>
+                  <li>The <code className="bg-brand-900/40 text-brand-400 px-1">_wp_attachment_image_alt</code> field is updated</li>
                   <li>Caption and description are also injected</li>
                 </ul>
               </div>
@@ -450,9 +450,9 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
 
         {/* Error display */}
         {config?.lastError && (
-          <div className="flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-none">
-            <XCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
-            <p className="text-xs text-red-700">{config.lastError}</p>
+          <div className="flex items-start gap-3 p-3 bg-red-900/20 border border-red-700/50 rounded-none">
+            <XCircle className="h-4 w-4 text-red-400 mt-0.5 flex-shrink-0" />
+            <p className="text-xs text-red-300">{config.lastError}</p>
           </div>
         )}
       </div>

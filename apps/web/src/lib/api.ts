@@ -297,6 +297,14 @@ export const exportsApi = {
       includeManifest?: boolean;
       zipOutput?: boolean;
     };
+    // Web Preview Pack options (v1)
+    webPack?: {
+      enabled: boolean;
+      includeCaption?: boolean;
+      includeCredit?: boolean;
+      maxEdge?: number;
+      quality?: number;
+    };
   }) =>
     fetchWithAuth('/exports/advanced', {
       token,

@@ -81,6 +81,14 @@ interface ExportOptions {
   zipOutput: boolean;
 }
 
+interface WebPackOptions {
+  enabled: boolean;
+  includeCaption: boolean;
+  includeCredit: boolean;
+  maxEdge: number;
+  quality: number;
+}
+
 interface ExportModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -126,6 +134,15 @@ export function ExportModal({
     includeManifest: false,
     zipOutput: true,
   });
+  
+  // Web Preview Pack options (v1)
+  const [webPack, setWebPack] = useState<WebPackOptions>({
+    enabled: false,
+    includeCaption: true,
+    includeCredit: true,
+    maxEdge: 1200,
+    quality: 82,
+  });
 
   // Reset when modal opens
   useEffect(() => {
@@ -135,6 +152,13 @@ export function ExportModal({
       setExportResult(null);
       setProgress(null);
       setExporting(false);
+      setWebPack({
+        enabled: false,
+        includeCaption: true,
+        includeCredit: true,
+        maxEdge: 1200,
+        quality: 82,
+      });
     }
   }, [isOpen]);
 
@@ -227,6 +251,8 @@ export function ExportModal({
         assetIds,
         preset: selectedPreset,
         options: selectedPreset === 'custom' ? options : undefined,
+        // Include Web Preview Pack options if enabled
+        webPack: webPack.enabled ? webPack : undefined,
       });
       
       // Connect to SSE for progress updates during processing
@@ -542,6 +568,60 @@ export function ExportModal({
                   </div>
                 </div>
               )}
+
+              {/* Web Preview Pack Section */}
+              <div className="mt-4 p-4 bg-gradient-to-r from-brand-900/20 to-purple-900/20 border border-brand-700/30 rounded-none">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={webPack.enabled}
+                    onChange={(e) => setWebPack(w => ({ ...w, enabled: e.target.checked }))}
+                    className="rounded border-gray-600 bg-gray-800 text-brand-500 focus:ring-brand-500"
+                  />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <Globe className="w-4 h-4 text-brand-400" />
+                      <span className="text-sm font-medium text-white">Generate Web Preview Pack</span>
+                      <span className="px-1.5 py-0.5 text-[10px] font-medium bg-brand-600/30 text-brand-300 rounded">
+                        WordPress-ready
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Creates styled thumbnails (1200px) with caption/credit overlays in a separate <code className="text-brand-400">web/</code> folder
+                    </p>
+                  </div>
+                </label>
+
+                {webPack.enabled && (
+                  <div className="mt-4 pl-7 space-y-3 border-t border-brand-700/20 pt-3">
+                    <div className="flex gap-6">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={webPack.includeCaption}
+                          onChange={(e) => setWebPack(w => ({ ...w, includeCaption: e.target.checked }))}
+                          className="rounded border-gray-600 bg-gray-800 text-brand-500 focus:ring-brand-500"
+                        />
+                        <span className="text-xs text-gray-300">Include caption overlay</span>
+                      </label>
+                      
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={webPack.includeCredit}
+                          onChange={(e) => setWebPack(w => ({ ...w, includeCredit: e.target.checked }))}
+                          className="rounded border-gray-600 bg-gray-800 text-brand-500 focus:ring-brand-500"
+                        />
+                        <span className="text-xs text-gray-300">Include credit line</span>
+                      </label>
+                    </div>
+                    
+                    <div className="text-[10px] text-gray-500">
+                      Caption drawn from headline/title • Credit from your profile settings
+                    </div>
+                  </div>
+                )}
+              </div>
             </>
           )}
         </div>

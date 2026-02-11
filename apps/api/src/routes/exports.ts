@@ -44,6 +44,12 @@ import {
   safeRmDir,
   checkExportLimits,
 } from '../services/export-lock';
+import {
+  generateWebVariant,
+  resolveCaption,
+  resolveCredit,
+  type WebVariantOptions,
+} from '../services/web-preview-generator';
 
 export const exportsRouter: IRouter = Router();
 
@@ -632,6 +638,15 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
       includeManifest: z.boolean().optional(),
       zipOutput: z.boolean().optional(),
     }).optional(),
+    // Web Preview Pack options (v1)
+    webPack: z.object({
+      enabled: z.boolean().default(false),
+      includeCaption: z.boolean().default(true),
+      includeCredit: z.boolean().default(true),
+      maxEdge: z.number().min(400).max(2400).default(1200),
+      quality: z.number().min(50).max(100).default(82),
+      style: z.enum(['clean_bar_v1']).default('clean_bar_v1'),
+    }).optional(),
   });
   
   const body = AdvancedExportSchema.parse(req.body);
@@ -847,6 +862,81 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
         });
         failCount++;
       }
+    }
+    
+    // ─────────────────────────────────────────────────────────────────────────
+    // Web Preview Pack v1: Generate styled thumbnails for web publishing
+    // ─────────────────────────────────────────────────────────────────────────
+    const webPackOptions = body.webPack;
+    if (webPackOptions?.enabled) {
+      emitProgress(exportRecord.id, {
+        stage: 'converting',
+        message: 'Generating Web Preview Pack...',
+      });
+      
+      const webFolder = path.join(exportFolder!, 'web');
+      await fs.promises.mkdir(webFolder, { recursive: true });
+      
+      // Prepare credit line from business context
+      const creditLine = resolveCredit({
+        creditTemplate: businessContext.credit,
+        businessName: businessContext.brand,
+        creatorName: businessContext.photographerName,
+      }, new Date().getFullYear());
+      
+      // Process each successfully exported file
+      const successfulFiles = exportedFiles.filter(f => f.success && f.outputPath);
+      
+      for (let i = 0; i < successfulFiles.length; i++) {
+        const file = successfulFiles[i]!;
+        const baseName = path.basename(file.outputPath, path.extname(file.outputPath));
+        const webOutputPath = path.join(webFolder, `${baseName}-web.jpg`);
+        
+        emitProgress(exportRecord.id, {
+          stage: 'converting',
+          message: `Web preview ${i + 1}/${successfulFiles.length}: ${file.originalFilename}`,
+        });
+        
+        try {
+          // Resolve caption from asset metadata
+          const asset = completedAssets.find(a => a?.id === file.assetId);
+          const metadataResult = await metadataResultRepository.findLatestByAsset(file.assetId);
+          const metadata = metadataResult?.result || {};
+          
+          const caption = webPackOptions.includeCaption
+            ? resolveCaption({
+                imageCaption: (metadata as any).headline || (metadata as any).description,
+                imageTitle: (metadata as any).title,
+                altText: (metadata as any).alt,
+                filename: asset?.originalFilename,
+              })
+            : undefined;
+          
+          await generateWebVariant(
+            file.outputPath,
+            webOutputPath,
+            {
+              maxEdge: webPackOptions.maxEdge ?? 1200,
+              quality: webPackOptions.quality ?? 82,
+              style: webPackOptions.style ?? 'clean_bar_v1',
+              includeCaption: webPackOptions.includeCaption ?? true,
+              includeCredit: webPackOptions.includeCredit ?? true,
+            },
+            {
+              caption,
+              credit: webPackOptions.includeCredit ? creditLine : undefined,
+            }
+          );
+          
+          // Track web variant
+          file.webVariantPath = webOutputPath;
+        } catch (err) {
+          // Log but don't fail export for web variant issues
+          console.error(`Web variant failed for ${file.originalFilename}:`, err);
+        }
+      }
+      
+      logMemory(`web-pack-done[${requestId}]`, { count: successfulFiles.length });
     }
     
     // Generate manifest if requested

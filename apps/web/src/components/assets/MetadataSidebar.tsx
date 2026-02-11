@@ -37,6 +37,7 @@ import {
   type OnboardingContext,
 } from './MetadataQuality';
 import { MetadataDiffView } from './MetadataDiffView';
+import { AltTextPreview } from './AltTextPreview';
 
 // ===========================================
 // Types
@@ -144,6 +145,7 @@ interface AssetData {
 
 interface MetadataSidebarProps {
   asset: AssetData | null;
+  projectId?: string;
   onboarding?: OnboardingContext;
   onClose: () => void;
   onApprove: (id: string) => void;
@@ -469,6 +471,7 @@ function MetadataHealth({ stats, assetStatus }: { stats: ValidationStats; assetS
 
 export function MetadataSidebar({
   asset,
+  projectId,
   onboarding,
   onClose,
   onApprove,
@@ -778,6 +781,17 @@ export function MetadataSidebar({
                     <Copy className="w-3 h-3" /> Copy
                   </button>
                 </CollapsibleSection>
+
+                {/* ALT TEXT ENGINE */}
+                {asset && projectId && (
+                  <div className="px-3 py-3 border-b border-gray-800">
+                    <AltTextPreview
+                      projectId={projectId}
+                      assetId={asset.id}
+                      existingAltText={(legacyMeta as any)?.altText || null}
+                    />
+                  </div>
+                )}
 
                 {/* ATTRIBUTION Section */}
                 <CollapsibleSection title="Attribution & Rights" icon={Shield}>

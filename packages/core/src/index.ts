@@ -5,12 +5,14 @@ export * from './types/pipeline';
 export * from './types/metadata';
 export * from './types/export';
 export * from './types/wordpress';
+export * from './types/alt-text';
 
 // Schemas (Zod validators)
 export * from './schemas/vision';
 export * from './schemas/metadata';
 export * from './schemas/onboarding';
 export * from './schemas/perfectMetadata';
+export * from './schemas/alt-text';
 
 // Interfaces (Provider abstractions)
 export * from './interfaces/vision-provider';

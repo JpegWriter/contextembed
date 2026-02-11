@@ -19,6 +19,7 @@ import { growthRouter } from './routes/growth';
 import { userProfileRouter } from './routes/user-profile';
 import { authorshipRouter } from './routes/authorship';
 import { wordpressRouter } from './routes/wordpress';
+import { altTextRouter } from './routes/alt-text';
 import iaRouter from './routes/ia';
 import copilotRouter from './routes/copilot';
 import { errorHandler } from './middleware/error-handler';
@@ -97,6 +98,7 @@ app.use('/exports', optionalAuthMiddleware, exportsRouter); // Optional auth for
 app.use('/growth', authMiddleware, growthRouter); // Growth image governance
 app.use('/authorship', authMiddleware, authorshipRouter); // Authorship Integrity Engine
 app.use('/wordpress', authMiddleware, wordpressRouter); // WordPress alt text injection
+app.use('/alt-text', authMiddleware, altTextRouter);    // Alt Text Engine
 app.use('/copilot', copilotRouter); // Copilot AI assistant (has own auth)
 
 // Admin routes (consider adding admin auth middleware)

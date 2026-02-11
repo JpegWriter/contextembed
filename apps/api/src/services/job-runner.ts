@@ -38,11 +38,13 @@ import {
   ExportGuard,
   CeEventType,
   ImageSignals,
+  AltTextInput,
 } from '@contextembed/core';
 import { 
   createVisionProvider, 
   createLLMProvider,
   getDefaultProviderConfig,
+  createAltTextGenerator,
 } from '@contextembed/providers';
 import { createExifToolWriter } from '@contextembed/metadata';
 import { uploadEmbeddedFile, isStorageAvailable } from './supabase-storage';
@@ -611,6 +613,57 @@ async function processFullPipeline(job: any): Promise<void> {
   
   await jobRepository.update(job.id, { progress: 70 });
   
+  // ─────────────────────────────────────────────
+  // Step 2b: Alt Text Engine (deterministic generation)
+  // ─────────────────────────────────────────────
+  try {
+    const altTextGenerator = createAltTextGenerator();
+    const altInput: AltTextInput = {
+      headline: synthesisOutput.metadata!.headline,
+      description: synthesisOutput.metadata!.description,
+      keywords: synthesisOutput.metadata!.keywords,
+      sceneType: (visionOutput.analysis.scene as any)?.type,
+      subjects: visionOutput.analysis.subjects?.map(
+        (s: { description: string }) => s.description,
+      ),
+      mood: Array.isArray((visionOutput.analysis as any).mood)
+        ? (visionOutput.analysis as any).mood[0]
+        : undefined,
+      brandName: (profile as any).confirmedContext?.brandName,
+      industry: (profile as any).confirmedContext?.industry,
+      userComment: asset.userComment || undefined,
+    };
+
+    const altResult = await altTextGenerator.generate(altInput, 'seo');
+
+    if (altResult.output) {
+      // Merge alt text output into the saved metadata result
+      const enrichedWithAlt = {
+        ...synthesisOutput.metadata!,
+        altTextShort: altResult.output.alt_text_short,
+        altTextLong: altResult.output.alt_text_accessibility,
+        altText: altResult.output, // Full structured alt text
+      };
+      synthesisOutput = { ...synthesisOutput, metadata: enrichedWithAlt as any };
+
+      // Update the stored metadata result with alt text
+      const latestMeta = await metadataResultRepository.findLatestByAsset(asset.id);
+      if (latestMeta) {
+        await metadataResultRepository.update(latestMeta.id, {
+          result: enrichedWithAlt as any,
+        });
+      }
+
+      console.log(
+        `🖊️ Alt text generated (mode=seo, fallback=${altResult.usedFallback}, ` +
+        `tokens=${altResult.tokensUsed}, ${altResult.durationMs}ms)`,
+      );
+    }
+  } catch (altErr) {
+    // Alt text generation is non-blocking — pipeline continues even if it fails
+    console.warn('⚠️ Alt text generation failed (non-blocking):', altErr);
+  }
+
   // ─────────────────────────────────────────────
   // Step 3: Authorship-Aware Metadata Embedding
   // ─────────────────────────────────────────────

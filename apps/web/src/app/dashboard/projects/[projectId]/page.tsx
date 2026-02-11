@@ -567,6 +567,7 @@ export default function ProjectPage() {
           />
           <MetadataSidebar
             asset={detailAsset}
+            projectId={projectId}
             onboarding={userProfile ? {
               brandName: userProfile.businessName,
               industry: userProfile.industry,

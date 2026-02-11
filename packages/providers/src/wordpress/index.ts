@@ -6,4 +6,5 @@
  */
 
 export { WordPressClient } from './client';
-export { buildWordPressPayload, extractMediaPayloadFromMetadata } from './payload-builder';
+export { buildWordPressPayload, extractMediaPayloadFromMetadata, updateWpMediaText } from './payload-builder';
+export type { UpdateWpMediaTextOpts } from './payload-builder';

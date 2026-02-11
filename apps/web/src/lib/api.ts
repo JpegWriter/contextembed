@@ -478,3 +478,43 @@ export const wordpressApi = {
       body: JSON.stringify({ wpMediaId }),
     }),
 };
+
+// Alt Text Engine
+export const altTextApi = {
+  /** Generate alt text for a processed asset (writes to DB) */
+  generate: (
+    token: string,
+    projectId: string,
+    assetId: string,
+    opts: { mode?: string; focusKeyphrase?: string } = {},
+  ) =>
+    fetchWithAuth(`/alt-text/${projectId}/generate/${assetId}`, {
+      token,
+      method: 'POST',
+      body: JSON.stringify(opts),
+    }),
+
+  /** Stateless preview — generate alt text from raw inputs (no DB write) */
+  preview: (
+    token: string,
+    projectId: string,
+    input: {
+      headline: string;
+      description: string;
+      keywords: string[];
+      sceneType?: string;
+      subjects?: string[];
+      mood?: string;
+      brandName?: string;
+      industry?: string;
+      userComment?: string;
+      focusKeyphrase?: string;
+      mode?: string;
+    },
+  ) =>
+    fetchWithAuth(`/alt-text/${projectId}/preview`, {
+      token,
+      method: 'POST',
+      body: JSON.stringify(input),
+    }),
+};

@@ -475,6 +475,10 @@ export const metadataResultRepository = {
   }): Promise<MetadataResult> {
     return prisma.metadataResult.create({ data });
   },
+
+  async update(id: string, data: { result?: JsonInput }): Promise<MetadataResult> {
+    return prisma.metadataResult.update({ where: { id }, data });
+  },
 };
 
 // ============================================

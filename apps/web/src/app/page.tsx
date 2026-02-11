@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Logo } from '@/components/Logo';
 import { 
   ArrowRight, 
   X,
@@ -17,10 +18,7 @@ export default function HomePage() {
       <header className="border-b border-gray-100 dark:border-gray-800">
         <div className="max-w-5xl mx-auto px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-slate-900 dark:bg-white rounded-lg flex items-center justify-center">
-              <span className="text-white dark:text-slate-900 font-bold text-sm">CE</span>
-            </div>
-            <span className="text-lg font-semibold text-slate-900 dark:text-white">ContextEmbed</span>
+            <Logo variant="full" size="md" dark={false} />
           </div>
           <div className="flex items-center gap-6">
             <Link

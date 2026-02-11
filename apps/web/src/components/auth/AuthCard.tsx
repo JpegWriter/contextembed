@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Sparkles } from 'lucide-react';
+import { Logo } from '@/components/Logo';
 
 interface AuthCardProps {
   children: React.ReactNode;
@@ -27,10 +27,7 @@ export function AuthCard({ children, title, subtitle, helperText }: AuthCardProp
           {/* Header Zone */}
           <div className="px-8 pt-8 pb-6 border-b border-gray-800/50">
             <Link href="/" className="inline-flex items-center gap-2 mb-6 group">
-              <div className="p-2 bg-cyan-500/10 rounded-lg group-hover:bg-cyan-500/20 transition-colors">
-                <Sparkles className="h-6 w-6 text-cyan-500" />
-              </div>
-              <span className="text-lg font-bold text-white">ContextEmbed</span>
+              <Logo variant="full" size="lg" dark />
             </Link>
             
             <h1 className="text-2xl font-bold text-white">

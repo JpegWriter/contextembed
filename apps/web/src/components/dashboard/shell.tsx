@@ -4,6 +4,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import type { User } from '@supabase/supabase-js';
 import { useSupabase } from '@/lib/supabase-provider';
+import { Logo } from '@/components/Logo';
 import {
   Sparkles,
   LayoutDashboard,
@@ -71,8 +72,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
         {/* Logo */}
         <div className="h-12 px-4 flex items-center border-b border-gray-800">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-cyan-400" />
-            <span className="text-sm font-bold text-white tracking-wide">ContextEmbed</span>
+            <Logo variant="full" size="sm" dark />
           </Link>
         </div>
 

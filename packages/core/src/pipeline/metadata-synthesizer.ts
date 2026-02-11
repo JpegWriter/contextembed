@@ -223,6 +223,117 @@ export class MetadataSynthesizer {
       licensorUrl: profile.rights.website || metadata.licensorUrl,
     };
   }
+
+  /**
+   * Apply location from the onboarding profile to metadata.
+   * Guarantees location fields are populated when the profile has location data
+   * and locationBehavior is 'strict' or 'infer'.
+   * Will NOT overwrite location fields already set by user context or LLM
+   * unless behavior is 'strict'.
+   */
+  applyLocationFromProfile(
+    metadata: SynthesizedMetadata,
+    profile: OnboardingProfile
+  ): SynthesizedMetadata {
+    const locationBehavior = profile.preferences?.locationBehavior || 'infer';
+
+    // If behavior is 'none', clear location data entirely
+    if (locationBehavior === 'none') {
+      return {
+        ...metadata,
+        city: null,
+        state: null,
+        country: null,
+        countryCode: null,
+        sublocation: null,
+      };
+    }
+
+    const profileLocation = profile.confirmedContext?.location;
+    if (!profileLocation) return metadata;
+
+    const hasCity = profileLocation.city;
+    const hasCountry = profileLocation.country;
+
+    if (!hasCity && !hasCountry) return metadata;
+
+    // In 'strict' mode, always override with profile location
+    // In 'infer' mode, only fill in blanks (don't overwrite LLM/user-context values)
+    const isStrict = locationBehavior === 'strict' || profileLocation.isStrict;
+
+    return {
+      ...metadata,
+      city: isStrict
+        ? (profileLocation.city || metadata.city)
+        : (metadata.city || profileLocation.city || null),
+      state: isStrict
+        ? (profileLocation.state || metadata.state)
+        : (metadata.state || profileLocation.state || null),
+      country: isStrict
+        ? (profileLocation.country || metadata.country)
+        : (metadata.country || profileLocation.country || null),
+      countryCode: isStrict
+        ? (profileLocation.countryCode || metadata.countryCode)
+        : (metadata.countryCode || profileLocation.countryCode || null),
+      // Sublocation: use studio name if not already set
+      sublocation: metadata.sublocation || (profile.rights.studioName
+        ? `${profile.rights.studioName} Studio`
+        : metadata.sublocation),
+    };
+  }
+
+  /**
+   * Apply default release statuses.
+   * For images with people detected (from vision analysis), default model
+   * release to 'not-released' (safer default). For studio/business images,
+   * default property release to 'not-applicable'.
+   * Never overwrites values already set by user or LLM.
+   */
+  applyReleasesDefaults(
+    metadata: SynthesizedMetadata,
+    hasPeople: boolean = false
+  ): SynthesizedMetadata {
+    const currentReleases = metadata.releases || {};
+    const currentModel = currentReleases.model || { status: 'unknown' as const };
+    const currentProperty = currentReleases.property || { status: 'not-applicable' as const };
+
+    return {
+      ...metadata,
+      releases: {
+        model: {
+          ...currentModel,
+          // If still 'unknown' and people are present, mark as 'not-released' (safe default)
+          status: currentModel.status === 'unknown' && hasPeople
+            ? 'not-released' as const
+            : currentModel.status === 'unknown' && !hasPeople
+            ? 'not-applicable' as const
+            : currentModel.status,
+          allowedUse: currentModel.allowedUse || ['portfolio', 'website'],
+        },
+        property: {
+          ...currentProperty,
+          status: currentProperty.status === 'unknown'
+            ? 'not-applicable' as const
+            : currentProperty.status,
+        },
+      },
+    };
+  }
+
+  /**
+   * Apply ALL profile enrichments in one call.
+   * Combines rights, location, and release defaults.
+   */
+  applyAllProfileEnrichments(
+    metadata: SynthesizedMetadata,
+    profile: OnboardingProfile,
+    hasPeople: boolean = false
+  ): SynthesizedMetadata {
+    let enriched = this.applyRightsInfo(metadata, profile);
+    enriched = this.applyLocationFromProfile(enriched, profile);
+    enriched = this.applyReleasesDefaults(enriched, hasPeople);
+    return enriched;
+  }
   
   /**
    * Interpolate copyright template with current year

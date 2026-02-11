@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Sparkles, Mail, Lock, ArrowRight, AlertTriangle, ExternalLink } from 'lucide-react';
+import { Mail, Lock, ArrowRight, AlertTriangle, ExternalLink } from 'lucide-react';
 import { useSupabase } from '@/lib/supabase-provider';
 import { AuthCard, AuthInput, AuthButton, AuthDivider } from '@/components/auth';
+import { Logo } from '@/components/Logo';
 import toast from 'react-hot-toast';
 
 export default function SignUpPage() {
@@ -104,8 +105,7 @@ export default function SignUpPage() {
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-2">
-              <Sparkles className="h-10 w-10 text-cyan-500" />
-              <span className="text-2xl font-bold text-white">ContextEmbed</span>
+              <Logo variant="full" size="lg" dark />
             </Link>
           </div>
 

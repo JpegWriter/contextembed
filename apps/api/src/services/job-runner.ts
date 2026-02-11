@@ -512,14 +512,18 @@ async function processFullPipeline(job: any): Promise<void> {
     throw new Error(synthesisOutput.error || 'Metadata synthesis failed');
   }
   
-  // Apply profile rights to guarantee attribution fields are populated
-  // This ensures creator, copyright, credit, source, usageTerms come from
-  // the user profile — not left to LLM discretion
-  const rightsEnrichedMetadata = metadataSynthesizer.applyRightsInfo(
+  // Apply ALL profile enrichments to guarantee attribution, location, and
+  // release fields are populated from the user profile — not left to LLM discretion
+  // Detect people from vision analysis for smart release defaults
+  const hasPeople = visionOutput.analysis.subjects?.some(
+    (s: { type: string }) => s.type === 'person'
+  ) ?? false;
+  const profileEnrichedMeta = metadataSynthesizer.applyAllProfileEnrichments(
     synthesisOutput.metadata,
-    profile as unknown as OnboardingProfile
+    profile as unknown as OnboardingProfile,
+    hasPeople
   );
-  synthesisOutput = { ...synthesisOutput, metadata: rightsEnrichedMetadata };
+  synthesisOutput = { ...synthesisOutput, metadata: profileEnrichedMeta };
   
   // Get latest vision result for linking
   const latestVisionResult = await visionResultRepository.findLatestByAsset(asset.id);
@@ -715,7 +719,7 @@ async function processMetadataSynthesis(job: any): Promise<void> {
     eventDate: project?.createdAt?.toISOString()?.split('T')[0],
   };
   
-  const synthesisOutput = await metadataSynthesizer.synthesize(
+  let synthesisOutput = await metadataSynthesizer.synthesize(
     latestVisionResult.result as unknown as VisionAnalysis,
     profile as unknown as OnboardingProfile,
     asset.userComment || undefined,
@@ -725,6 +729,17 @@ async function processMetadataSynthesis(job: any): Promise<void> {
   if (!synthesisOutput.success || !synthesisOutput.metadata) {
     throw new Error(synthesisOutput.error || 'Metadata synthesis failed');
   }
+
+  // Apply ALL profile enrichments (rights, location, releases)
+  const hasPeople = (latestVisionResult.result as unknown as VisionAnalysis).subjects?.some(
+    (s: { type: string }) => s.type === 'person'
+  ) ?? false;
+  const enrichedMetadata = metadataSynthesizer.applyAllProfileEnrichments(
+    synthesisOutput.metadata,
+    profile as unknown as OnboardingProfile,
+    hasPeople
+  );
+  synthesisOutput = { ...synthesisOutput, metadata: enrichedMetadata };
   
   await metadataResultRepository.create({
     assetId: asset.id,

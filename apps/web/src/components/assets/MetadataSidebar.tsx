@@ -83,8 +83,8 @@ interface PerfectMetadata {
   workflow?: {
     jobId?: string;
     instructions?: string;
-    modelReleaseStatus?: 'unknown' | 'present' | 'not_present';
-    propertyReleaseStatus?: 'unknown' | 'present' | 'not_present';
+    modelReleaseStatus?: 'unknown' | 'released' | 'not-released' | 'not-applicable';
+    propertyReleaseStatus?: 'unknown' | 'released' | 'not-released' | 'not-applicable';
   };
   audit?: {
     ceRunId?: string;
@@ -116,6 +116,10 @@ interface LegacyMetadataResult {
     eventId?: string;
     eventName?: string;
     eventDate?: string;
+  };
+  releases?: {
+    model?: { status: string; allowedUse?: string[] };
+    property?: { status: string };
   };
   confidence?: Record<string, number>;
   reasoning?: Record<string, string>;
@@ -161,6 +165,12 @@ interface ValidationStats {
   requiredTotal: number;
   keywordCount: number;
   locationSafe: boolean;
+  hasLocation: boolean;
+  hasHeadline: boolean;
+  hasDescription: boolean;
+  hasAltText: boolean;
+  hasCreator: boolean;
+  hasCopyright: boolean;
   allValid: boolean;
 }
 
@@ -405,13 +415,13 @@ function MetadataHealth({ stats }: { stats: ValidationStats }) {
   const percentage = Math.round((stats.requiredComplete / stats.requiredTotal) * 100);
   
   const checks = [
-    { label: 'Headline', ok: stats.requiredComplete >= 1 },
-    { label: 'Description', ok: stats.requiredComplete >= 2 },
-    { label: 'Alt Text', ok: stats.requiredComplete >= 3 },
+    { label: 'Headline', ok: stats.hasHeadline },
+    { label: 'Description', ok: stats.hasDescription },
+    { label: 'Alt Text', ok: stats.hasAltText },
     { label: `Keywords (${stats.keywordCount})`, ok: stats.keywordCount >= 8 },
-    { label: 'Creator', ok: stats.requiredComplete >= 5 },
-    { label: 'Copyright', ok: stats.requiredComplete >= 7 },
-    { label: 'Location', ok: stats.locationSafe },
+    { label: 'Creator', ok: stats.hasCreator },
+    { label: 'Copyright', ok: stats.hasCopyright },
+    { label: 'Location', ok: stats.hasLocation },
     { label: 'XMP Written', ok: stats.allValid },
     { label: 'IPTC Written', ok: stats.allValid },
     { label: 'Hash Final', ok: false },
@@ -501,8 +511,8 @@ export function MetadataSidebar({
       workflow: {
         jobId: asset.id,
         instructions: legacyMeta.eventAnchor?.eventName || undefined,
-        modelReleaseStatus: 'unknown',
-        propertyReleaseStatus: 'unknown',
+        modelReleaseStatus: (legacyMeta.releases?.model?.status as 'unknown' | 'released' | 'not-released' | 'not-applicable') || 'unknown',
+        propertyReleaseStatus: (legacyMeta.releases?.property?.status as 'unknown' | 'released' | 'not-released' | 'not-applicable') || 'unknown',
       },
       audit: {
         ceRunId: asset.id,
@@ -522,29 +532,37 @@ export function MetadataSidebar({
 
   // Calculate validation stats
   const validationStats: ValidationStats = useMemo(() => {
-    const requiredFields = [
-      metadata.descriptive?.headline,
-      metadata.descriptive?.description,
-      metadata.descriptive?.altText,
-      metadata.descriptive?.keywords?.length ? metadata.descriptive.keywords : null,
-      metadata.attribution?.creator,
-      metadata.attribution?.creditLine,
-      metadata.attribution?.copyrightNotice,
-      metadata.workflow?.jobId,
-    ];
-    
-    const complete = requiredFields.filter(f => f !== null && f !== undefined && f !== '').length;
+    const hasHeadline = !!(metadata.descriptive?.headline);
+    const hasDescription = !!(metadata.descriptive?.description);
+    const hasAltText = !!(metadata.descriptive?.altText);
+    const hasKeywords = !!(metadata.descriptive?.keywords?.length);
+    const hasCreator = !!(metadata.attribution?.creator);
+    const hasCreditLine = !!(metadata.attribution?.creditLine);
+    const hasCopyright = !!(metadata.attribution?.copyrightNotice);
+    const hasJobId = !!(metadata.workflow?.jobId);
+    const hasLocation = !!(metadata.location?.city || metadata.location?.country);
     const keywordCount = metadata.descriptive?.keywords?.length || 0;
     const locationMode = metadata.location?.locationMode;
-    const hasLocationData = !!(metadata.location?.city || metadata.location?.country);
-    const locationSafe = locationMode === 'none' ? !hasLocationData : true;
+    const locationSafe = locationMode === 'none' ? !hasLocation : true;
+
+    const requiredChecks = [
+      hasHeadline, hasDescription, hasAltText, hasKeywords,
+      hasCreator, hasCreditLine, hasCopyright, hasJobId,
+    ];
+    const complete = requiredChecks.filter(Boolean).length;
     
     return {
       requiredComplete: complete,
-      requiredTotal: requiredFields.length,
+      requiredTotal: requiredChecks.length,
       keywordCount,
       locationSafe,
-      allValid: complete === requiredFields.length && keywordCount >= 8 && locationSafe,
+      hasLocation,
+      hasHeadline,
+      hasDescription,
+      hasAltText,
+      hasCreator,
+      hasCopyright,
+      allValid: complete === requiredChecks.length && keywordCount >= 8 && (hasLocation || locationMode === 'none'),
     };
   }, [metadata]);
 

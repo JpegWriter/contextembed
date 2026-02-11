@@ -13,6 +13,8 @@ import {
   exportRepository,
   embedResultRepository,
   metadataResultRepository,
+  onboardingProfileRepository,
+  userProfileRepository,
 } from '@contextembed/db';
 import { 
   EXPORT_PRESETS,
@@ -538,6 +540,27 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
     throw createApiError('No completed assets to export', 400);
   }
   
+  // Fetch onboarding profile / user profile for business context in IPTC validation
+  const onboardingProfile = await onboardingProfileRepository.findByProjectId(projectId);
+  const userProfile = await userProfileRepository.findByUserId(userId);
+  const businessContext = {
+    brand: (onboardingProfile?.confirmedContext as any)?.brandName
+      || userProfile?.businessName || project.name,
+    photographerName: (onboardingProfile?.rights as any)?.creatorName
+      || userProfile?.creatorName || userProfile?.businessName || '',
+    credit: (onboardingProfile?.rights as any)?.creditTemplate
+      || userProfile?.creditTemplate || '',
+    city: (onboardingProfile?.confirmedContext as any)?.location?.city
+      || userProfile?.city || '',
+    country: (onboardingProfile?.confirmedContext as any)?.location?.country
+      || userProfile?.country || '',
+    copyrightTemplate: (onboardingProfile?.rights as any)?.copyrightTemplate
+      || userProfile?.copyrightTemplate || '',
+    usageTerms: (onboardingProfile?.rights as any)?.usageTermsTemplate
+      || userProfile?.usageTerms || 'All Rights Reserved. Contact for licensing.',
+    sessionType: project.name,
+  };
+
   // Create export record
   const exportRecord = await exportRepository.create({
     projectId,
@@ -623,6 +646,7 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
           metadata: metadata as any,
           options: exportOptions,
           sequence: i + 1,
+          businessContext,
         }, metadataWriter);
         
         if (result.success && result.file) {

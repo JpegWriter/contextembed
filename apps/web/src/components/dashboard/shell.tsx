@@ -14,6 +14,7 @@ import {
   UserCircle,
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import SupportDrawer from './SupportDrawer';
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -127,6 +128,9 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
       <main className="flex-1 overflow-auto bg-black">
         {children}
       </main>
+
+      {/* Support Operator Drawer */}
+      <SupportDrawer currentRoute={pathname} />
     </div>
   );
 }

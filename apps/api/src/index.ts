@@ -22,6 +22,7 @@ import { wordpressRouter } from './routes/wordpress';
 import { altTextRouter } from './routes/alt-text';
 import iaRouter from './routes/ia';
 import copilotRouter from './routes/copilot';
+import { operatorRouter } from './routes/operator';
 import { errorHandler } from './middleware/error-handler';
 import { authMiddleware, optionalAuthMiddleware } from './middleware/auth';
 import { startJobRunner, stopJobRunner } from './services/job-runner';
@@ -102,6 +103,7 @@ app.use('/wordpress', authMiddleware, wordpressRouter); // WordPress alt text in
 app.use('/alt-text', authMiddleware, altTextRouter);    // Alt Text Engine
 app.use('/copilot', copilotRouter); // Copilot AI assistant (has own auth)
 app.use('/survival', authMiddleware, survivalLabRouter); // Survival Lab - Metadata Study
+app.use('/operator', authMiddleware, operatorRouter); // CE Support Operator v1
 
 // Admin routes (consider adding admin auth middleware)
 app.use('/admin/ia', iaRouter);

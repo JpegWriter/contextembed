@@ -830,6 +830,44 @@ export const ceEventLogRepository = {
       take: limit,
     });
   },
+
+  /** Get recent events with optional event type filtering */
+  async findRecentByUser(userId: string, options?: {
+    limit?: number;
+    eventTypes?: string[];
+  }) {
+    const { limit = 50, eventTypes } = options ?? {};
+    return prisma.ceEventLog.findMany({
+      where: {
+        userId,
+        ...(eventTypes?.length ? { eventType: { in: eventTypes } } : {}),
+      },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
+  },
+
+  /** Get last error event for a user */
+  async findLastError(userId: string) {
+    return prisma.ceEventLog.findFirst({
+      where: {
+        userId,
+        eventType: { contains: 'error' },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  },
+
+  /** Get last action for a user (non-error events) */
+  async findLastAction(userId: string) {
+    return prisma.ceEventLog.findFirst({
+      where: {
+        userId,
+        NOT: { eventType: { contains: 'error' } },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  },
 };
 
 // ============================================
@@ -1144,6 +1182,50 @@ export const survivalComparisonRepository = {
         ...data,
         fieldsMissing: data.fieldsMissing ?? [],
       },
+    });
+  },
+};
+
+// ============================================
+// Support Operator — Ticket Repository
+// ============================================
+
+export const ceSupportTicketRepository = {
+  async create(data: {
+    userId: string;
+    category?: string;
+    userMessage: string;
+    matchedPlaybook?: string;
+    contextSnapshot?: any;
+    environment?: any;
+  }) {
+    return prisma.ceSupportTicket.create({
+      data: {
+        ...data,
+        contextSnapshot: data.contextSnapshot ?? {},
+        environment: data.environment ?? {},
+      },
+    });
+  },
+
+  async findByUser(userId: string, limit = 20) {
+    return prisma.ceSupportTicket.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
+  },
+
+  async findById(id: string) {
+    return prisma.ceSupportTicket.findUnique({
+      where: { id },
+    });
+  },
+
+  async updateStatus(id: string, status: string) {
+    return prisma.ceSupportTicket.update({
+      where: { id },
+      data: { status },
     });
   },
 };

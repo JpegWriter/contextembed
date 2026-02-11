@@ -106,6 +106,8 @@ interface LegacyMetadataResult {
   source?: string;
   usageTerms?: string;
   webStatement?: string;
+  altTextShort?: string;
+  altTextLong?: string;
   licensorName?: string;
   licensorEmail?: string;
   licensorUrl?: string;
@@ -411,21 +413,23 @@ function KeywordsList({ keywords, validation }: { keywords?: string[]; validatio
 // Health Summary
 // ===========================================
 
-function MetadataHealth({ stats }: { stats: ValidationStats }) {
-  const percentage = Math.round((stats.requiredComplete / stats.requiredTotal) * 100);
+function MetadataHealth({ stats, assetStatus }: { stats: ValidationStats; assetStatus?: string }) {
+  const pipelineRan = assetStatus === 'completed' || assetStatus === 'approved';
   
   const checks = [
     { label: 'Headline', ok: stats.hasHeadline },
     { label: 'Description', ok: stats.hasDescription },
     { label: 'Alt Text', ok: stats.hasAltText },
-    { label: `Keywords (${stats.keywordCount})`, ok: stats.keywordCount >= 8 },
+    { label: `Keywords (${stats.keywordCount})`, ok: stats.keywordCount >= 5 },
     { label: 'Creator', ok: stats.hasCreator },
     { label: 'Copyright', ok: stats.hasCopyright },
     { label: 'Location', ok: stats.hasLocation },
-    { label: 'XMP Written', ok: stats.allValid },
-    { label: 'IPTC Written', ok: stats.allValid },
-    { label: 'Hash Final', ok: false },
+    { label: 'XMP Written', ok: pipelineRan },
+    { label: 'IPTC Written', ok: pipelineRan },
+    { label: 'Hash Final', ok: pipelineRan },
   ];
+  
+  const percentage = Math.round((checks.filter(c => c.ok).length / checks.length) * 100);
   
   return (
     <div className="mb-3 p-2 bg-gray-800 border border-gray-700 rounded">
@@ -491,7 +495,7 @@ export function MetadataSidebar({
       descriptive: {
         headline: legacyMeta.headline || legacyMeta.title,
         description: legacyMeta.description,
-        altText: legacyMeta.description?.slice(0, 160),
+        altText: legacyMeta.altTextShort || legacyMeta.description?.slice(0, 160),
         keywords: legacyMeta.keywords,
       },
       attribution: {
@@ -551,6 +555,11 @@ export function MetadataSidebar({
     ];
     const complete = requiredChecks.filter(Boolean).length;
     
+    // Core validity: descriptive fields + attribution must be present
+    // Location is tracked but not a blocker for committing
+    const coreValid = hasHeadline && hasDescription && hasAltText && hasKeywords
+      && keywordCount >= 5 && hasCreator && hasCopyright;
+    
     return {
       requiredComplete: complete,
       requiredTotal: requiredChecks.length,
@@ -562,7 +571,7 @@ export function MetadataSidebar({
       hasAltText,
       hasCreator,
       hasCopyright,
-      allValid: complete === requiredChecks.length && keywordCount >= 8 && (hasLocation || locationMode === 'none'),
+      allValid: coreValid,
     };
   }, [metadata]);
 
@@ -714,7 +723,7 @@ export function MetadataSidebar({
                 )}
 
                 {/* Health Summary */}
-                <MetadataHealth stats={validationStats} />
+                <MetadataHealth stats={validationStats} assetStatus={asset.status} />
 
                 {/* Copy All Button */}
                 <button

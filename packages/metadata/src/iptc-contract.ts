@@ -35,6 +35,48 @@ export const PAGE_ROLES = [
 export type PageRole = typeof PAGE_ROLES[number];
 
 // =============================================================================
+// GOVERNANCE ATTESTATION (NEW - v2.2 portable proof)
+// =============================================================================
+
+export const GOVERNANCE_STATUSES = [
+  'approved',
+  'blocked', 
+  'warning',
+  'pending',
+] as const;
+
+export type GovernanceStatus = typeof GOVERNANCE_STATUSES[number];
+
+export const GOVERNANCE_POLICIES = [
+  'deny_ai_proof',  // Strict: Block AI for proof roles
+  'conditional',    // Default: AI proof requires review
+  'allow',          // Permissive: All content allowed
+] as const;
+
+export type GovernancePolicy = typeof GOVERNANCE_POLICIES[number];
+
+/**
+ * Governance Attestation
+ * 
+ * Portable proof of AI detection + governance decision.
+ * Written to XMP namespace and manifest for third-party verification.
+ */
+export interface GovernanceAttestation {
+  // AI detection result
+  aiGenerated: boolean | null;           // true/false/null (unknown)
+  aiConfidence?: number | null;          // 0..1 confidence score
+  
+  // Governance decision
+  status: GovernanceStatus;              // approved/blocked/warning/pending
+  policy: GovernancePolicy;              // deny_ai_proof/conditional/allow
+  reason?: string | null;                // Human-readable reason
+  
+  // Audit trail
+  checkedAt: string;                     // ISO timestamp
+  decisionRef?: string | null;           // Short ref/hash/id for audit lookup
+}
+
+// =============================================================================
 // BUSINESS IDENTITY CONTRACT (NEW - proof-first)
 // =============================================================================
 
@@ -245,6 +287,9 @@ export interface XMPContextEmbedContract {
   
   // --- Metadata Version ---
   metadataVersion: string;
+  
+  // --- Governance Attestation (NEW v2.2 - portable proof) ---
+  governance?: GovernanceAttestation;
 }
 
 // =============================================================================

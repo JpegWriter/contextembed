@@ -28,6 +28,21 @@ import {
 // MANIFEST TYPES
 // =============================================================================
 
+/**
+ * Governance Attestation in Manifest
+ * Portable proof of AI detection + governance decision.
+ * Survives even when platforms strip XMP metadata.
+ */
+export interface ManifestGovernanceAttestation {
+  aiGenerated: boolean | null;
+  aiConfidence: number | null;
+  status: string | null;
+  policy: string | null;
+  reason: string | null;
+  checkedAt: string | null;
+  decisionRef: string | null;
+}
+
 export interface ManifestAsset {
   // File identification
   fileName: string;
@@ -47,6 +62,9 @@ export interface ManifestAsset {
   // Full metadata contract (portable truth)
   iptc: IPTCCoreContract;
   xmpContextEmbed: Omit<XMPContextEmbedContract, 'checksum'>;
+  
+  // Governance attestation (NEW v2.2 - portable proof)
+  governanceAttestation: ManifestGovernanceAttestation | null;
   
   // Health scoring
   healthScore: number;
@@ -96,6 +114,31 @@ export async function calculateFileChecksum(filePath: string): Promise<string> {
 
 export function calculateStringChecksum(content: string): string {
   return crypto.createHash('sha256').update(content).digest('hex');
+}
+
+// =============================================================================
+// GOVERNANCE NORMALIZATION (NEW v2.2)
+// =============================================================================
+
+/**
+ * Normalize governance attestation from contract for manifest inclusion.
+ * Returns null if no governance data present (for backwards compatibility).
+ */
+function normalizeGovernanceForManifest(contract: MetadataContract): ManifestGovernanceAttestation | null {
+  const gov = contract?.xmpContextEmbed?.governance;
+  if (!gov) return null;
+  
+  return {
+    aiGenerated: typeof gov.aiGenerated === 'boolean' ? gov.aiGenerated : null,
+    aiConfidence: typeof gov.aiConfidence === 'number' 
+      ? Math.max(0, Math.min(1, gov.aiConfidence)) 
+      : null,
+    status: gov.status ?? null,
+    policy: gov.policy ?? null,
+    reason: gov.reason ?? null,
+    checkedAt: gov.checkedAt ?? null,
+    decisionRef: gov.decisionRef ?? null,
+  };
 }
 
 // =============================================================================
@@ -291,6 +334,9 @@ export async function generateManifest(options: GenerateManifestOptions): Promis
       case EMBED_TIERS.INCOMPLETE: tierCounts.incomplete++; break;
     }
     
+    // Extract governance attestation (NEW v2.2 - portable proof)
+    const governanceAttestation = normalizeGovernanceForManifest(asset.contract);
+    
     const manifestAsset: ManifestAsset = {
       fileName: path.basename(asset.filePath),
       originalFileName: asset.originalFileName,
@@ -304,6 +350,7 @@ export async function generateManifest(options: GenerateManifestOptions): Promis
       xmpContextEmbed: {
         ...asset.contract.xmpContextEmbed,
       },
+      governanceAttestation, // NEW v2.2
       healthScore: healthReport.score,
       healthStatus: healthReport.status,
       missingFields: healthReport.missingFields,

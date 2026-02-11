@@ -133,6 +133,15 @@ export const CONTEXTEMBED_XMP_CONFIG = `
     
     # Embed Tier
     EmbedTier => { },
+    
+    # Governance Attestation (NEW v2.2 - portable proof)
+    AIGenerated => { },
+    AIConfidence => { },
+    GovernanceStatus => { },
+    GovernancePolicy => { },
+    GovernanceReason => { },
+    GovernanceCheckedAt => { },
+    GovernanceDecisionRef => { },
 );
 `;
 
@@ -257,6 +266,36 @@ export async function writeAuthoritativeMetadata(
 // =============================================================================
 // TAG BUILDER
 // =============================================================================
+
+// --- Governance Helper Functions ---
+
+/**
+ * Convert boolean/null to XMP-safe string
+ */
+function governanceBoolToString(value: boolean | null | undefined): 'true' | 'false' | 'unknown' {
+  if (value === true) return 'true';
+  if (value === false) return 'false';
+  return 'unknown';
+}
+
+/**
+ * Clamp confidence to 0.00-1.00 string format
+ */
+function governanceClampConfidence(n: number | null | undefined): string | null {
+  if (typeof n !== 'number' || Number.isNaN(n)) return null;
+  const clamped = Math.max(0, Math.min(1, n));
+  return clamped.toFixed(2);
+}
+
+/**
+ * Normalize timestamp to ISO format
+ */
+function governanceIsoTimestamp(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toISOString();
+}
 
 /**
  * Build ExifTool tags from metadata contract
@@ -475,6 +514,38 @@ function buildExifToolTags(contract: MetadataContract): Record<string, unknown> 
     // --- Embed Tier (calculated) ---
     const embedTier = calculateEmbedTier(iptc, xmpContextEmbed);
     tags['XMP-contextembed:EmbedTier'] = embedTier;
+    
+    // --- Governance Attestation (NEW v2.2 - portable proof) ---
+    // Makes governance decisions inspectable in the exported file
+    const gov = xmpContextEmbed.governance;
+    if (gov) {
+      // AI detection result
+      tags['XMP-contextembed:AIGenerated'] = governanceBoolToString(gov.aiGenerated);
+      
+      const conf = governanceClampConfidence(gov.aiConfidence);
+      if (conf !== null) {
+        tags['XMP-contextembed:AIConfidence'] = conf;
+      }
+      
+      // Governance decision
+      tags['XMP-contextembed:GovernanceStatus'] = gov.status;
+      tags['XMP-contextembed:GovernancePolicy'] = gov.policy;
+      
+      if (gov.reason) {
+        // Keep short to avoid bloat
+        tags['XMP-contextembed:GovernanceReason'] = String(gov.reason).slice(0, 280);
+      }
+      
+      // Audit trail
+      const checkedAt = governanceIsoTimestamp(gov.checkedAt);
+      if (checkedAt) {
+        tags['XMP-contextembed:GovernanceCheckedAt'] = checkedAt;
+      }
+      
+      if (gov.decisionRef) {
+        tags['XMP-contextembed:GovernanceDecisionRef'] = String(gov.decisionRef).slice(0, 80);
+      }
+    }
   }
   
   return tags;
@@ -614,6 +685,17 @@ export interface MetadataToContractOptions {
   copyrightTemplate?: string;
   usageTerms?: string;
   sessionType?: string;
+  
+  // Governance attestation (NEW v2.2)
+  governance?: {
+    aiGenerated?: boolean | null;
+    aiConfidence?: number | null;
+    status?: 'approved' | 'blocked' | 'warning' | 'pending';
+    policy?: 'deny_ai_proof' | 'conditional' | 'allow';
+    reason?: string | null;
+    checkedAt?: string | null;
+    decisionRef?: string | null;
+  };
 }
 
 /**
@@ -717,6 +799,17 @@ export function toMetadataContract(
     
     // Metadata Version
     metadataVersion: '2.1',
+    
+    // Governance Attestation (NEW v2.2 - portable proof)
+    governance: options.governance ? {
+      aiGenerated: options.governance.aiGenerated ?? null,
+      aiConfidence: options.governance.aiConfidence ?? null,
+      status: options.governance.status || 'approved',
+      policy: options.governance.policy || 'conditional',
+      reason: options.governance.reason ?? null,
+      checkedAt: options.governance.checkedAt || new Date().toISOString(),
+      decisionRef: options.governance.decisionRef ?? null,
+    } : undefined,
   };
   
   return { iptc, xmpContextEmbed };

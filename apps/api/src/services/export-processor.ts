@@ -41,6 +41,16 @@ export interface ProcessFileRequest {
     copyrightTemplate?: string;
     usageTerms?: string;
     sessionType?: string;
+    // Governance attestation (NEW v2.2)
+    governance?: {
+      aiGenerated?: boolean | null;
+      aiConfidence?: number | null;
+      status?: 'approved' | 'blocked' | 'warning' | 'pending';
+      policy?: 'deny_ai_proof' | 'conditional' | 'allow';
+      reason?: string | null;
+      checkedAt?: string | null;
+      decisionRef?: string | null;
+    };
   };
   /** Skip IPTC validation (not recommended) */
   skipValidation?: boolean;

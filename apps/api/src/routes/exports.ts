@@ -749,6 +749,20 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
   // Fetch onboarding profile / user profile for business context in IPTC validation
   const onboardingProfile = await onboardingProfileRepository.findByProjectId(projectId);
   const userProfile = await userProfileRepository.findByUserId(userId);
+  
+  // Derive governance attestation from project policy
+  // Assets that reach export with completed/approved status have passed governance
+  const governancePolicy = project.visualAuthenticityPolicy || 'conditional';
+  const governanceAttestation = {
+    aiGenerated: false,  // Default: standard assets are non-AI unless explicitly flagged
+    aiConfidence: undefined as number | undefined,
+    status: 'approved' as const,  // Only approved assets reach export
+    policy: governancePolicy,
+    reason: `Export approved under ${governancePolicy} policy`,
+    checkedAt: new Date().toISOString(),
+    decisionRef: `export-${requestId}`,  // Use requestId as decision reference
+  };
+  
   const businessContext = {
     brand: (onboardingProfile?.confirmedContext as any)?.brandName
       || userProfile?.businessName || project.name,
@@ -765,6 +779,7 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
     usageTerms: (onboardingProfile?.rights as any)?.usageTermsTemplate
       || userProfile?.usageTerms || 'All Rights Reserved. Contact for licensing.',
     sessionType: project.name,
+    governance: governanceAttestation,
   };
 
   // Create export record

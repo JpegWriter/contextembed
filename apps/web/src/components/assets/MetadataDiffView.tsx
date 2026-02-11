@@ -126,7 +126,7 @@ export function MetadataDiffView({
             Before / After
           </span>
           {changedFields.length > 0 && (
-            <span className="px-1.5 py-0.5 bg-cyan-900/40 text-cyan-400 text-[10px] font-mono rounded border border-cyan-700/50">
+            <span className="px-1.5 py-0.5 bg-brand-900/40 text-brand-400 text-[10px] font-mono rounded border border-brand-700/50">
               {addedCount > 0 && `+${addedCount}`}
               {addedCount > 0 && modifiedCount > 0 && ' / '}
               {modifiedCount > 0 && `~${modifiedCount}`}
@@ -201,7 +201,7 @@ export function MetadataDiffView({
             </div>
             <div>
               <p className="text-[9px] text-gray-600 uppercase mb-1">After</p>
-              <pre className="p-2 bg-gray-900 rounded text-[9px] text-cyan-300 overflow-x-auto max-h-40">
+              <pre className="p-2 bg-gray-900 rounded text-[9px] text-brand-300 overflow-x-auto max-h-40">
                 {JSON.stringify(generated || {}, null, 2)}
               </pre>
             </div>
@@ -315,9 +315,9 @@ function KeywordsDiff({ before, after }: { before: string[]; after: string[] }) 
   const kept = after.filter(k => beforeSet.has(k.toLowerCase()));
 
   return (
-    <div className="p-2 rounded border border-cyan-700/50 bg-cyan-900/10">
+    <div className="p-2 rounded border border-brand-700/50 bg-brand-900/10">
       <div className="flex items-center gap-2 mb-2">
-        <ArrowRight className="w-3 h-3 text-cyan-500" />
+        <ArrowRight className="w-3 h-3 text-brand-500" />
         <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">
           Keywords
         </span>

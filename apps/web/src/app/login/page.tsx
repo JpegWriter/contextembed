@@ -118,7 +118,7 @@ export default function LoginPage() {
             </Link>
           </div>
 
-          <div className="bg-amber-900/20 border border-amber-800/50 rounded-xl p-6">
+          <div className="bg-amber-900/20 border border-amber-800/50 rounded-none p-6">
             <div className="flex items-start gap-3">
               <AlertTriangle className="h-6 w-6 text-amber-400 flex-shrink-0 mt-0.5" />
               <div>

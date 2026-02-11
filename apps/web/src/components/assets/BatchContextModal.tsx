@@ -98,13 +98,13 @@ export function BatchContextModal({
       />
       
       {/* Modal */}
-      <div className="relative bg-gray-900 rounded-2xl shadow-2xl 
+      <div className="relative bg-gray-900 rounded-none shadow-2xl 
         w-full max-w-lg mx-4 overflow-hidden border border-gray-700">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b 
           border-gray-700">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-amber-900/30 rounded-lg">
+            <div className="p-2 bg-amber-900/30 rounded-none">
               <MessageSquarePlus className="w-5 h-5 text-amber-400" />
             </div>
             <div>
@@ -116,7 +116,7 @@ export function BatchContextModal({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white"
+            className="p-2 hover:bg-gray-800 rounded-none text-gray-400 hover:text-white"
           >
             <X className="w-5 h-5" />
           </button>
@@ -137,15 +137,15 @@ export function BatchContextModal({
               <button
                 onClick={() => setShowSituationalDropdown(!showSituationalDropdown)}
                 className={`w-full flex items-center justify-between px-3 py-2.5 
-                  rounded-lg border text-left transition-colors
+                  rounded-none border text-left transition-colors
                   ${situationalLock !== 'auto' 
-                    ? 'bg-cyan-900/20 border-cyan-700/50 text-cyan-300' 
+                    ? 'bg-brand-900/20 border-brand-700/50 text-brand-300' 
                     : 'bg-gray-800 border-gray-600 text-gray-300'
                   }`}
               >
                 <div className="flex items-center gap-2">
                   {situationalLock !== 'auto' && (
-                    <Lock className="w-4 h-4 text-cyan-400" />
+                    <Lock className="w-4 h-4 text-brand-400" />
                   )}
                   <div>
                     <span className="text-sm font-medium">{selectedOption?.label}</span>
@@ -159,7 +159,7 @@ export function BatchContextModal({
               
               {showSituationalDropdown && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-gray-800 
-                  border border-gray-600 rounded-lg shadow-lg z-10 
+                  border border-gray-600 rounded-none shadow-lg z-10 
                   max-h-64 overflow-y-auto">
                   {SITUATIONAL_OPTIONS.map((option) => (
                     <button
@@ -170,18 +170,18 @@ export function BatchContextModal({
                       }}
                       className={`w-full flex items-center gap-3 px-3 py-2 text-left 
                         hover:bg-gray-700 transition-colors
-                        ${situationalLock === option.value ? 'bg-cyan-900/20' : ''}`}
+                        ${situationalLock === option.value ? 'bg-brand-900/20' : ''}`}
                     >
                       <div className="flex-1">
                         <span className={`text-sm font-medium text-gray-200 ${
-                          situationalLock === option.value ? 'text-cyan-400' : ''
+                          situationalLock === option.value ? 'text-brand-400' : ''
                         }`}>
                           {option.label}
                         </span>
                         <p className="text-xs text-gray-500">{option.description}</p>
                       </div>
                       {situationalLock === option.value && (
-                        <Lock className="w-4 h-4 text-cyan-500" />
+                        <Lock className="w-4 h-4 text-brand-500" />
                       )}
                     </button>
                   ))}
@@ -222,8 +222,8 @@ export function BatchContextModal({
 
 Example: Wedding reception at The Grand Hotel Brighton, June 15th 2025. Bride: Sarah, Groom: James. Guests enjoying dinner and dancing."
               className="w-full mt-2 px-4 py-3 border border-gray-600 
-                rounded-xl text-sm bg-gray-800 text-white resize-none
-                focus:ring-2 focus:ring-cyan-500 focus:border-transparent
+                rounded-none text-sm bg-gray-800 text-white resize-none
+                focus:ring-2 focus:ring-brand-500 focus:border-transparent
                 placeholder:text-gray-500"
               rows={5}
             />
@@ -239,7 +239,7 @@ Example: Wedding reception at The Grand Hotel Brighton, June 15th 2025. Bride: S
           <button
             onClick={onClose}
             className="flex-1 py-2.5 border border-gray-600 text-gray-300
-              rounded-lg font-medium hover:bg-gray-700 hover:text-white
+              rounded-none font-medium hover:bg-gray-700 hover:text-white
               transition-colors"
           >
             Cancel
@@ -247,9 +247,9 @@ Example: Wedding reception at The Grand Hotel Brighton, June 15th 2025. Bride: S
           <button
             onClick={handleApply}
             disabled={(!context.trim() && situationalLock === 'auto') || applying}
-            className="flex-1 py-2.5 bg-gradient-to-r from-cyan-600 to-teal-600 text-white rounded-lg font-medium
-              hover:from-cyan-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed
-              flex items-center justify-center gap-2 transition-colors shadow-lg shadow-cyan-900/30"
+            className="flex-1 py-2.5 bg-gradient-to-r from-brand-600 to-teal-600 text-white rounded-none font-medium
+              hover:from-brand-500 hover:to-teal-500 disabled:opacity-50 disabled:cursor-not-allowed
+              flex items-center justify-center gap-2 transition-colors shadow-lg shadow-brand-900/30"
           >
             {applying ? (
               <>

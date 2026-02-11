@@ -393,7 +393,7 @@ function OnboardingContent() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
+        <Loader2 className="h-8 w-8 animate-spin text-brand-400" />
       </div>
     );
   }
@@ -416,7 +416,7 @@ function OnboardingContent() {
                 disabled={i > currentStep}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition-colors whitespace-nowrap ${
                   i === currentStep
-                    ? 'bg-cyan-600 text-white'
+                    ? 'bg-brand-600 text-white'
                     : i < currentStep
                     ? 'bg-emerald-900/50 text-emerald-400 border border-emerald-700/50'
                     : 'bg-gray-800 text-gray-500 border border-gray-700'
@@ -448,12 +448,12 @@ function OnboardingContent() {
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
                     placeholder="https://yourwebsite.com"
-                    className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-white placeholder:text-gray-600 focus:border-cyan-600 focus:outline-none"
+                    className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-white placeholder:text-gray-600 focus:border-brand-600 focus:outline-none"
                   />
                   <button
                     onClick={handleAuditUrl}
                     disabled={!url || auditing}
-                    className="px-4 py-2 bg-cyan-600 text-white text-sm font-medium rounded hover:bg-cyan-500 disabled:opacity-50 flex items-center gap-2"
+                    className="px-4 py-2 bg-brand-600 text-white text-sm font-medium rounded hover:bg-brand-500 disabled:opacity-50 flex items-center gap-2"
                   >
                     {auditing ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Analyze'}
                   </button>
@@ -474,7 +474,7 @@ function OnboardingContent() {
               <div className="flex justify-end">
                 <button
                   onClick={() => setCurrentStep(1)}
-                  className="flex items-center gap-2 px-4 py-2 bg-cyan-600 text-white text-sm font-medium rounded hover:bg-cyan-500"
+                  className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-sm font-medium rounded hover:bg-brand-500"
                 >
                   Next <ArrowRight className="h-4 w-4" />
                 </button>
@@ -599,7 +599,7 @@ function OnboardingContent() {
                 <button
                   onClick={handleSaveContext}
                   disabled={!context.brandName || saving}
-                  className="flex items-center gap-2 px-4 py-2 bg-cyan-600 text-white text-sm font-medium rounded hover:bg-cyan-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-sm font-medium rounded hover:bg-brand-500 disabled:opacity-50"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Next <ArrowRight className="h-4 w-4" /></>}
                 </button>
@@ -611,7 +611,7 @@ function OnboardingContent() {
           {currentStep === 2 && (
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <Award className="w-5 h-5 text-cyan-400" />
+                <Award className="w-5 h-5 text-brand-400" />
                 <h2 className="text-base font-semibold text-white">Authority & Expertise</h2>
               </div>
               <p className="text-xs text-gray-500 -mt-2">
@@ -694,7 +694,7 @@ function OnboardingContent() {
                         value={authority.pricePoint}
                         onChange={(e) => setAuthority(a => ({ ...a, pricePoint: e.target.value }))}
                         onFocus={() => handleFocus('pricePoint', 'authority')}
-                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 focus:border-cyan-600 focus:outline-none"
+                        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 focus:border-brand-600 focus:outline-none"
                       >
                         <option value="">Select...</option>
                         <option value="budget">Budget-friendly</option>
@@ -753,7 +753,7 @@ function OnboardingContent() {
                 <button
                   onClick={handleSaveAuthority}
                   disabled={saving}
-                  className="flex items-center gap-2 px-4 py-2 bg-cyan-600 text-white text-sm font-medium rounded hover:bg-cyan-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-sm font-medium rounded hover:bg-brand-500 disabled:opacity-50"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Next <ArrowRight className="h-4 w-4" /></>}
                 </button>
@@ -843,7 +843,7 @@ function OnboardingContent() {
                 <button
                   onClick={handleSaveRights}
                   disabled={!rights.creatorName || saving}
-                  className="flex items-center gap-2 px-4 py-2 bg-cyan-600 text-white text-sm font-medium rounded hover:bg-cyan-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-sm font-medium rounded hover:bg-brand-500 disabled:opacity-50"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Next <ArrowRight className="h-4 w-4" /></>}
                 </button>
@@ -864,7 +864,7 @@ function OnboardingContent() {
                   <select
                     value={preferences.keywordStyle}
                     onChange={(e) => setPreferences(p => ({ ...p, keywordStyle: e.target.value as any }))}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 focus:border-cyan-600 focus:outline-none"
+                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 focus:border-brand-600 focus:outline-none"
                   >
                     <option value="short">Short (single words)</option>
                     <option value="long">Long (multi-word phrases)</option>
@@ -878,7 +878,7 @@ function OnboardingContent() {
                   <select
                     value={preferences.locationBehavior}
                     onChange={(e) => setPreferences(p => ({ ...p, locationBehavior: e.target.value as any }))}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 focus:border-cyan-600 focus:outline-none"
+                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 focus:border-brand-600 focus:outline-none"
                   >
                     <option value="strict">Strict (only use my location)</option>
                     <option value="infer">Infer (detect from images)</option>
@@ -897,7 +897,7 @@ function OnboardingContent() {
                   max="50"
                   value={preferences.maxKeywords}
                   onChange={(e) => setPreferences(p => ({ ...p, maxKeywords: parseInt(e.target.value) }))}
-                  className="w-full accent-cyan-500"
+                  className="w-full accent-brand-500"
                 />
                 <div className="flex justify-between text-[10px] text-gray-600">
                   <span>5</span>
@@ -915,7 +915,7 @@ function OnboardingContent() {
                 <button
                   onClick={handleSavePreferences}
                   disabled={saving}
-                  className="flex items-center gap-2 px-4 py-2 bg-cyan-600 text-white text-sm font-medium rounded hover:bg-cyan-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-sm font-medium rounded hover:bg-brand-500 disabled:opacity-50"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Next <ArrowRight className="h-4 w-4" /></>}
                 </button>
@@ -956,7 +956,7 @@ function OnboardingContent() {
                 <button
                   onClick={handleComplete}
                   disabled={saving}
-                  className="flex items-center gap-2 px-6 py-2 bg-cyan-600 text-white text-sm font-medium rounded hover:bg-cyan-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-6 py-2 bg-brand-600 text-white text-sm font-medium rounded hover:bg-brand-500 disabled:opacity-50"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Start Uploading'}
                 </button>
@@ -970,7 +970,7 @@ function OnboardingContent() {
       <div className="w-72 shrink-0 hidden lg:block">
         <div className="sticky top-6">
           <div className="flex items-center gap-2 mb-3">
-            <Sparkles className="w-4 h-4 text-cyan-400" />
+            <Sparkles className="w-4 h-4 text-brand-400" />
             <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">AI Copilot</span>
           </div>
           <FieldCopilot
@@ -1006,7 +1006,7 @@ function InputField({
   multiline?: boolean;
   type?: string;
 }) {
-  const baseClasses = "w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 placeholder:text-gray-600 focus:border-cyan-600 focus:outline-none focus:ring-1 focus:ring-cyan-600/50";
+  const baseClasses = "w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 placeholder:text-gray-600 focus:border-brand-600 focus:outline-none focus:ring-1 focus:ring-brand-600/50";
   
   return (
     <div>

@@ -400,7 +400,7 @@ function KeywordsList({ keywords, validation }: { keywords?: string[]; validatio
         {keywords.map((kw, i) => (
           <span
             key={i}
-            className="px-1.5 py-0.5 bg-cyan-900/30 text-cyan-300 
+            className="px-1.5 py-0.5 bg-brand-900/30 text-brand-300 
               rounded text-[10px] font-medium"
           >
             {kw}
@@ -653,7 +653,7 @@ export function MetadataSidebar({
             className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium
               transition-colors border-b-2 -mb-px uppercase tracking-wider
               ${activeTab === tab.id 
-                ? 'border-cyan-500 text-cyan-400 bg-gray-800/50' 
+                ? 'border-brand-500 text-brand-400 bg-gray-800/50' 
                 : 'border-transparent text-gray-500 hover:text-gray-300'
               }`}
           >
@@ -681,7 +681,7 @@ export function MetadataSidebar({
                     onClick={() => setShowDiffView(!showDiffView)}
                     className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium transition-colors ${
                       showDiffView 
-                        ? 'bg-cyan-900/40 text-cyan-400 border border-cyan-700/50' 
+                        ? 'bg-brand-900/40 text-brand-400 border border-brand-700/50' 
                         : 'text-gray-500 hover:text-gray-300'
                     }`}
                   >
@@ -746,8 +746,8 @@ export function MetadataSidebar({
                   title="Descriptive" 
                   icon={FileText}
                   badge={
-                    <span className="text-[10px] font-mono px-1 py-0 bg-cyan-900/40 text-cyan-400 
-                      rounded border border-cyan-700/50">
+                    <span className="text-[10px] font-mono px-1 py-0 bg-brand-900/40 text-brand-400 
+                      rounded border border-brand-700/50">
                       {validationStats.keywordCount}kw
                     </span>
                   }
@@ -776,7 +776,7 @@ export function MetadataSidebar({
                   />
                   <button
                     onClick={() => copySection('descriptive')}
-                    className="text-[10px] text-gray-500 hover:text-cyan-400 mt-1.5 flex items-center gap-1"
+                    className="text-[10px] text-gray-500 hover:text-brand-400 mt-1.5 flex items-center gap-1"
                   >
                     <Copy className="w-3 h-3" /> Copy
                   </button>
@@ -824,7 +824,7 @@ export function MetadataSidebar({
                   />
                   <button
                     onClick={() => copySection('attribution')}
-                    className="text-[10px] text-gray-500 hover:text-cyan-400 mt-1.5 flex items-center gap-1"
+                    className="text-[10px] text-gray-500 hover:text-brand-400 mt-1.5 flex items-center gap-1"
                   >
                     <Copy className="w-3 h-3" /> Copy
                   </button>
@@ -881,7 +881,7 @@ export function MetadataSidebar({
                   
                   <button
                     onClick={() => copySection('location')}
-                    className="text-[10px] text-gray-500 hover:text-cyan-400 mt-1.5 flex items-center gap-1"
+                    className="text-[10px] text-gray-500 hover:text-brand-400 mt-1.5 flex items-center gap-1"
                   >
                     <Copy className="w-3 h-3" /> Copy
                   </button>
@@ -1106,7 +1106,7 @@ export function MetadataSidebar({
                 placeholder="Add context: names, location, event details..."
                 className="w-full h-20 p-2 text-xs font-mono border border-gray-700 
                   rounded bg-gray-800 text-gray-200 resize-none placeholder:text-gray-600
-                  focus:border-cyan-600 focus:outline-none focus:ring-1 focus:ring-cyan-600/50"
+                  focus:border-brand-600 focus:outline-none focus:ring-1 focus:ring-brand-600/50"
               />
               <button
                 onClick={handleSaveContext}
@@ -1147,7 +1147,7 @@ export function MetadataSidebar({
                   <span className="text-[10px] text-gray-500 uppercase">Status</span>
                   <span className={`text-xs font-mono uppercase ${
                     asset.status === 'completed' ? 'text-green-400' :
-                    asset.status === 'approved' ? 'text-cyan-400' :
+                    asset.status === 'approved' ? 'text-brand-400' :
                     asset.status === 'failed' ? 'text-red-400' : 'text-gray-200'
                   }`}>
                     {asset.status}
@@ -1194,12 +1194,12 @@ export function MetadataSidebar({
             onClick={() => onDownload(asset.id)}
             disabled={!isCompleted}
             className="flex-1 flex items-center justify-center gap-1.5 py-2 
-              bg-cyan-600 text-white rounded text-sm font-medium
-              hover:bg-cyan-500 disabled:opacity-50 transition-colors border border-cyan-500"
+              bg-brand-600 text-white rounded text-sm font-medium
+              hover:bg-brand-500 disabled:opacity-50 transition-colors border border-brand-500"
           >
             <Download className="w-3.5 h-3.5" />
             Export
-            <span className="text-cyan-200 text-xs">E</span>
+            <span className="text-brand-200 text-xs">E</span>
           </button>
         </div>
       </div>

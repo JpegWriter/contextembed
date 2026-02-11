@@ -27,7 +27,7 @@ export function Logo({ variant = 'full', size = 'md', dark = true, className = '
   const s = sizes[size];
 
   const markBg = dark
-    ? 'bg-white'
+    ? 'bg-black'
     : 'bg-slate-900';
   const markText = dark
     ? 'text-slate-900'

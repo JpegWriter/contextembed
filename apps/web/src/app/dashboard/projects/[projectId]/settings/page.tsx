@@ -164,7 +164,7 @@ export default function ProjectSettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+        <Loader2 className="h-8 w-8 animate-spin text-brand-400" />
       </div>
     );
   }
@@ -173,7 +173,7 @@ export default function ProjectSettingsPage() {
     return (
       <div className="p-8 text-center">
         <p className="text-gray-500">Project not found</p>
-        <Link href="/dashboard" className="text-blue-500 hover:underline mt-4 inline-block">
+        <Link href="/dashboard" className="text-brand-400 hover:underline mt-4 inline-block">
           Back to Dashboard
         </Link>
       </div>
@@ -186,12 +186,12 @@ export default function ProjectSettingsPage() {
       <div className="flex items-center gap-4">
         <Link
           href={`/dashboard/projects/${projectId}`}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 hover:bg-steel-800 rounded-none transition-colors"
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-gray-200 flex items-center gap-2">
             <Settings className="h-6 w-6" />
             Project Settings
           </h1>
@@ -200,12 +200,12 @@ export default function ProjectSettingsPage() {
       </div>
 
       {/* Governance Section */}
-      <section className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+      <section className="bg-black rounded-none border border-steel-700/50 overflow-hidden">
+        <div className="px-6 py-4 border-b border-steel-700/50 bg-steel-900/50">
           <div className="flex items-center gap-3">
-            <Shield className="h-5 w-5 text-blue-600" />
+            <Shield className="h-5 w-5 text-brand-400" />
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Governance</h2>
+              <h2 className="text-lg font-semibold text-gray-200">Governance</h2>
               <p className="text-sm text-gray-500">
                 Control how AI-generated images are handled in this project
               </p>
@@ -216,11 +216,11 @@ export default function ProjectSettingsPage() {
         <div className="p-6 space-y-6">
           {/* Startup Mode Lock Banner */}
           {project.startupModeEnabled && (
-            <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-              <Lock className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+            <div className="flex items-start gap-3 p-4 bg-amber-900/20 border border-amber-700/50 rounded-none">
+              <Lock className="h-5 w-5 text-amber-400 mt-0.5 flex-shrink-0" />
               <div>
-                <h3 className="font-medium text-amber-800">Startup Mode Active</h3>
-                <p className="text-sm text-amber-700 mt-1">
+                <h3 className="font-medium text-amber-300">Startup Mode Active</h3>
+                <p className="text-sm text-amber-400 mt-1">
                   Visual authenticity policy is locked to &quot;Deny AI for Proof&quot; to ensure all proof-of-work 
                   images are authentic. This helps build trust with clients and protects your reputation.
                 </p>
@@ -230,7 +230,7 @@ export default function ProjectSettingsPage() {
 
           {/* Visual Authenticity Policy */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <label className="block text-sm font-medium text-gray-300 mb-3">
               Visual Authenticity Policy
             </label>
             
@@ -248,10 +248,10 @@ export default function ProjectSettingsPage() {
                     disabled={saving || isLocked || isLockedActive}
                     onClick={() => handlePolicyChange(option.value)}
                     className={`
-                      w-full text-left p-4 rounded-lg border-2 transition-all
+                      w-full text-left p-4 rounded-none border transition-all
                       ${isSelected 
-                        ? 'border-blue-500 bg-blue-50' 
-                        : 'border-gray-200 hover:border-gray-300 bg-white'
+                        ? 'border-brand-500 bg-brand-900/20' 
+                        : 'border-steel-700/50 hover:border-steel-600 bg-black'
                       }
                       ${(isLocked || isLockedActive) ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}
                     `}
@@ -260,19 +260,19 @@ export default function ProjectSettingsPage() {
                       <Icon className={`h-5 w-5 mt-0.5 ${option.color}`} />
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className={`font-medium ${isSelected ? 'text-blue-900' : 'text-gray-900'}`}>
+                          <span className={`font-medium ${isSelected ? 'text-brand-200' : 'text-gray-200'}`}>
                             {option.label}
                           </span>
                           {isLockedActive && (
                             <Lock className="h-4 w-4 text-amber-500" />
                           )}
                         </div>
-                        <p className={`text-sm mt-1 ${isSelected ? 'text-blue-700' : 'text-gray-500'}`}>
+                        <p className={`text-sm mt-1 ${isSelected ? 'text-brand-400' : 'text-gray-500'}`}>
                           {option.description}
                         </p>
                       </div>
                       {isSelected && (
-                        <CheckCircle2 className="h-5 w-5 text-blue-500 flex-shrink-0" />
+                        <CheckCircle2 className="h-5 w-5 text-brand-400 flex-shrink-0" />
                       )}
                     </div>
                   </button>
@@ -282,11 +282,11 @@ export default function ProjectSettingsPage() {
           </div>
 
           {/* Info Box */}
-          <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-blue-800">
+          <div className="flex items-start gap-3 p-4 bg-brand-900/20 border border-brand-700/50 rounded-none">
+            <Info className="h-5 w-5 text-brand-400 mt-0.5 flex-shrink-0" />
+            <div className="text-sm text-brand-300">
               <p className="font-medium">How does this affect my images?</p>
-              <ul className="mt-2 space-y-1 list-disc list-inside text-blue-700">
+              <ul className="mt-2 space-y-1 list-disc list-inside text-brand-400">
                 <li><strong>Proof images:</strong> Photos showing completed work, before/after comparisons, case studies</li>
                 <li><strong>Hero images:</strong> Main visuals on landing pages, banners</li>
                 <li><strong>Decorative images:</strong> Background patterns, icons, stock illustrations</li>
@@ -297,10 +297,10 @@ export default function ProjectSettingsPage() {
 
           {/* Startup Mode CTA */}
           {!project.startupModeEnabled && (
-            <div className="pt-4 border-t border-gray-200">
+            <div className="pt-4 border-t border-steel-700/50">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="font-medium text-gray-900">Enable Startup Mode</h3>
+                  <h3 className="font-medium text-gray-200">Enable Startup Mode</h3>
                   <p className="text-sm text-gray-500 mt-1">
                     Lock policy to &quot;Deny AI for Proof&quot; to ensure authenticity for all proof-of-work images. 
                     Recommended for new service businesses building their portfolio.
@@ -310,7 +310,7 @@ export default function ProjectSettingsPage() {
                   type="button"
                   onClick={handleEnableStartupMode}
                   disabled={saving}
-                  className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors whitespace-nowrap flex items-center gap-2 disabled:opacity-50"
+                  className="px-4 py-2 bg-amber-900/200 text-white rounded-none hover:bg-amber-900/200 transition-colors whitespace-nowrap flex items-center gap-2 disabled:opacity-50"
                 >
                   {saving && <Loader2 className="h-4 w-4 animate-spin" />}
                   <Lock className="h-4 w-4" />
@@ -323,22 +323,22 @@ export default function ProjectSettingsPage() {
       </section>
 
       {/* General Settings Section */}
-      <section className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-          <h2 className="text-lg font-semibold text-gray-900">General</h2>
+      <section className="bg-black rounded-none border border-steel-700/50 overflow-hidden">
+        <div className="px-6 py-4 border-b border-steel-700/50 bg-steel-900/50">
+          <h2 className="text-lg font-semibold text-gray-200">General</h2>
         </div>
         <div className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Project Name</label>
-            <p className="text-gray-900">{project.name}</p>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Project Name</label>
+            <p className="text-gray-200">{project.name}</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Goal</label>
-            <p className="text-gray-900 capitalize">{project.goal?.replace(/_/g, ' ') || 'Not set'}</p>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Goal</label>
+            <p className="text-gray-200 capitalize">{project.goal?.replace(/_/g, ' ') || 'Not set'}</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Created</label>
-            <p className="text-gray-900">{new Date(project.createdAt).toLocaleDateString()}</p>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Created</label>
+            <p className="text-gray-200">{new Date(project.createdAt).toLocaleDateString()}</p>
           </div>
         </div>
       </section>

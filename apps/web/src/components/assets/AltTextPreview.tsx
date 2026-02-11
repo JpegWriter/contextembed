@@ -84,7 +84,7 @@ function FieldCard({
   const charCount = value.length;
 
   return (
-    <div className="group rounded-lg border border-gray-200 bg-white p-3 hover:border-blue-300 transition-colors">
+    <div className="group rounded-none border border-steel-700/50 bg-black p-3 hover:border-brand-600 transition-colors">
       <div className="flex items-center justify-between mb-1.5">
         <div className="flex items-center gap-1.5">
           <Icon className="h-3.5 w-3.5 text-gray-400" />
@@ -98,7 +98,7 @@ function FieldCard({
           </span>
           <button
             onClick={handleCopy}
-            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100"
+            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-steel-800"
             title="Copy to clipboard"
           >
             {copied ? (
@@ -109,7 +109,7 @@ function FieldCard({
           </button>
         </div>
       </div>
-      <p className="text-sm text-gray-800 leading-relaxed">{value}</p>
+      <p className="text-sm text-gray-200 leading-relaxed">{value}</p>
     </div>
   );
 }
@@ -178,22 +178,22 @@ export function AltTextPreview({
   }, [supabase, projectId, assetId, mode, focusKeyphrase, onGenerated]);
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-gray-50 overflow-hidden">
+    <div className="rounded-none border border-steel-700/50 bg-steel-900/50 overflow-hidden">
       {/* Header */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-100 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 hover:bg-steel-800 transition-colors"
       >
         <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-purple-500" />
-          <span className="text-sm font-semibold text-gray-900">Alt Text Engine</span>
+          <Sparkles className="h-4 w-4 text-brand-400" />
+          <span className="text-sm font-semibold text-gray-200">Alt Text Engine</span>
           {output && (
-            <span className="text-[10px] font-medium text-green-700 bg-green-50 px-2 py-0.5 rounded-full border border-green-200">
+            <span className="text-[10px] font-medium text-brand-400 bg-brand-900/30 px-2 py-0.5 rounded-full border border-brand-700/50">
               Generated
             </span>
           )}
           {usedFallback && (
-            <span className="text-[10px] font-medium text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+            <span className="text-[10px] font-medium text-amber-400 bg-amber-900/30 px-2 py-0.5 rounded-full border border-amber-700/50">
               Fallback
             </span>
           )}
@@ -224,10 +224,10 @@ export function AltTextPreview({
                       onClick={() => setMode(opt.value)}
                       title={opt.description}
                       className={`
-                        flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all
+                        flex items-center gap-1 px-2.5 py-1.5 rounded-none text-xs font-medium transition-all
                         ${isActive
-                          ? 'bg-purple-100 text-purple-700 border border-purple-300'
-                          : 'bg-white text-gray-600 border border-gray-200 hover:border-gray-300'}
+                          ? 'bg-brand-900/30 text-brand-400 border border-brand-700/50'
+                          : 'bg-steel-800 text-gray-400 border border-steel-700/50 hover:border-gray-300'}
                       `}
                     >
                       <OptIcon className="h-3 w-3" />
@@ -242,8 +242,8 @@ export function AltTextPreview({
             <button
               onClick={handleGenerate}
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg
-                hover:bg-purple-700 transition-colors disabled:opacity-50 text-sm font-medium
+              className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-none
+                hover:bg-brand-500 transition-colors disabled:opacity-50 text-sm font-medium
                 shadow-sm"
             >
               {loading ? (
@@ -269,8 +269,8 @@ export function AltTextPreview({
                 value={focusKeyphrase}
                 onChange={(e) => setFocusKeyphrase(e.target.value)}
                 placeholder="e.g. luxury wedding photography"
-                className="w-full pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-lg
-                  focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white"
+                className="w-full pl-8 pr-3 py-2 text-sm border border-steel-700/50 rounded-none
+                  focus:ring-1 focus:ring-brand-500/50 focus:border-brand-500 bg-steel-900"
               />
             </div>
           </div>
@@ -304,19 +304,19 @@ export function AltTextPreview({
               />
 
               {/* Keyphrase badge */}
-              <div className="flex items-center gap-2 px-3 py-2 bg-purple-50 rounded-lg border border-purple-200">
-                <Tag className="h-3.5 w-3.5 text-purple-500" />
-                <span className="text-xs font-medium text-purple-700">Focus Keyphrase:</span>
-                <span className="text-xs text-purple-900 font-semibold">
+              <div className="flex items-center gap-2 px-3 py-2 bg-brand-900/20 rounded-none border border-brand-700/50">
+                <Tag className="h-3.5 w-3.5 text-brand-400" />
+                <span className="text-xs font-medium text-brand-400">Focus Keyphrase:</span>
+                <span className="text-xs text-brand-300 font-semibold">
                   {output.focus_keyphrase}
                 </span>
               </div>
 
               {/* Safety notes */}
               {output.safety_notes && (
-                <div className="flex items-start gap-2 px-3 py-2 bg-amber-50 rounded-lg border border-amber-200">
+                <div className="flex items-start gap-2 px-3 py-2 bg-amber-900/20 rounded-none border border-amber-700/50">
                   <AlertTriangle className="h-3.5 w-3.5 text-amber-500 mt-0.5 flex-shrink-0" />
-                  <p className="text-xs text-amber-800">{output.safety_notes}</p>
+                  <p className="text-xs text-amber-300">{output.safety_notes}</p>
                 </div>
               )}
 

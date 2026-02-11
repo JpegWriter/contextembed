@@ -78,7 +78,7 @@ export default function AdminIALinkRulesPage() {
       </div>
 
       {/* Global Link Rules */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-black rounded-none border border-slate-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
           <div className="flex items-center gap-3">
             <Link2 className="w-5 h-5 text-slate-600" />
@@ -119,7 +119,7 @@ export default function AdminIALinkRulesPage() {
       </div>
 
       {/* Page-Specific Rules */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-black rounded-none border border-slate-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
           <div className="flex items-center gap-3">
             <Link2 className="w-5 h-5 text-slate-600" />
@@ -138,7 +138,7 @@ export default function AdminIALinkRulesPage() {
                     <p className="text-sm text-slate-900">{rule.description}</p>
                     <div className="flex items-center gap-4 mt-2">
                       {rule.sourcePageId && (
-                        <code className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-xs">
+                        <code className="px-2 py-0.5 bg-brand-900/20 text-brand-400 rounded text-xs">
                           {rule.sourcePageId}
                         </code>
                       )}
@@ -167,7 +167,7 @@ export default function AdminIALinkRulesPage() {
       </div>
 
       {/* Mentions Policies */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-black rounded-none border border-slate-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
           <div className="flex items-center gap-3">
             <AlertTriangle className="w-5 h-5 text-slate-600" />
@@ -226,7 +226,7 @@ export default function AdminIALinkRulesPage() {
 
       {/* Empty State */}
       {linkRules.length === 0 && mentionsPolicies.length === 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
+        <div className="bg-black rounded-none border border-slate-200 p-12 text-center">
           <Link2 className="w-12 h-12 text-slate-300 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-slate-900 mb-2">No Rules Defined</h3>
           <p className="text-slate-500 mb-4">Import an IA plan to see link rules and policies.</p>

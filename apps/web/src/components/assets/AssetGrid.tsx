@@ -76,7 +76,7 @@ const statusConfig = {
   },
   analyzing: { 
     icon: Loader2, 
-    bg: 'bg-cyan-600', 
+    bg: 'bg-brand-600', 
     text: 'AI',
     textFull: 'Analyzing',
     animate: true

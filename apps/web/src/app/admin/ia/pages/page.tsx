@@ -30,7 +30,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 const roleColors: Record<string, string> = {
   money: 'bg-green-100 text-green-800',
   pillar: 'bg-purple-100 text-purple-800',
-  trust: 'bg-blue-100 text-blue-800',
+  trust: 'bg-brand-900/30 text-brand-300',
   support: 'bg-amber-100 text-amber-800',
   caseStudy: 'bg-pink-100 text-pink-800',
   release: 'bg-slate-100 text-slate-800',
@@ -39,7 +39,7 @@ const roleColors: Record<string, string> = {
 const statusColors: Record<string, string> = {
   planned: 'bg-slate-100 text-slate-700',
   draft: 'bg-amber-100 text-amber-700',
-  review: 'bg-blue-100 text-blue-700',
+  review: 'bg-brand-900/30 text-brand-400',
   published: 'bg-green-100 text-green-700',
   archived: 'bg-red-100 text-red-700',
 };
@@ -107,7 +107,7 @@ export default function AdminIAPagesPage() {
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="text-sm border border-slate-300 rounded-lg px-3 py-2 bg-white"
+              className="text-sm border border-slate-300 rounded-none px-3 py-2 bg-black"
             >
               <option value="all">All Roles</option>
               <option value="money">Money</option>
@@ -122,7 +122,7 @@ export default function AdminIAPagesPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="text-sm border border-slate-300 rounded-lg px-3 py-2 bg-white"
+            className="text-sm border border-slate-300 rounded-none px-3 py-2 bg-black"
           >
             <option value="all">All Status</option>
             <option value="planned">Planned</option>
@@ -139,7 +139,7 @@ export default function AdminIAPagesPage() {
         if (!rolePages || rolePages.length === 0) return null;
 
         return (
-          <div key={role} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <div key={role} className="bg-black rounded-none border border-slate-200 overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -189,7 +189,7 @@ export default function AdminIAPagesPage() {
       })}
 
       {pages.length === 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
+        <div className="bg-black rounded-none border border-slate-200 p-12 text-center">
           <FileText className="w-12 h-12 text-slate-300 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-slate-900 mb-2">No Pages Found</h3>
           <p className="text-slate-500 mb-4">Import an IA plan to see pages here.</p>

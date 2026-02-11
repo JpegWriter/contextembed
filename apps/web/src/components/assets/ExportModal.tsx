@@ -274,12 +274,12 @@ export function ExportModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="bg-gray-900 border border-gray-700 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="bg-gray-900 border border-gray-700 rounded-none w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-800">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-cyan-600/20 rounded-lg flex items-center justify-center">
-              <Download className="w-5 h-5 text-cyan-400" />
+            <div className="w-10 h-10 bg-brand-600/20 rounded-none flex items-center justify-center">
+              <Download className="w-5 h-5 text-brand-400" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-white">Export Images</h2>
@@ -288,7 +288,7 @@ export function ExportModal({
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-gray-500 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+            className="p-2 text-gray-500 hover:text-white hover:bg-gray-800 rounded-none transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -306,7 +306,7 @@ export function ExportModal({
               <p className="text-gray-400 mb-4">
                 {exportResult.successfulFiles} of {exportResult.totalFiles} files exported successfully
               </p>
-              <div className="bg-gray-800/50 rounded-lg p-4 text-left mb-6 max-w-sm mx-auto">
+              <div className="bg-gray-800/50 rounded-none p-4 text-left mb-6 max-w-sm mx-auto">
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <span className="text-gray-500">Format:</span>
                   <span className="text-gray-300">{exportResult.format}</span>
@@ -317,14 +317,14 @@ export function ExportModal({
               <div className="flex justify-center gap-3">
                 <button
                   onClick={onClose}
-                  className="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 border border-gray-700"
+                  className="px-4 py-2 bg-gray-800 text-gray-300 rounded-none hover:bg-gray-700 border border-gray-700"
                 >
                   Close
                 </button>
                 {exportResult.downloadUrl && (
                   <button
                     onClick={() => window.open(exportsApi.download(exportResult.id), '_blank')}
-                    className="px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-500 flex items-center gap-2"
+                    className="px-4 py-2 bg-brand-600 text-white rounded-none hover:bg-brand-500 flex items-center gap-2"
                   >
                     <Download className="w-4 h-4" />
                     Download Again
@@ -348,18 +348,18 @@ export function ExportModal({
                       <button
                         key={preset.id}
                         onClick={() => setSelectedPreset(preset.id)}
-                        className={`relative p-4 rounded-lg border text-left transition-all ${
+                        className={`relative p-4 rounded-none border text-left transition-all ${
                           isSelected
-                            ? 'bg-cyan-600/20 border-cyan-500 ring-1 ring-cyan-500/50'
+                            ? 'bg-brand-600/20 border-brand-500 ring-1 ring-brand-500/50'
                             : 'bg-gray-800/50 border-gray-700 hover:border-gray-600'
                         }`}
                       >
                         {'recommended' in preset && preset.recommended && (
-                          <span className="absolute -top-2 -right-2 bg-cyan-500 text-[10px] font-medium text-white px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+                          <span className="absolute -top-2 -right-2 bg-brand-500 text-[10px] font-medium text-white px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
                             <Sparkles className="w-2.5 h-2.5" /> Best
                           </span>
                         )}
-                        <Icon className={`w-5 h-5 mb-2 ${isSelected ? 'text-cyan-400' : 'text-gray-500'}`} />
+                        <Icon className={`w-5 h-5 mb-2 ${isSelected ? 'text-brand-400' : 'text-gray-500'}`} />
                         <div className={`text-sm font-medium ${isSelected ? 'text-white' : 'text-gray-300'}`}>
                           {preset.name}
                         </div>
@@ -373,12 +373,12 @@ export function ExportModal({
               </div>
 
               {/* Quick Summary */}
-              <div className="bg-gray-800/30 border border-gray-700/50 rounded-lg p-4 mb-4">
+              <div className="bg-gray-800/30 border border-gray-700/50 rounded-none p-4 mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-medium text-gray-400">Export Settings</span>
                   <button
                     onClick={() => setShowAdvanced(!showAdvanced)}
-                    className="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1"
+                    className="text-xs text-brand-400 hover:text-brand-300 flex items-center gap-1"
                   >
                     {showAdvanced ? 'Hide' : 'Customize'}
                     <ChevronDown className={`w-3 h-3 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
@@ -404,7 +404,7 @@ export function ExportModal({
 
               {/* Advanced Options */}
               {showAdvanced && (
-                <div className="space-y-4 mb-4 p-4 bg-gray-800/20 rounded-lg border border-gray-800">
+                <div className="space-y-4 mb-4 p-4 bg-gray-800/20 rounded-none border border-gray-800">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">
@@ -459,7 +459,7 @@ export function ExportModal({
                           setOptions(o => ({ ...o, jpegQuality: parseInt(e.target.value) }));
                           setSelectedPreset('custom');
                         }}
-                        className="w-full accent-cyan-500"
+                        className="w-full accent-brand-500"
                       />
                       <div className="flex justify-between text-[10px] text-gray-600">
                         <span>50 (smaller)</span>
@@ -517,7 +517,7 @@ export function ExportModal({
                           setOptions(o => ({ ...o, includeXmpSidecars: e.target.checked }));
                           setSelectedPreset('custom');
                         }}
-                        className="rounded border-gray-600 bg-gray-800 text-cyan-500 focus:ring-cyan-500"
+                        className="rounded border-gray-600 bg-gray-800 text-brand-500 focus:ring-brand-500"
                       />
                       <span className="text-xs text-gray-300">Include XMP sidecars</span>
                     </label>
@@ -530,7 +530,7 @@ export function ExportModal({
                           setOptions(o => ({ ...o, includeManifest: e.target.checked }));
                           setSelectedPreset('custom');
                         }}
-                        className="rounded border-gray-600 bg-gray-800 text-cyan-500 focus:ring-cyan-500"
+                        className="rounded border-gray-600 bg-gray-800 text-brand-500 focus:ring-brand-500"
                       />
                       <span className="text-xs text-gray-300">Include manifest.json</span>
                     </label>
@@ -551,13 +551,13 @@ export function ExportModal({
                   <span className="text-gray-400 truncate max-w-[200px]">
                     {progress.message || `Processing ${progress.currentFileName}...`}
                   </span>
-                  <span className="text-cyan-400">
+                  <span className="text-brand-400">
                     {progress.currentFile}/{progress.totalFiles}
                   </span>
                 </div>
                 <div className="w-full bg-gray-800 rounded-full h-1.5">
                   <div 
-                    className="bg-cyan-500 h-1.5 rounded-full transition-all duration-300"
+                    className="bg-brand-500 h-1.5 rounded-full transition-all duration-300"
                     style={{ 
                       width: `${progress.totalFiles > 0 
                         ? (progress.currentFile / progress.totalFiles) * 100 
@@ -577,14 +577,14 @@ export function ExportModal({
                 <button
                   onClick={onClose}
                   disabled={exporting}
-                  className="px-4 py-2 bg-gray-800 text-gray-300 text-sm rounded-lg hover:bg-gray-700 border border-gray-700 disabled:opacity-50"
+                  className="px-4 py-2 bg-gray-800 text-gray-300 text-sm rounded-none hover:bg-gray-700 border border-gray-700 disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleExport}
                   disabled={exporting || assetCount === 0}
-                  className="px-6 py-2 bg-cyan-600 text-white text-sm font-medium rounded-lg hover:bg-cyan-500 disabled:opacity-50 flex items-center gap-2"
+                  className="px-6 py-2 bg-brand-600 text-white text-sm font-medium rounded-none hover:bg-brand-500 disabled:opacity-50 flex items-center gap-2"
                 >
                   {exporting ? (
                     <>

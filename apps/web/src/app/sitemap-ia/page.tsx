@@ -53,7 +53,7 @@ const roleConfig: Record<string, { label: string; icon: React.ReactNode; descrip
     label: 'Trust & Transparency',
     icon: <Shield className="w-5 h-5" />,
     description: 'Security, methodology, and compliance',
-    color: 'bg-blue-50 border-blue-200 text-blue-800',
+    color: 'bg-brand-900/20 border-brand-700/50 text-brand-300',
   },
   support: {
     label: 'Help & Resources',
@@ -184,7 +184,7 @@ export default function SitemapIAPage() {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-slate-900 mb-2">Sitemap Unavailable</h1>
           <p className="text-slate-600">The IA plan data could not be loaded.</p>
-          <Link href="/" className="mt-4 inline-block text-blue-600 hover:underline">
+          <Link href="/" className="mt-4 inline-block text-brand-400 hover:underline">
             ← Back to Home
           </Link>
         </div>
@@ -195,7 +195,7 @@ export default function SitemapIAPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200">
+      <header className="bg-black border-b border-slate-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Link href="/" className="text-sm text-slate-500 hover:text-slate-700 mb-4 inline-block">
             ← Back to Home
@@ -218,7 +218,7 @@ export default function SitemapIAPage() {
             return (
               <section
                 key={section.role}
-                className={`rounded-xl border-2 overflow-hidden ${config.color}`}
+                className={`rounded-none border-2 overflow-hidden ${config.color}`}
               >
                 <div className="px-6 py-4 border-b border-current/10">
                   <div className="flex items-center gap-3">
@@ -227,17 +227,17 @@ export default function SitemapIAPage() {
                       <h2 className="font-semibold">{config.label}</h2>
                       <p className="text-sm opacity-80">{config.description}</p>
                     </div>
-                    <span className="ml-auto px-2 py-1 bg-white/50 rounded text-sm">
+                    <span className="ml-auto px-2 py-1 bg-black/50 rounded text-sm">
                       {section.pages.length} pages
                     </span>
                   </div>
                 </div>
-                <div className="bg-white/80 divide-y divide-slate-100">
+                <div className="bg-black/80 divide-y divide-slate-100">
                   {section.pages.map((page) => (
                     <Link
                       key={page.id}
                       href={page.slug}
-                      className="block px-6 py-3 hover:bg-white transition-colors group"
+                      className="block px-6 py-3 hover:bg-black transition-colors group"
                     >
                       <div className="flex items-center justify-between">
                         <span className="font-medium text-slate-900 group-hover:text-slate-700">
@@ -256,7 +256,7 @@ export default function SitemapIAPage() {
         </div>
 
         {/* Footer Info */}
-        <div className="mt-12 p-6 bg-white rounded-xl border border-slate-200">
+        <div className="mt-12 p-6 bg-black rounded-none border border-slate-200">
           <div className="flex items-start gap-4">
             <FileText className="w-6 h-6 text-slate-400 flex-shrink-0 mt-1" />
             <div>

@@ -223,12 +223,12 @@ export function BatchUploadModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">
+      <div className="bg-zinc-900 border border-zinc-700 rounded-none shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-zinc-700">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-cyan-500/20 rounded-lg">
-              <Upload className="w-5 h-5 text-cyan-400" />
+            <div className="p-2 bg-brand-500/20 rounded-none">
+              <Upload className="w-5 h-5 text-brand-400" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-white">Batch Upload</h2>
@@ -239,7 +239,7 @@ export function BatchUploadModal({
           </div>
           <button
             onClick={handleClose}
-            className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
+            className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-none transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -266,7 +266,7 @@ export function BatchUploadModal({
           <div className="h-2 bg-zinc-800 rounded-full overflow-hidden">
             <div 
               className={`h-full transition-all duration-300 ${
-                hasErrors ? 'bg-gradient-to-r from-cyan-500 to-amber-500' : 'bg-cyan-500'
+                hasErrors ? 'bg-gradient-to-r from-brand-500 to-amber-500' : 'bg-brand-500'
               }`}
               style={{ width: `${overallProgress}%` }}
             />
@@ -279,7 +279,7 @@ export function BatchUploadModal({
               <span>{stats.pending} pending</span>
             </div>
             {stats.uploading > 0 && (
-              <div className="flex items-center gap-1.5 text-cyan-400">
+              <div className="flex items-center gap-1.5 text-brand-400">
                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
                 <span>{stats.uploading} uploading</span>
               </div>
@@ -302,8 +302,8 @@ export function BatchUploadModal({
           {uploadFiles.map((uploadFile) => (
             <div 
               key={uploadFile.id}
-              className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${
-                uploadFile.status === 'uploading' ? 'bg-cyan-500/10 border border-cyan-500/30' :
+              className={`flex items-center gap-3 p-2 rounded-none transition-colors ${
+                uploadFile.status === 'uploading' ? 'bg-brand-500/10 border border-brand-500/30' :
                 uploadFile.status === 'success' ? 'bg-emerald-500/10' :
                 uploadFile.status === 'error' ? 'bg-red-500/10' :
                 'bg-zinc-800/50'
@@ -332,7 +332,7 @@ export function BatchUploadModal({
                   </button>
                 )}
                 {uploadFile.status === 'uploading' && (
-                  <Loader2 className="w-5 h-5 text-cyan-400 animate-spin" />
+                  <Loader2 className="w-5 h-5 text-brand-400 animate-spin" />
                 )}
                 {uploadFile.status === 'success' && (
                   <CheckCircle2 className="w-5 h-5 text-emerald-400" />
@@ -369,7 +369,7 @@ export function BatchUploadModal({
             {hasErrors && !isUploading && (
               <button
                 onClick={retryFailed}
-                className="px-4 py-2 text-sm font-medium text-amber-400 hover:bg-amber-500/10 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-medium text-amber-400 hover:bg-amber-500/10 rounded-none transition-colors"
               >
                 Retry Failed
               </button>
@@ -378,14 +378,14 @@ export function BatchUploadModal({
             {isComplete ? (
               <button
                 onClick={handleClose}
-                className="px-4 py-2 text-sm font-medium bg-cyan-500 text-black rounded-lg hover:bg-cyan-400 transition-colors"
+                className="px-4 py-2 text-sm font-medium bg-brand-500 text-black rounded-none hover:bg-brand-400 transition-colors"
               >
                 Done
               </button>
             ) : isUploading ? (
               <button
                 onClick={pauseUpload}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-zinc-700 text-white rounded-none hover:bg-zinc-600 transition-colors"
               >
                 <Pause className="w-4 h-4" />
                 Pause
@@ -394,7 +394,7 @@ export function BatchUploadModal({
               <button
                 onClick={startUpload}
                 disabled={stats.pending === 0}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-cyan-500 text-black rounded-lg hover:bg-cyan-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-brand-500 text-black rounded-none hover:bg-brand-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isPaused ? (
                   <>

@@ -98,7 +98,7 @@ export default function GovernancePage() {
             
             <p className="text-slate-900 dark:text-white font-medium text-center text-lg">
               Governance isn't about adding more work.<br />
-              <span className="text-cyan-600 dark:text-cyan-400">It's about preventing the work you'll regret.</span>
+              <span className="text-brand-600 dark:text-brand-400">It's about preventing the work you'll regret.</span>
             </p>
           </div>
         </section>
@@ -116,8 +116,8 @@ export default function GovernancePage() {
             
             <div className="space-y-4 mb-10">
               <div className="flex items-start gap-4 p-5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-                <div className="w-10 h-10 rounded-xl bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center flex-shrink-0">
-                  <Ban className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
+                <div className="w-10 h-10 rounded-xl bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center flex-shrink-0">
+                  <Ban className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900 dark:text-white mb-1">Block risky images from leaving</h3>
@@ -126,8 +126,8 @@ export default function GovernancePage() {
               </div>
               
               <div className="flex items-start gap-4 p-5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-                <div className="w-10 h-10 rounded-xl bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center flex-shrink-0">
-                  <FileCheck className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
+                <div className="w-10 h-10 rounded-xl bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center flex-shrink-0">
+                  <FileCheck className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900 dark:text-white mb-1">Enforce usage intent</h3>
@@ -136,8 +136,8 @@ export default function GovernancePage() {
               </div>
               
               <div className="flex items-start gap-4 p-5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-                <div className="w-10 h-10 rounded-xl bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center flex-shrink-0">
-                  <Lock className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
+                <div className="w-10 h-10 rounded-xl bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center flex-shrink-0">
+                  <Lock className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900 dark:text-white mb-1">Keep ownership & rights consistent</h3>
@@ -146,8 +146,8 @@ export default function GovernancePage() {
               </div>
               
               <div className="flex items-start gap-4 p-5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-                <div className="w-10 h-10 rounded-xl bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center flex-shrink-0">
-                  <Eye className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
+                <div className="w-10 h-10 rounded-xl bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center flex-shrink-0">
+                  <Eye className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900 dark:text-white mb-1">Full audit trail</h3>
@@ -156,8 +156,8 @@ export default function GovernancePage() {
               </div>
               
               <div className="flex items-start gap-4 p-5 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-                <div className="w-10 h-10 rounded-xl bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center flex-shrink-0">
-                  <Shield className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
+                <div className="w-10 h-10 rounded-xl bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center flex-shrink-0">
+                  <Shield className="h-5 w-5 text-brand-600 dark:text-brand-400" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-slate-900 dark:text-white mb-1">Extend beyond IPTC limits</h3>

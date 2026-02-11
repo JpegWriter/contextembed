@@ -131,7 +131,7 @@ export default function AdminIACalendarItemPage() {
         <div className="flex items-center gap-4">
           <Link
             href="/admin/ia/calendar"
-            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-slate-100 rounded-none transition-colors"
           >
             <ArrowLeft className="w-5 h-5 text-slate-600" />
           </Link>
@@ -150,7 +150,7 @@ export default function AdminIACalendarItemPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium hover:bg-slate-800 disabled:opacity-50 flex items-center gap-2"
+          className="px-4 py-2 bg-slate-900 text-white rounded-none text-sm font-medium hover:bg-slate-800 disabled:opacity-50 flex items-center gap-2"
         >
           {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           Save Changes
@@ -159,7 +159,7 @@ export default function AdminIACalendarItemPage() {
 
       {/* Adobe Mention Warning */}
       {item.adobeMention && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
+        <div className="bg-amber-50 border border-amber-200 rounded-none p-4 flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
           <div>
             <h3 className="font-medium text-amber-800">Adobe Mention</h3>
@@ -169,7 +169,7 @@ export default function AdminIACalendarItemPage() {
       )}
 
       {/* Form */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
+      <div className="bg-black rounded-none border border-slate-200 p-6">
         <h2 className="text-lg font-semibold text-slate-900 mb-4">Content Details</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="md:col-span-2">
@@ -178,7 +178,7 @@ export default function AdminIACalendarItemPage() {
               type="text"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+              className="w-full px-3 py-2 border border-slate-300 rounded-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
             />
           </div>
           <div>
@@ -187,7 +187,7 @@ export default function AdminIACalendarItemPage() {
               type="text"
               value={formData.slug}
               onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+              className="w-full px-3 py-2 border border-slate-300 rounded-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
             />
           </div>
           <div>
@@ -195,7 +195,7 @@ export default function AdminIACalendarItemPage() {
             <select
               value={formData.contentStatus}
               onChange={(e) => setFormData({ ...formData, contentStatus: e.target.value })}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+              className="w-full px-3 py-2 border border-slate-300 rounded-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
             >
               <option value="planned">Planned</option>
               <option value="draft">Draft</option>
@@ -211,7 +211,7 @@ export default function AdminIACalendarItemPage() {
               value={formData.draftPath}
               onChange={(e) => setFormData({ ...formData, draftPath: e.target.value })}
               placeholder="/content/drafts/..."
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+              className="w-full px-3 py-2 border border-slate-300 rounded-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
             />
           </div>
           <div>
@@ -221,7 +221,7 @@ export default function AdminIACalendarItemPage() {
               value={formData.publishedUrl}
               onChange={(e) => setFormData({ ...formData, publishedUrl: e.target.value })}
               placeholder="https://..."
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+              className="w-full px-3 py-2 border border-slate-300 rounded-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
             />
           </div>
           <div>
@@ -230,14 +230,14 @@ export default function AdminIACalendarItemPage() {
               type="date"
               value={formData.publishedAt}
               onChange={(e) => setFormData({ ...formData, publishedAt: e.target.value })}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+              className="w-full px-3 py-2 border border-slate-300 rounded-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
             />
           </div>
         </div>
       </div>
 
       {/* Read-only Info */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
+      <div className="bg-black rounded-none border border-slate-200 p-6">
         <h2 className="text-lg font-semibold text-slate-900 mb-4">Calendar Metadata</h2>
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -261,7 +261,7 @@ export default function AdminIACalendarItemPage() {
 
       {/* Primary Links */}
       {item.primaryLinks.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <div className="bg-black rounded-none border border-slate-200 p-6">
           <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
             <ExternalLink className="w-5 h-5" />
             Primary Links ({item.primaryLinks.length})

@@ -308,7 +308,7 @@ export function FieldCopilot({ fieldDefinitions, onApplySuggestion, apiToken, ur
     return (
       <div className="p-4 bg-gray-900/50 border border-gray-800 rounded">
         <div className="text-center text-gray-500 py-6">
-          <Sparkles className="w-8 h-8 mx-auto mb-2 opacity-50 text-cyan-500/50" />
+          <Sparkles className="w-8 h-8 mx-auto mb-2 opacity-50 text-brand-500/50" />
           <p className="text-xs uppercase tracking-wider">AI Copilot</p>
           <p className="text-[10px] mt-1 text-gray-600">Click a field to get suggestions</p>
         </div>
@@ -322,13 +322,13 @@ export function FieldCopilot({ fieldDefinitions, onApplySuggestion, apiToken, ur
       <div className="flex items-start justify-between p-3 border-b border-gray-800 bg-gray-900/80">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+            <Sparkles className="w-3.5 h-3.5 text-brand-400 shrink-0" />
             <h3 className="font-medium text-white text-sm truncate">{currentField.label}</h3>
           </div>
           <p className="text-[10px] text-gray-500 mt-0.5 line-clamp-2">{currentField.description}</p>
         </div>
         {isAnalyzing ? (
-          <Loader2 className="w-4 h-4 animate-spin text-cyan-400 shrink-0 ml-2" />
+          <Loader2 className="w-4 h-4 animate-spin text-brand-400 shrink-0 ml-2" />
         ) : analysis ? (
           <StatusBadge status={analysis.status} />
         ) : null}
@@ -336,10 +336,10 @@ export function FieldCopilot({ fieldDefinitions, onApplySuggestion, apiToken, ur
 
       <div className="p-3 space-y-3">
         {/* What to Write Hint */}
-        <div className="bg-cyan-950/30 border border-cyan-900/50 rounded p-2.5">
+        <div className="bg-brand-950/30 border border-brand-900/50 rounded p-2.5">
           <div className="flex items-center gap-1.5 mb-1">
-            <Lightbulb className="w-3 h-3 text-cyan-400" />
-            <span className="text-[10px] font-medium text-cyan-400 uppercase tracking-wider">What to write</span>
+            <Lightbulb className="w-3 h-3 text-brand-400" />
+            <span className="text-[10px] font-medium text-brand-400 uppercase tracking-wider">What to write</span>
           </div>
           <p className="text-xs text-gray-300 leading-relaxed">{currentField.copilotHints.whatToWrite}</p>
         </div>
@@ -398,11 +398,11 @@ export function FieldCopilot({ fieldDefinitions, onApplySuggestion, apiToken, ur
                   key={i}
                   onClick={() => onApplySuggestion(activeField.fieldId, example)}
                   className="block w-full text-left text-xs p-2 rounded bg-gray-800/50 hover:bg-gray-800 
-                    border border-gray-700/50 hover:border-cyan-700/50 transition-colors text-gray-300 
+                    border border-gray-700/50 hover:border-brand-700/50 transition-colors text-gray-300 
                     hover:text-white group"
                 >
                   <span className="opacity-70 group-hover:opacity-100">"{example}"</span>
-                  <Zap className="w-3 h-3 inline ml-1 opacity-0 group-hover:opacity-100 text-cyan-400" />
+                  <Zap className="w-3 h-3 inline ml-1 opacity-0 group-hover:opacity-100 text-brand-400" />
                 </button>
               ))}
             </div>
@@ -413,10 +413,10 @@ export function FieldCopilot({ fieldDefinitions, onApplySuggestion, apiToken, ur
         {analysis?.suggestion && analysis.suggestion !== currentValue && (
           <div className="border-t border-gray-800 pt-3">
             <div className="flex items-center gap-1.5 mb-2">
-              <Sparkles className="w-3 h-3 text-cyan-400" />
-              <span className="text-[10px] font-medium text-cyan-400 uppercase tracking-wider">AI Suggestion</span>
+              <Sparkles className="w-3 h-3 text-brand-400" />
+              <span className="text-[10px] font-medium text-brand-400 uppercase tracking-wider">AI Suggestion</span>
             </div>
-            <div className="bg-cyan-950/20 border border-cyan-900/30 rounded p-2.5 mb-2">
+            <div className="bg-brand-950/20 border border-brand-900/30 rounded p-2.5 mb-2">
               <p className="text-xs text-gray-200 leading-relaxed">{analysis.suggestion}</p>
             </div>
             {analysis.rationale && (
@@ -424,7 +424,7 @@ export function FieldCopilot({ fieldDefinitions, onApplySuggestion, apiToken, ur
             )}
             <button
               onClick={() => onApplySuggestion(activeField.fieldId, analysis.suggestion!)}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-cyan-600 hover:bg-cyan-500 
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-brand-600 hover:bg-brand-500 
                 text-white text-xs font-medium rounded transition-colors"
             >
               <Check className="w-3 h-3" />
@@ -464,7 +464,7 @@ export function FieldCopilot({ fieldDefinitions, onApplySuggestion, apiToken, ur
                     key={i}
                     onClick={() => onApplySuggestion(activeField.fieldId, option)}
                     className="px-2 py-1 text-[10px] bg-gray-800 hover:bg-gray-700 
-                      border border-gray-700 hover:border-cyan-700 rounded text-gray-300 
+                      border border-gray-700 hover:border-brand-700 rounded text-gray-300 
                       hover:text-white transition-colors"
                   >
                     {option}

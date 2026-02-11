@@ -181,10 +181,10 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
 
   if (loading) {
     return (
-      <section className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+      <section className="bg-black rounded-none border border-steel-700/50 overflow-hidden">
+        <div className="px-6 py-4 border-b border-steel-700/50 bg-steel-900/50">
           <div className="flex items-center gap-3">
-            <Globe className="h-5 w-5 text-blue-600" />
+            <Globe className="h-5 w-5 text-brand-400" />
             <h2 className="text-lg font-semibold text-gray-900">WordPress Integration</h2>
           </div>
         </div>
@@ -196,12 +196,12 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
   }
 
   return (
-    <section className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <section className="bg-black rounded-none border border-steel-700/50 overflow-hidden">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+      <div className="px-6 py-4 border-b border-steel-700/50 bg-steel-900/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Globe className="h-5 w-5 text-blue-600" />
+            <Globe className="h-5 w-5 text-brand-400" />
             <div>
               <h2 className="text-lg font-semibold text-gray-900">WordPress Integration</h2>
               <p className="text-sm text-gray-500">
@@ -242,7 +242,7 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
                 value={siteUrl}
                 onChange={(e) => setSiteUrl(e.target.value)}
                 placeholder="https://your-site.com"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-none focus:ring-2 focus:ring-blue-500 focus:border-brand-500"
               />
             </div>
 
@@ -254,7 +254,7 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
               <select
                 value={authMethod}
                 onChange={(e) => setAuthMethod(e.target.value as 'application_password' | 'basic_auth')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-none focus:ring-2 focus:ring-blue-500 focus:border-brand-500"
               >
                 <option value="application_password">Application Password (recommended)</option>
                 <option value="basic_auth">Basic Auth</option>
@@ -271,7 +271,7 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="admin"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-none focus:ring-2 focus:ring-blue-500 focus:border-brand-500"
               />
             </div>
 
@@ -286,7 +286,7 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={configured ? '••••••••••••' : 'xxxx xxxx xxxx xxxx xxxx xxxx'}
-                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-none focus:ring-2 focus:ring-blue-500 focus:border-brand-500"
                 />
                 <button
                   type="button"
@@ -308,7 +308,7 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center gap-2"
+                className="px-4 py-2 bg-brand-600 text-white rounded-none hover:bg-brand-500 transition-colors disabled:opacity-50 flex items-center gap-2"
               >
                 {saving && <Loader2 className="h-4 w-4 animate-spin" />}
                 <Key className="h-4 w-4" />
@@ -325,7 +325,7 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
                       setAuthMethod(config.authMethod as 'application_password' | 'basic_auth');
                     }
                   }}
-                  className="px-4 py-2 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 text-gray-700 border border-gray-300 rounded-none hover:bg-steel-900/50 transition-colors"
                 >
                   Cancel
                 </button>
@@ -338,7 +338,7 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
         {configured && !editing && (
           <>
             {/* Connection Info */}
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-steel-900/50 rounded-none">
               <div>
                 <p className="text-sm font-medium text-gray-900">{config?.siteUrl}</p>
                 <p className="text-xs text-gray-500 mt-0.5">
@@ -349,20 +349,20 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
                 <button
                   onClick={handleTestConnection}
                   disabled={testing}
-                  className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  className="p-2 text-gray-500 hover:text-brand-400 hover:bg-brand-900/20 rounded-none transition-colors"
                   title="Test connection"
                 >
                   {testing ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
                 </button>
                 <button
                   onClick={() => setEditing(true)}
-                  className="px-3 py-1.5 text-sm text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="px-3 py-1.5 text-sm text-gray-700 border border-gray-300 rounded-none hover:bg-gray-100 transition-colors"
                 >
                   Edit
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-none transition-colors"
                   title="Remove WordPress connection"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -382,12 +382,12 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
                 onClick={handleToggle}
                 className={`
                   relative inline-flex h-6 w-11 items-center rounded-full transition-colors
-                  ${autoInject ? 'bg-blue-600' : 'bg-gray-300'}
+                  ${autoInject ? 'bg-brand-600' : 'bg-gray-300'}
                 `}
               >
                 <span
                   className={`
-                    inline-block h-4 w-4 transform rounded-full bg-white transition-transform
+                    inline-block h-4 w-4 transform rounded-full bg-black transition-transform
                     ${autoInject ? 'translate-x-6' : 'translate-x-1'}
                   `}
                 />
@@ -408,10 +408,10 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
                       type="button"
                       onClick={() => handleStrategyChange(option.value)}
                       className={`
-                        w-full text-left p-3 rounded-lg border-2 transition-all
+                        w-full text-left p-3 rounded-none border-2 transition-all
                         ${isSelected
-                          ? 'border-blue-500 bg-blue-50'
-                          : 'border-gray-200 hover:border-gray-300 bg-white'
+                          ? 'border-brand-500 bg-brand-900/20'
+                          : 'border-steel-700/50 hover:border-gray-300 bg-black'
                         }
                       `}
                     >
@@ -424,7 +424,7 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
                             {option.description}
                           </p>
                         </div>
-                        {isSelected && <CheckCircle2 className="h-5 w-5 text-blue-500 flex-shrink-0" />}
+                        {isSelected && <CheckCircle2 className="h-5 w-5 text-brand-400 flex-shrink-0" />}
                       </div>
                     </button>
                   );
@@ -433,8 +433,8 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
             </div>
 
             {/* Info */}
-            <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+            <div className="flex items-start gap-3 p-4 bg-brand-900/20 border border-brand-700/50 rounded-none">
+              <Info className="h-5 w-5 text-brand-400 mt-0.5 flex-shrink-0" />
               <div className="text-sm text-blue-800">
                 <p className="font-medium">How it works</p>
                 <ul className="mt-1 space-y-1 list-disc list-inside text-blue-700 text-xs">
@@ -450,7 +450,7 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
 
         {/* Error display */}
         {config?.lastError && (
-          <div className="flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-start gap-3 p-3 bg-red-50 border border-red-200 rounded-none">
             <XCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
             <p className="text-xs text-red-700">{config.lastError}</p>
           </div>

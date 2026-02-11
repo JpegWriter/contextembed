@@ -215,7 +215,7 @@ export function MetadataStrengthIndicator({
   ];
 
   return (
-    <div className={`p-3 rounded-lg ${config.bg} border ${config.border}`}>
+    <div className={`p-3 rounded-none ${config.bg} border ${config.border}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
@@ -495,7 +495,7 @@ export function ProvenancePreview({ metadata, onboarding }: ProvenancePreviewPro
         <p className="text-xs text-gray-400">
           {preview.rights}
           {preview.website && (
-            <span> · <span className="text-cyan-400">{preview.website}</span></span>
+            <span> · <span className="text-brand-400">{preview.website}</span></span>
           )}
         </p>
       </div>

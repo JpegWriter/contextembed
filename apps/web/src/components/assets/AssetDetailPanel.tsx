@@ -84,9 +84,9 @@ interface AssetDetailPanelProps {
 }
 
 function ConfidenceBadge({ score }: { score: number }) {
-  const color = score >= 0.8 ? 'bg-green-100 text-green-700' 
-    : score >= 0.5 ? 'bg-yellow-100 text-yellow-700' 
-    : 'bg-red-100 text-red-700';
+  const color = score >= 0.8 ? 'bg-green-900/40 text-green-400' 
+    : score >= 0.5 ? 'bg-amber-900/40 text-amber-400' 
+    : 'bg-red-900/40 text-red-400';
   
   return (
     <span className={`text-xs px-1.5 py-0.5 rounded ${color}`}>
@@ -128,9 +128,9 @@ function MetadataField({
   };
 
   return (
-    <div className="group py-3 border-b border-gray-100 dark:border-gray-700 last:border-0">
+    <div className="group py-3 border-b border-steel-800 last:border-0">
       <div className="flex items-center justify-between mb-1">
-        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+        <span className="text-xs font-medium text-gray-400 uppercase tracking-wide">
           {label}
         </span>
         <div className="flex items-center gap-2">
@@ -138,8 +138,8 @@ function MetadataField({
           {editable && !isEditing && (
             <button 
               onClick={handleEdit}
-              className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-100 
-                dark:hover:bg-gray-700 rounded transition-all"
+              className="opacity-0 group-hover:opacity-100 p-1 hover:bg-steel-800 
+                hover:bg-steel-700 rounded transition-all"
             >
               <Edit3 className="w-3 h-3 text-gray-400" />
             </button>
@@ -153,25 +153,25 @@ function MetadataField({
             type="text"
             value={editValue}
             onChange={(e) => setEditValue(e.target.value)}
-            className="flex-1 px-2 py-1 text-sm border rounded dark:bg-gray-700 
-              dark:border-gray-600"
+            className="flex-1 px-2 py-1 text-sm border rounded bg-steel-800 
+              border-steel-700"
             autoFocus
           />
           <button 
             onClick={handleSave}
-            className="p-1 bg-brand-500 text-white rounded hover:bg-brand-600"
+            className="p-1 bg-brand-500 text-white rounded hover:bg-brand-500"
           >
             <Save className="w-4 h-4" />
           </button>
           <button 
             onClick={() => setIsEditing(false)}
-            className="p-1 bg-gray-200 dark:bg-gray-600 rounded hover:bg-gray-300"
+            className="p-1 bg-gray-200 bg-steel-700 rounded hover:bg-gray-300"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
       ) : (
-        <p className="text-sm text-gray-900 dark:text-gray-100">
+        <p className="text-sm text-gray-200">
           {displayValue}
         </p>
       )}
@@ -222,10 +222,10 @@ export function AssetDetailPanel({
   };
 
   return (
-    <div className="fixed inset-y-0 right-0 w-full max-w-lg bg-white dark:bg-gray-900 
-      shadow-2xl z-50 flex flex-col border-l border-gray-200 dark:border-gray-700">
+    <div className="fixed inset-y-0 right-0 w-full max-w-lg bg-black 
+      shadow-lg z-50 flex flex-col border-l border-steel-700/50">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex items-center justify-between p-4 border-b border-steel-700/50">
         <div className="flex-1 min-w-0">
           <h2 className="text-lg font-semibold truncate">{asset.originalFilename}</h2>
           <p className="text-sm text-gray-500">
@@ -234,15 +234,15 @@ export function AssetDetailPanel({
         </div>
         <button
           onClick={onClose}
-          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+          className="p-2 hover:bg-steel-800 hover:bg-steel-800 rounded-none transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
       </div>
 
       {/* Preview */}
-      <div className="p-4 bg-gray-50 dark:bg-gray-800/50">
-        <div className="aspect-video bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden">
+      <div className="p-4 bg-steel-900/50">
+        <div className="aspect-video bg-steel-800 overflow-hidden">
           <img
             src={assetsApi.getFileUrl(asset.id, 'thumbnail')}
             alt={asset.originalFilename}
@@ -252,7 +252,7 @@ export function AssetDetailPanel({
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-200 dark:border-gray-700">
+      <div className="flex border-b border-steel-700/50">
         {[
           { id: 'metadata', label: 'Metadata', icon: FileText },
           { id: 'vision', label: 'AI Analysis', icon: Sparkles },
@@ -264,8 +264,8 @@ export function AssetDetailPanel({
             className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium
               transition-colors border-b-2 -mb-px
               ${activeTab === tab.id 
-                ? 'border-brand-500 text-brand-600 dark:text-brand-400' 
-                : 'border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                ? 'border-brand-500 text-brand-400' 
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:text-gray-300'
               }`}
           >
             <tab.icon className="w-4 h-4" />
@@ -280,7 +280,7 @@ export function AssetDetailPanel({
           <div>
             {!isCompleted ? (
               <div className="text-center py-8 text-gray-500">
-                <AlertTriangle className="w-12 h-12 mx-auto mb-3 text-yellow-500" />
+                <AlertTriangle className="w-12 h-12 mx-auto mb-3 text-amber-500" />
                 <p className="font-medium">Not yet processed</p>
                 <p className="text-sm">Process this asset to generate metadata</p>
               </div>
@@ -336,9 +336,9 @@ export function AssetDetailPanel({
                 <button
                   onClick={() => copyToClipboard(JSON.stringify(metadata, null, 2))}
                   className="w-full mt-4 flex items-center justify-center gap-2 py-2 
-                    text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 
-                    dark:hover:text-gray-200 border border-gray-200 dark:border-gray-700 
-                    rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    text-sm text-gray-600 hover:text-gray-900 text-gray-400 
+                    hover:text-gray-200 border border-steel-700/50 
+                    rounded-none hover:bg-steel-900/50 hover:bg-steel-800 transition-colors"
                 >
                   <Copy className="w-4 h-4" />
                   Copy All Metadata
@@ -362,9 +362,8 @@ export function AssetDetailPanel({
             ) : (
               <div className="space-y-4">
                 {vision.naturalDescription && (
-                  <div className="p-3 bg-gradient-to-br from-purple-50 to-blue-50 
-                    dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg">
-                    <p className="text-sm italic text-gray-700 dark:text-gray-300">
+                  <div className="p-3 bg-gradient-to-br from-purple-900/20 to-blue-900/20 rounded-none">
+                    <p className="text-sm italic text-gray-300">
                       "{vision.naturalDescription}"
                     </p>
                   </div>
@@ -378,11 +377,11 @@ export function AssetDetailPanel({
                     <div className="space-y-2">
                       {vision.subjects.map((s, i) => (
                         <div key={i} className="flex items-start gap-2 text-sm">
-                          <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 
-                            text-blue-700 dark:text-blue-300 rounded text-xs">
+                          <span className="px-2 py-0.5 bg-blue-900/30 bg-blue-900/30 
+                            text-blue-400 text-blue-300 rounded text-xs">
                             {s.type}
                           </span>
-                          <span className="text-gray-600 dark:text-gray-400">
+                          <span className="text-gray-400">
                             {s.description}
                           </span>
                         </div>
@@ -397,14 +396,14 @@ export function AssetDetailPanel({
                       Scene
                     </h4>
                     <div className="flex flex-wrap gap-2">
-                      <span className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">
+                      <span className="px-2 py-1 bg-steel-800 rounded text-sm">
                         {vision.scene.type}
                       </span>
-                      <span className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">
+                      <span className="px-2 py-1 bg-steel-800 rounded text-sm">
                         {vision.scene.setting}
                       </span>
                       {vision.scene.timeOfDay && (
-                        <span className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded text-sm">
+                        <span className="px-2 py-1 bg-steel-800 rounded text-sm">
                           {vision.scene.timeOfDay}
                         </span>
                       )}
@@ -419,8 +418,8 @@ export function AssetDetailPanel({
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {vision.mood.map((m, i) => (
-                        <span key={i} className="px-2 py-1 bg-pink-100 dark:bg-pink-900/30 
-                          text-pink-700 dark:text-pink-300 rounded text-sm">
+                        <span key={i} className="px-2 py-1 bg-pink-900/30 bg-pink-900/30 
+                          text-pink-400 text-pink-300 rounded text-sm">
                           {m}
                         </span>
                       ))}
@@ -435,8 +434,8 @@ export function AssetDetailPanel({
                     </h4>
                     <div className="flex flex-wrap gap-1">
                       {vision.objects.map((o, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 
-                          rounded text-xs text-gray-600 dark:text-gray-400">
+                        <span key={i} className="px-2 py-0.5 bg-steel-800 
+                          rounded text-xs text-gray-400">
                           {o}
                         </span>
                       ))}
@@ -453,7 +452,7 @@ export function AssetDetailPanel({
                       {vision.colors.dominant.map((c, i) => (
                         <div key={i} className="flex items-center gap-1">
                           <div 
-                            className="w-4 h-4 rounded-full border border-gray-200"
+                            className="w-4 h-4 rounded-full border border-steel-700/50"
                             style={{ backgroundColor: c.toLowerCase() }}
                           />
                           <span className="text-xs text-gray-500">{c}</span>
@@ -479,15 +478,15 @@ export function AssetDetailPanel({
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 placeholder="Add context about this image (e.g., 'Wedding reception at Grand Hotel Brighton, June 2025')"
-                className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 
-                  rounded-lg text-sm bg-white dark:bg-gray-800 resize-none"
+                className="w-full px-3 py-2 border border-steel-700/50 
+                  rounded-none text-sm bg-black bg-steel-800 resize-none"
                 rows={3}
               />
               <button
                 onClick={handleSaveComment}
                 disabled={savingComment || comment === (asset.userComment || '')}
-                className="mt-2 px-4 py-2 bg-brand-500 text-white rounded-lg text-sm
-                  hover:bg-brand-600 disabled:opacity-50 disabled:cursor-not-allowed
+                className="mt-2 px-4 py-2 bg-brand-500 text-white rounded-none text-sm
+                  hover:bg-brand-500 disabled:opacity-50 disabled:cursor-not-allowed
                   flex items-center gap-2"
               >
                 {savingComment ? (
@@ -507,27 +506,27 @@ export function AssetDetailPanel({
               <dl className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <dt className="text-gray-500">Filename</dt>
-                  <dd className="text-gray-900 dark:text-gray-100">{asset.originalFilename}</dd>
+                  <dd className="text-gray-200">{asset.originalFilename}</dd>
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-gray-500">Type</dt>
-                  <dd className="text-gray-900 dark:text-gray-100">{asset.mimeType}</dd>
+                  <dd className="text-gray-200">{asset.mimeType}</dd>
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-gray-500">Dimensions</dt>
-                  <dd className="text-gray-900 dark:text-gray-100">
+                  <dd className="text-gray-200">
                     {asset.width} × {asset.height}
                   </dd>
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-gray-500">Size</dt>
-                  <dd className="text-gray-900 dark:text-gray-100">
+                  <dd className="text-gray-200">
                     {(asset.size / 1024 / 1024).toFixed(2)} MB
                   </dd>
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-gray-500">Uploaded</dt>
-                  <dd className="text-gray-900 dark:text-gray-100">
+                  <dd className="text-gray-200">
                     {new Date(asset.createdAt).toLocaleString()}
                   </dd>
                 </div>
@@ -538,13 +537,13 @@ export function AssetDetailPanel({
       </div>
 
       {/* Actions */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
+      <div className="p-4 border-t border-steel-700/50 space-y-2">
         {isCompleted && asset.status !== 'approved' && (
           <button
             onClick={() => onApprove(asset.id)}
             className="w-full flex items-center justify-center gap-2 py-2.5 
-              bg-emerald-500 text-white rounded-lg font-medium
-              hover:bg-emerald-600 transition-colors"
+              bg-brand-600 text-white rounded-none font-medium
+              hover:bg-brand-500 transition-colors"
           >
             <Check className="w-5 h-5" />
             Approve Metadata
@@ -555,8 +554,8 @@ export function AssetDetailPanel({
           <button
             onClick={() => onReprocess(asset.id)}
             className="flex-1 flex items-center justify-center gap-2 py-2.5 
-              border border-gray-200 dark:border-gray-700 rounded-lg
-              hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              border border-steel-700/50 rounded-none
+              hover:bg-steel-900/50 hover:bg-steel-800 transition-colors"
           >
             <RotateCcw className="w-4 h-4" />
             Reprocess
@@ -566,8 +565,8 @@ export function AssetDetailPanel({
             <button
               onClick={() => onDownload(asset.id)}
               className="flex-1 flex items-center justify-center gap-2 py-2.5 
-                bg-brand-500 text-white rounded-lg
-                hover:bg-brand-600 transition-colors"
+                bg-brand-500 text-white rounded-none
+                hover:bg-brand-500 transition-colors"
             >
               <Download className="w-4 h-4" />
               Download

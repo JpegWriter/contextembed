@@ -89,19 +89,19 @@ export default function PricingPage() {
                   <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Includes</p>
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
-                      <Check className="h-4 w-4 text-cyan-600 dark:text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <Check className="h-4 w-4 text-brand-600 dark:text-brand-400 mt-0.5 flex-shrink-0" />
                       3 image exports per project
                     </li>
                     <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
-                      <Check className="h-4 w-4 text-cyan-600 dark:text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <Check className="h-4 w-4 text-brand-600 dark:text-brand-400 mt-0.5 flex-shrink-0" />
                       Full context embedding
                     </li>
                     <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
-                      <Check className="h-4 w-4 text-cyan-600 dark:text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <Check className="h-4 w-4 text-brand-600 dark:text-brand-400 mt-0.5 flex-shrink-0" />
                       Live onboarding & discovery
                     </li>
                     <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
-                      <Check className="h-4 w-4 text-cyan-600 dark:text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <Check className="h-4 w-4 text-brand-600 dark:text-brand-400 mt-0.5 flex-shrink-0" />
                       BYOK (Bring Your Own OpenAI Key)
                     </li>
                   </ul>
@@ -120,16 +120,16 @@ export default function PricingPage() {
               </div>
 
               {/* Lifetime Pro */}
-              <div className="p-6 bg-cyan-50 dark:bg-cyan-900/20 rounded-2xl border-2 border-cyan-500 dark:border-cyan-400 relative">
+              <div className="p-6 bg-brand-50 dark:bg-brand-900/20 rounded-2xl border-2 border-brand-500 dark:border-brand-400 relative">
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="px-3 py-1 bg-cyan-500 text-white text-xs font-medium rounded-full">
+                  <span className="px-3 py-1 bg-brand-500 text-white text-xs font-medium rounded-full">
                     Most Popular
                   </span>
                 </div>
                 
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-cyan-100 dark:bg-cyan-900/50 flex items-center justify-center">
-                    <Download className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+                  <div className="w-10 h-10 rounded-xl bg-brand-100 dark:bg-brand-900/50 flex items-center justify-center">
+                    <Download className="w-5 h-5 text-brand-600 dark:text-brand-400" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-slate-900 dark:text-white">Lifetime License</h3>
@@ -150,27 +150,27 @@ export default function PricingPage() {
                   <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Includes</p>
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
-                      <Check className="h-4 w-4 text-cyan-600 dark:text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <Check className="h-4 w-4 text-brand-600 dark:text-brand-400 mt-0.5 flex-shrink-0" />
                       Unlimited exports
                     </li>
                     <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
-                      <Check className="h-4 w-4 text-cyan-600 dark:text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <Check className="h-4 w-4 text-brand-600 dark:text-brand-400 mt-0.5 flex-shrink-0" />
                       BYOK: Bring Your Own OpenAI Key
                     </li>
                     <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
-                      <Check className="h-4 w-4 text-cyan-600 dark:text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <Check className="h-4 w-4 text-brand-600 dark:text-brand-400 mt-0.5 flex-shrink-0" />
                       Elite-grade context embedding
                     </li>
                     <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
-                      <Check className="h-4 w-4 text-cyan-600 dark:text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <Check className="h-4 w-4 text-brand-600 dark:text-brand-400 mt-0.5 flex-shrink-0" />
                       Full IPTC/XMP compliance
                     </li>
                     <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
-                      <Check className="h-4 w-4 text-cyan-600 dark:text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <Check className="h-4 w-4 text-brand-600 dark:text-brand-400 mt-0.5 flex-shrink-0" />
                       Persistent memory per project
                     </li>
                     <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
-                      <Check className="h-4 w-4 text-cyan-600 dark:text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <Check className="h-4 w-4 text-brand-600 dark:text-brand-400 mt-0.5 flex-shrink-0" />
                       Desktop app (coming soon)
                     </li>
                   </ul>
@@ -182,7 +182,7 @@ export default function PricingPage() {
                 
                 <Link
                   href="/login?plan=pro"
-                  className="block w-full py-3 text-center bg-cyan-600 dark:bg-cyan-500 text-white font-medium rounded-lg hover:bg-cyan-700 dark:hover:bg-cyan-600 transition-colors"
+                  className="block w-full py-3 text-center bg-brand-600 dark:bg-brand-500 text-white font-medium rounded-lg hover:bg-brand-700 dark:hover:bg-brand-600 transition-colors"
                 >
                   Buy Lifetime License
                 </Link>
@@ -213,23 +213,23 @@ export default function PricingPage() {
                   <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Everything in Lifetime, plus</p>
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
-                      <Check className="h-4 w-4 text-cyan-600 dark:text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <Check className="h-4 w-4 text-brand-600 dark:text-brand-400 mt-0.5 flex-shrink-0" />
                       Governance layer access
                     </li>
                     <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
-                      <Check className="h-4 w-4 text-cyan-600 dark:text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <Check className="h-4 w-4 text-brand-600 dark:text-brand-400 mt-0.5 flex-shrink-0" />
                       Pre-export rule enforcement
                     </li>
                     <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
-                      <Check className="h-4 w-4 text-cyan-600 dark:text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <Check className="h-4 w-4 text-brand-600 dark:text-brand-400 mt-0.5 flex-shrink-0" />
                       Full audit trails
                     </li>
                     <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
-                      <Check className="h-4 w-4 text-cyan-600 dark:text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <Check className="h-4 w-4 text-brand-600 dark:text-brand-400 mt-0.5 flex-shrink-0" />
                       Usage intent enforcement
                     </li>
                     <li className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
-                      <Check className="h-4 w-4 text-cyan-600 dark:text-cyan-400 mt-0.5 flex-shrink-0" />
+                      <Check className="h-4 w-4 text-brand-600 dark:text-brand-400 mt-0.5 flex-shrink-0" />
                       Priority support
                     </li>
                   </ul>
@@ -251,7 +251,7 @@ export default function PricingPage() {
         </section>
 
         {/* BYOK Explainer */}
-        <section className="py-16 px-6 bg-cyan-50 dark:bg-cyan-900/20">
+        <section className="py-16 px-6 bg-brand-50 dark:bg-brand-900/20">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
               Why "Bring Your Own Key"?
@@ -263,15 +263,15 @@ export default function PricingPage() {
             
             <div className="grid sm:grid-cols-3 gap-6 mb-8">
               <div className="p-5 bg-white dark:bg-slate-800 rounded-xl">
-                <p className="text-3xl font-bold text-cyan-600 dark:text-cyan-400 mb-2">~€0.01</p>
+                <p className="text-3xl font-bold text-brand-600 dark:text-brand-400 mb-2">~€0.01</p>
                 <p className="text-sm text-slate-600 dark:text-slate-400">per image (typical cost)</p>
               </div>
               <div className="p-5 bg-white dark:bg-slate-800 rounded-xl">
-                <p className="text-3xl font-bold text-cyan-600 dark:text-cyan-400 mb-2">No markup</p>
+                <p className="text-3xl font-bold text-brand-600 dark:text-brand-400 mb-2">No markup</p>
                 <p className="text-sm text-slate-600 dark:text-slate-400">pay OpenAI directly</p>
               </div>
               <div className="p-5 bg-white dark:bg-slate-800 rounded-xl">
-                <p className="text-3xl font-bold text-cyan-600 dark:text-cyan-400 mb-2">No limits</p>
+                <p className="text-3xl font-bold text-brand-600 dark:text-brand-400 mb-2">No limits</p>
                 <p className="text-sm text-slate-600 dark:text-slate-400">process as many as you want</p>
               </div>
             </div>
@@ -329,10 +329,10 @@ export default function PricingPage() {
               </p>
               
               <div className="flex items-center justify-center gap-4">
-                <Link href="/governance" className="text-cyan-600 dark:text-cyan-400 font-medium hover:underline">
+                <Link href="/governance" className="text-brand-600 dark:text-brand-400 font-medium hover:underline">
                   Governance →
                 </Link>
-                <Link href="/api" className="text-cyan-600 dark:text-cyan-400 font-medium hover:underline">
+                <Link href="/api" className="text-brand-600 dark:text-brand-400 font-medium hover:underline">
                   API →
                 </Link>
               </div>
@@ -362,7 +362,7 @@ export default function PricingPage() {
                     <td className="px-6 py-4 text-sm text-slate-900 dark:text-white font-medium">€0</td>
                     <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">Trying it properly</td>
                   </tr>
-                  <tr className="border-t border-slate-200 dark:border-slate-700 bg-cyan-50/50 dark:bg-cyan-900/10">
+                  <tr className="border-t border-slate-200 dark:border-slate-700 bg-brand-50/50 dark:bg-brand-900/10">
                     <td className="px-6 py-4 text-sm text-slate-700 dark:text-slate-300 font-medium">Lifetime License</td>
                     <td className="px-6 py-4 text-sm text-slate-900 dark:text-white font-medium">€249</td>
                     <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">Most users (BYOK)</td>
@@ -421,7 +421,7 @@ export default function PricingPage() {
               </Link>
               <Link
                 href="/login?plan=pro"
-                className="px-6 py-3 text-cyan-600 dark:text-cyan-400 font-medium hover:underline transition-colors"
+                className="px-6 py-3 text-brand-600 dark:text-brand-400 font-medium hover:underline transition-colors"
               >
                 Buy Lifetime
               </Link>

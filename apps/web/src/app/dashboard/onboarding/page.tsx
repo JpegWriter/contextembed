@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -378,7 +378,7 @@ function OnboardingContent() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
+        <Loader2 className="h-8 w-8 animate-spin text-brand-400" />
       </div>
     );
   }
@@ -389,9 +389,9 @@ function OnboardingContent() {
       <div className="flex-1 min-w-0">
         {/* Header */}
         <div className="mb-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-cyan-900/30 border border-cyan-800/50 rounded-full mb-4">
-            <Sparkles className="w-4 h-4 text-cyan-400" />
-            <span className="text-xs font-medium text-cyan-300">Welcome to ContextEmbed</span>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-brand-900/30 border border-brand-800/50 rounded-full mb-4">
+            <Sparkles className="w-4 h-4 text-brand-400" />
+            <span className="text-xs font-medium text-brand-300">Welcome to ContextEmbed</span>
           </div>
           <h1 className="text-xl font-bold text-white mb-1">Set Up Your Business Profile</h1>
           <p className="text-sm text-gray-500">
@@ -408,7 +408,7 @@ function OnboardingContent() {
                 disabled={i > currentStep}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition-colors whitespace-nowrap ${
                   i === currentStep
-                    ? 'bg-cyan-600 text-white'
+                    ? 'bg-brand-600 text-white'
                     : i < currentStep
                     ? 'bg-emerald-900/50 text-emerald-400 border border-emerald-700/50'
                     : 'bg-gray-800 text-gray-500 border border-gray-700'
@@ -425,7 +425,7 @@ function OnboardingContent() {
         </div>
 
         {/* Step content */}
-        <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-6">
+        <div className="bg-gray-900/50 border border-gray-800 rounded-none p-6">
           {/* Step 0: Website */}
           {currentStep === 0 && (
             <div className="space-y-6">
@@ -440,12 +440,12 @@ function OnboardingContent() {
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
                     placeholder="https://yourwebsite.com"
-                    className="flex-1 px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-white placeholder:text-gray-600 focus:border-cyan-600 focus:outline-none focus:ring-1 focus:ring-cyan-600/50"
+                    className="flex-1 px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-none text-sm text-white placeholder:text-gray-600 focus:border-brand-600 focus:outline-none focus:ring-1 focus:ring-brand-600/50"
                   />
                   <button
                     onClick={handleAuditUrl}
                     disabled={!url || auditing}
-                    className="px-4 py-2.5 bg-cyan-600 text-white text-sm font-medium rounded-lg hover:bg-cyan-500 disabled:opacity-50 flex items-center gap-2"
+                    className="px-4 py-2.5 bg-brand-600 text-white text-sm font-medium rounded-none hover:bg-brand-500 disabled:opacity-50 flex items-center gap-2"
                   >
                     {auditing ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Analyze'}
                   </button>
@@ -453,7 +453,7 @@ function OnboardingContent() {
               </div>
 
               {urlAudit && urlAudit.success && (
-                <div className="p-4 bg-emerald-900/20 border border-emerald-700/50 rounded-lg">
+                <div className="p-4 bg-emerald-900/20 border border-emerald-700/50 rounded-none">
                   <h3 className="font-medium text-emerald-400 text-sm mb-2">Found information:</h3>
                   <ul className="text-xs space-y-1 text-emerald-300">
                     {urlAudit.businessName && <li>• Business: {urlAudit.businessName}</li>}
@@ -467,7 +467,7 @@ function OnboardingContent() {
               <div className="flex justify-end">
                 <button
                   onClick={() => setCurrentStep(1)}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-cyan-600 text-white text-sm font-medium rounded-lg hover:bg-cyan-500"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-brand-600 text-white text-sm font-medium rounded-none hover:bg-brand-500"
                 >
                   Next <ArrowRight className="h-4 w-4" />
                 </button>
@@ -479,7 +479,7 @@ function OnboardingContent() {
           {currentStep === 1 && (
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-2">
-                <Building2 className="w-5 h-5 text-cyan-400" />
+                <Building2 className="w-5 h-5 text-brand-400" />
                 <h2 className="text-base font-semibold text-white">Business Identity</h2>
               </div>
               <p className="text-xs text-gray-500 -mt-2 mb-4">
@@ -590,14 +590,14 @@ function OnboardingContent() {
               <div className="flex justify-between pt-4">
                 <button
                   onClick={() => setCurrentStep(0)}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-300 text-sm rounded-lg hover:bg-gray-700 border border-gray-700"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-300 text-sm rounded-none hover:bg-gray-700 border border-gray-700"
                 >
                   <ArrowLeft className="h-4 w-4" /> Back
                 </button>
                 <button
                   onClick={handleNextStep}
                   disabled={!context.businessName || saving}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-cyan-600 text-white text-sm font-medium rounded-lg hover:bg-cyan-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-brand-600 text-white text-sm font-medium rounded-none hover:bg-brand-500 disabled:opacity-50"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Next <ArrowRight className="h-4 w-4" /></>}
                 </button>
@@ -609,7 +609,7 @@ function OnboardingContent() {
           {currentStep === 2 && (
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-2">
-                <Award className="w-5 h-5 text-cyan-400" />
+                <Award className="w-5 h-5 text-brand-400" />
                 <h2 className="text-base font-semibold text-white">Authority & Expertise</h2>
               </div>
               <p className="text-xs text-gray-500 -mt-2 mb-4">
@@ -692,7 +692,7 @@ function OnboardingContent() {
                         value={authority.pricePoint}
                         onChange={(e) => setAuthority(a => ({ ...a, pricePoint: e.target.value }))}
                         onFocus={() => handleFocus('pricePoint', 'authority')}
-                        className="w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 focus:border-cyan-600 focus:outline-none"
+                        className="w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-none text-sm text-gray-200 focus:border-brand-600 focus:outline-none"
                       >
                         <option value="">Select...</option>
                         <option value="budget">Budget-friendly</option>
@@ -744,14 +744,14 @@ function OnboardingContent() {
               <div className="flex justify-between pt-4">
                 <button
                   onClick={() => setCurrentStep(1)}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-300 text-sm rounded-lg hover:bg-gray-700 border border-gray-700"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-300 text-sm rounded-none hover:bg-gray-700 border border-gray-700"
                 >
                   <ArrowLeft className="h-4 w-4" /> Back
                 </button>
                 <button
                   onClick={handleNextStep}
                   disabled={saving}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-cyan-600 text-white text-sm font-medium rounded-lg hover:bg-cyan-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-brand-600 text-white text-sm font-medium rounded-none hover:bg-brand-500 disabled:opacity-50"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Next <ArrowRight className="h-4 w-4" /></>}
                 </button>
@@ -763,7 +763,7 @@ function OnboardingContent() {
           {currentStep === 3 && (
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-2">
-                <Copyright className="w-5 h-5 text-cyan-400" />
+                <Copyright className="w-5 h-5 text-brand-400" />
                 <h2 className="text-base font-semibold text-white">Rights & Attribution</h2>
               </div>
               <p className="text-xs text-gray-500 -mt-2 mb-4">
@@ -830,14 +830,14 @@ function OnboardingContent() {
               <div className="flex justify-between pt-4">
                 <button
                   onClick={() => setCurrentStep(2)}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-300 text-sm rounded-lg hover:bg-gray-700 border border-gray-700"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-300 text-sm rounded-none hover:bg-gray-700 border border-gray-700"
                 >
                   <ArrowLeft className="h-4 w-4" /> Back
                 </button>
                 <button
                   onClick={handleNextStep}
                   disabled={!rights.creatorName || saving}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-cyan-600 text-white text-sm font-medium rounded-lg hover:bg-cyan-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-brand-600 text-white text-sm font-medium rounded-none hover:bg-brand-500 disabled:opacity-50"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Next <ArrowRight className="h-4 w-4" /></>}
                 </button>
@@ -849,7 +849,7 @@ function OnboardingContent() {
           {currentStep === 4 && (
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-2">
-                <Sliders className="w-5 h-5 text-cyan-400" />
+                <Sliders className="w-5 h-5 text-brand-400" />
                 <h2 className="text-base font-semibold text-white">Output Preferences</h2>
               </div>
               <p className="text-xs text-gray-500 -mt-2 mb-4">
@@ -864,7 +864,7 @@ function OnboardingContent() {
                   <select
                     value={preferences.primaryLanguage}
                     onChange={(e) => setPreferences(p => ({ ...p, primaryLanguage: e.target.value }))}
-                    className="w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 focus:border-cyan-600 focus:outline-none"
+                    className="w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-none text-sm text-gray-200 focus:border-brand-600 focus:outline-none"
                   >
                     <option value="en">English</option>
                     <option value="es">Spanish</option>
@@ -884,7 +884,7 @@ function OnboardingContent() {
                   <select
                     value={preferences.keywordStyle}
                     onChange={(e) => setPreferences(p => ({ ...p, keywordStyle: e.target.value as any }))}
-                    className="w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 focus:border-cyan-600 focus:outline-none"
+                    className="w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-none text-sm text-gray-200 focus:border-brand-600 focus:outline-none"
                   >
                     <option value="short">Short (single words)</option>
                     <option value="long">Long-tail (phrases)</option>
@@ -903,7 +903,7 @@ function OnboardingContent() {
                   onChange={(e) => setPreferences(p => ({ ...p, maxKeywords: parseInt(e.target.value) || 25 }))}
                   min={5}
                   max={50}
-                  className="w-32 px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 focus:border-cyan-600 focus:outline-none"
+                  className="w-32 px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-none text-sm text-gray-200 focus:border-brand-600 focus:outline-none"
                 />
                 <p className="text-xs text-gray-500 mt-1">Recommended: 20-30 keywords</p>
               </div>
@@ -911,14 +911,14 @@ function OnboardingContent() {
               <div className="flex justify-between pt-4">
                 <button
                   onClick={() => setCurrentStep(3)}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-300 text-sm rounded-lg hover:bg-gray-700 border border-gray-700"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-300 text-sm rounded-none hover:bg-gray-700 border border-gray-700"
                 >
                   <ArrowLeft className="h-4 w-4" /> Back
                 </button>
                 <button
                   onClick={handleNextStep}
                   disabled={saving}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-cyan-600 text-white text-sm font-medium rounded-lg hover:bg-cyan-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-brand-600 text-white text-sm font-medium rounded-none hover:bg-brand-500 disabled:opacity-50"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Next <ArrowRight className="h-4 w-4" /></>}
                 </button>
@@ -940,7 +940,7 @@ function OnboardingContent() {
               </div>
 
               {/* Summary */}
-              <div className="bg-gray-800/50 rounded-lg p-4 space-y-3">
+              <div className="bg-gray-800/50 rounded-none p-4 space-y-3">
                 <h3 className="text-sm font-medium text-gray-300 mb-2">Profile Summary</h3>
                 <dl className="text-xs space-y-2">
                   <SummaryRow label="Business" value={context.businessName || 'ÔÇö'} />
@@ -955,14 +955,14 @@ function OnboardingContent() {
               <div className="flex justify-center gap-3 pt-4">
                 <button
                   onClick={() => setCurrentStep(4)}
-                  className="px-4 py-2 bg-gray-800 text-gray-300 text-sm rounded-lg hover:bg-gray-700 border border-gray-700"
+                  className="px-4 py-2 bg-gray-800 text-gray-300 text-sm rounded-none hover:bg-gray-700 border border-gray-700"
                 >
                   Edit Settings
                 </button>
                 <button
                   onClick={handleComplete}
                   disabled={saving}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-cyan-600 text-white text-sm font-medium rounded-lg hover:bg-cyan-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-6 py-2.5 bg-brand-600 text-white text-sm font-medium rounded-none hover:bg-brand-500 disabled:opacity-50"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Start Creating Projects'}
                 </button>
@@ -986,7 +986,7 @@ function OnboardingContent() {
       <div className="w-72 shrink-0 hidden lg:block">
         <div className="sticky top-6">
           <div className="flex items-center gap-2 mb-3">
-            <Sparkles className="w-4 h-4 text-cyan-400" />
+            <Sparkles className="w-4 h-4 text-brand-400" />
             <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">AI Copilot</span>
           </div>
           <FieldCopilot
@@ -1023,7 +1023,7 @@ function InputField({
   multiline?: boolean;
   type?: string;
 }) {
-  const baseClasses = "w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-lg text-sm text-gray-200 placeholder:text-gray-600 focus:border-cyan-600 focus:outline-none focus:ring-1 focus:ring-cyan-600/50";
+  const baseClasses = "w-full px-3 py-2.5 bg-gray-800 border border-gray-700 rounded-none text-sm text-gray-200 placeholder:text-gray-600 focus:border-brand-600 focus:outline-none focus:ring-1 focus:ring-brand-600/50";
   
   return (
     <div>

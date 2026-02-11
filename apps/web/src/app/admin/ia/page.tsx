@@ -163,7 +163,7 @@ export default function AdminIAPage() {
       {/* Message Banner */}
       {message && (
         <div
-          className={`p-4 rounded-lg flex items-center gap-3 ${
+          className={`p-4 rounded-none flex items-center gap-3 ${
             message.type === 'success'
               ? 'bg-green-50 text-green-800'
               : 'bg-red-50 text-red-800'
@@ -179,7 +179,7 @@ export default function AdminIAPage() {
       )}
 
       {/* File Status Card */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-black rounded-none border border-slate-200 overflow-hidden">
         <div className="p-6">
           <h2 className="text-lg font-semibold text-slate-900 mb-4">Plan Status</h2>
           
@@ -219,7 +219,7 @@ export default function AdminIAPage() {
 
               {/* Coverage Score */}
               {status.validation && (
-                <div className={`mt-4 p-4 rounded-lg ${getCoverageScoreBg(status.validation.coverageScore)}`}>
+                <div className={`mt-4 p-4 rounded-none ${getCoverageScoreBg(status.validation.coverageScore)}`}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <BarChart3 className={`w-5 h-5 ${getCoverageScoreColor(status.validation.coverageScore)}`} />
@@ -250,7 +250,7 @@ export default function AdminIAPage() {
           <button
             onClick={handleValidate}
             disabled={!status?.fileExists || validating}
-            className="px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-4 py-2 bg-black border border-slate-300 rounded-none text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {validating ? <RefreshCw className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
             Validate Plan
@@ -258,7 +258,7 @@ export default function AdminIAPage() {
           <button
             onClick={handleImport}
             disabled={!status?.fileExists || importing}
-            className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-4 py-2 bg-slate-900 text-white rounded-none text-sm font-medium hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {importing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
             Import to Database
@@ -268,7 +268,7 @@ export default function AdminIAPage() {
 
       {/* Database Status */}
       {status?.dbPlan && (
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <div className="bg-black rounded-none border border-slate-200 p-6">
           <h2 className="text-lg font-semibold text-slate-900 mb-4">Database Status</h2>
           <div className="flex items-center gap-3 mb-4">
             <CheckCircle2 className="w-5 h-5 text-green-600" />
@@ -287,7 +287,7 @@ export default function AdminIAPage() {
 
       {/* Validation Results */}
       {validation && (
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="bg-black rounded-none border border-slate-200 overflow-hidden">
           <div className="p-6">
             <h2 className="text-lg font-semibold text-slate-900 mb-4">Validation Results</h2>
             
@@ -305,7 +305,7 @@ export default function AdminIAPage() {
                 <h3 className="text-sm font-medium text-red-800 mb-2">Errors ({validation.errors.length})</h3>
                 <div className="space-y-2">
                   {validation.errors.map((error, i) => (
-                    <div key={i} className="bg-red-50 text-red-800 p-3 rounded-lg text-sm">
+                    <div key={i} className="bg-red-50 text-red-800 p-3 rounded-none text-sm">
                       <span className="font-mono text-xs">{error.path}</span>: {error.message}
                     </div>
                   ))}
@@ -319,7 +319,7 @@ export default function AdminIAPage() {
                 <h3 className="text-sm font-medium text-amber-800 mb-2">Warnings ({validation.warnings.length})</h3>
                 <div className="space-y-2">
                   {validation.warnings.map((warning, i) => (
-                    <div key={i} className="bg-amber-50 text-amber-800 p-3 rounded-lg text-sm flex items-start gap-2">
+                    <div key={i} className="bg-amber-50 text-amber-800 p-3 rounded-none text-sm flex items-start gap-2">
                       <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
                       <span>{warning.message}</span>
                     </div>
@@ -337,7 +337,7 @@ export default function AdminIAPage() {
                 </h3>
                 <div className="space-y-2">
                   {validation.suggestions.map((suggestion, i) => (
-                    <div key={i} className="bg-blue-50 text-blue-800 p-3 rounded-lg text-sm">
+                    <div key={i} className="bg-brand-900/20 text-brand-300 p-3 rounded-none text-sm">
                       <div className="flex items-center gap-2 mb-1">
                         <span className={`px-2 py-0.5 rounded text-xs font-medium ${
                           suggestion.priority === 'high' ? 'bg-red-100 text-red-700' :
@@ -349,7 +349,7 @@ export default function AdminIAPage() {
                         <span className="font-medium">{suggestion.message}</span>
                       </div>
                       {suggestion.action && (
-                        <p className="text-blue-700 text-xs mt-1">→ {suggestion.action}</p>
+                        <p className="text-brand-400 text-xs mt-1">→ {suggestion.action}</p>
                       )}
                     </div>
                   ))}
@@ -361,26 +361,26 @@ export default function AdminIAPage() {
       )}
 
       {/* Export Buttons */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6">
+      <div className="bg-black rounded-none border border-slate-200 p-6">
         <h2 className="text-lg font-semibold text-slate-900 mb-4">Export</h2>
         <div className="flex flex-wrap gap-3">
           <a
             href={`${API_BASE}/admin/ia/export/calendar`}
-            className="px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2"
+            className="px-4 py-2 bg-black border border-slate-300 rounded-none text-sm font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2"
           >
             <Download className="w-4 h-4" />
             Export Calendar CSV
           </a>
           <a
             href={`${API_BASE}/admin/ia/export/pages`}
-            className="px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2"
+            className="px-4 py-2 bg-black border border-slate-300 rounded-none text-sm font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2"
           >
             <Download className="w-4 h-4" />
             Export Pages CSV
           </a>
           <a
             href={`${API_BASE}/admin/ia/export/link-rules`}
-            className="px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2"
+            className="px-4 py-2 bg-black border border-slate-300 rounded-none text-sm font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2"
           >
             <Download className="w-4 h-4" />
             Export Link Rules CSV
@@ -401,7 +401,7 @@ function StatCard({
   icon: React.ReactNode;
 }) {
   return (
-    <div className="bg-slate-50 rounded-lg p-4">
+    <div className="bg-slate-50 rounded-none p-4">
       <div className="flex items-center gap-2 text-slate-500 mb-1">
         {icon}
         <span className="text-xs font-medium">{label}</span>

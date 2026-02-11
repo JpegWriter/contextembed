@@ -49,7 +49,7 @@ const typeConfig: Record<string, { label: string; icon: React.ReactNode; color: 
   trust: {
     label: 'Trust',
     icon: <Shield className="w-4 h-4" />,
-    color: 'bg-blue-100 text-blue-800 border-blue-200',
+    color: 'bg-brand-900/30 text-brand-300 border-brand-700/50',
   },
   trust_or_release: {
     label: 'Update',
@@ -83,7 +83,7 @@ export default function ContentCalendarPage() {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-slate-900 mb-2">Calendar Unavailable</h1>
           <p className="text-slate-600">The content calendar data could not be loaded.</p>
-          <Link href="/" className="mt-4 inline-block text-blue-600 hover:underline">
+          <Link href="/" className="mt-4 inline-block text-brand-400 hover:underline">
             ← Back to Home
           </Link>
         </div>
@@ -98,7 +98,7 @@ export default function ContentCalendarPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200">
+      <header className="bg-black border-b border-slate-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <Link href="/" className="text-sm text-slate-500 hover:text-slate-700 mb-4 inline-block">
             ← Back to Home
@@ -123,7 +123,7 @@ export default function ContentCalendarPage() {
       </header>
 
       {/* Legend */}
-      <div className="bg-white border-b border-slate-200">
+      <div className="bg-black border-b border-slate-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-wrap items-center gap-4">
             <span className="text-sm font-medium text-slate-500">Content Types:</span>
@@ -145,7 +145,7 @@ export default function ContentCalendarPage() {
         <div className="space-y-8">
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {calendar.months.map((month: any) => (
-            <section key={month.month} className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <section key={month.month} className="bg-black rounded-none border border-slate-200 overflow-hidden">
               {/* Month Header */}
               <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
                 <div className="flex items-center justify-between">
@@ -199,7 +199,7 @@ export default function ContentCalendarPage() {
         </div>
 
         {/* CTA */}
-        <div className="mt-12 bg-slate-900 rounded-xl p-8 text-center">
+        <div className="mt-12 bg-slate-900 rounded-none p-8 text-center">
           <h2 className="text-2xl font-bold text-white mb-4">
             Want Updates When We Publish?
           </h2>
@@ -210,7 +210,7 @@ export default function ContentCalendarPage() {
           <div className="flex items-center justify-center gap-4">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white text-slate-900 rounded-lg font-medium hover:bg-slate-100 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-black text-slate-900 rounded-none font-medium hover:bg-slate-100 transition-colors"
             >
               Get Started
               <ArrowRight className="w-4 h-4" />
@@ -219,7 +219,7 @@ export default function ContentCalendarPage() {
         </div>
 
         {/* About */}
-        <div className="mt-8 p-6 bg-white rounded-xl border border-slate-200 text-center">
+        <div className="mt-8 p-6 bg-black rounded-none border border-slate-200 text-center">
           <p className="text-sm text-slate-500">
             This calendar is auto-generated from our content planning system.
             Topics and timing may shift as we respond to user needs and industry changes.

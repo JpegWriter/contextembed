@@ -461,7 +461,7 @@ export default function HomePage() {
                 </ul>
               </div>
 
-              <div className="p-6 bg-brand-950/20 border border-cyan-200 dark:border-cyan-800 ">
+              <div className="p-6 bg-brand-950/20 border border-brand-200 dark:border-brand-800 ">
                 <h3 className="font-semibold text-brand-400 mb-4 text-sm uppercase tracking-wide">
                   ContextEmbed
                 </h3>

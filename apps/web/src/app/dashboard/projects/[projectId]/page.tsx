@@ -402,7 +402,7 @@ export default function ProjectPage() {
             onClick={() => setStatusFilter(statusFilter === 'processing' ? 'all' : 'processing')}
             className={`flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all border ${
               statusFilter === 'processing'
-                ? 'bg-blue-950/50 text-blue-400 border-blue-500'
+                ? 'bg-blue-950/50 text-blue-400 border-brand-500'
                 : 'bg-black text-steel-400 border-steel-700/50 hover:border-steel-500 hover:text-steel-300'
             }`}
           >

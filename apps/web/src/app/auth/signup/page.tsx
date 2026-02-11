@@ -109,7 +109,7 @@ export default function SignUpPage() {
             </Link>
           </div>
 
-          <div className="bg-amber-900/20 border border-amber-800/50 rounded-xl p-6">
+          <div className="bg-amber-900/20 border border-amber-800/50 rounded-none p-6">
             <div className="flex items-start gap-3">
               <AlertTriangle className="h-6 w-6 text-amber-400 flex-shrink-0 mt-0.5" />
               <div>
@@ -180,7 +180,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key`}
           Already have an account?{' '}
           <Link 
             href="/login" 
-            className="text-cyan-400 hover:text-cyan-300 font-medium"
+            className="text-brand-400 hover:text-brand-300 font-medium"
           >
             Sign in
           </Link>

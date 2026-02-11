@@ -17,7 +17,7 @@ export const projectsRouter: IRouter = Router();
 projectsRouter.get('/', asyncHandler(async (req, res) => {
   const { userId } = req as AuthenticatedRequest;
   
-  const projects = await projectRepository.findByUser(userId);
+  const projects = await projectRepository.findByUserWithCover(userId);
   
   res.json({
     projects: projects.map(p => ({
@@ -27,6 +27,7 @@ projectsRouter.get('/', asyncHandler(async (req, res) => {
       onboardingCompleted: p.onboardingCompleted,
       createdAt: p.createdAt,
       updatedAt: p.updatedAt,
+      coverAssetId: p.coverAssetId,
     })),
   });
 }));

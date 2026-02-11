@@ -2,6 +2,21 @@
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['@contextembed/core'],
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'contextembed-api.onrender.com',
+        pathname: '/files/**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '3001',
+        pathname: '/files/**',
+      },
+    ],
+  },
   async rewrites() {
     return [
       {

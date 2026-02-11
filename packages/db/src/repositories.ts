@@ -109,6 +109,30 @@ export const projectRepository = {
       orderBy: { createdAt: 'desc' },
     });
   },
+
+  /**
+   * Find projects with their cover image (first asset's thumbnail)
+   */
+  async findByUserWithCover(userId: string): Promise<(Project & { coverAssetId?: string })[]> {
+    const projects = await prisma.project.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        assets: {
+          where: { thumbnailPath: { not: null } },
+          select: { id: true },
+          take: 1,
+          orderBy: { createdAt: 'asc' },
+        },
+      },
+    });
+    
+    return projects.map(p => ({
+      ...p,
+      coverAssetId: p.assets[0]?.id,
+      assets: undefined, // Remove assets array from response
+    })) as (Project & { coverAssetId?: string })[];
+  },
   
   async create(data: { userId: string; name: string; goal: ProjectGoal }): Promise<Project> {
     return prisma.project.create({ data });

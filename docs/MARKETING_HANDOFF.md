@@ -327,6 +327,130 @@ Usage is tracked per registrable domain (e.g., `example.com`), not per user. Thi
 
 ---
 
+# Platform Metadata Survival Matrix
+
+ContextEmbed includes a **Survival Lab** for testing metadata preservation across platforms.
+
+## Phase 1 Platforms (Ready for Testing)
+
+| Platform | Category | Expected Survival | Notes |
+|----------|----------|-------------------|-------|
+| **WordPress (Self-Hosted)** | CMS | ✅ HIGH | Depends on hosting; most preserve |
+| **WordPress.com** | CMS | ⚠️ MEDIUM | Free tier may compress |
+| **Webflow** | CMS | ⚠️ MEDIUM | Asset compression possible |
+| **Medium** | Publishing | ❌ LOW | Known to strip most metadata |
+| **Substack** | Publishing | ⚠️ MEDIUM | Limited testing available |
+| **Pixieset** | Proofing | ✅ HIGH | Photographer-focused, preserves |
+| **Dropbox** | Storage | ✅ HIGH | File storage, no transformation |
+| **Google Drive** | Storage | ✅ HIGH | File storage, no transformation |
+| **WeTransfer** | Transfer | ✅ HIGH | File transfer, no transformation |
+| **Instagram** | Social | ❌ WIPE | Strips nearly all metadata |
+| **Facebook** | Social | ❌ WIPE | Strips nearly all metadata |
+| **LinkedIn** | Social | ❌ LOW | Heavy reprocessing |
+
+## Survival Score Calculation
+
+| Score | Classification | Meaning |
+|-------|---------------|---------|
+| 90-100 | **SAFE** | All core metadata preserved |
+| 70-89 | **PARTIAL** | Some fields stripped/modified |
+| 40-69 | **DEGRADED** | Critical fields missing |
+| 0-39 | **WIPED** | Little to no metadata survives |
+
+## Fields Tested
+
+| Field | Priority | Source |
+|-------|----------|--------|
+| Creator/Author | Critical | IPTC/XMP |
+| Copyright | Critical | IPTC/XMP/EXIF |
+| Credit | High | IPTC |
+| Description/Caption | High | IPTC/XMP |
+| Keywords | Medium | IPTC/XMP |
+| Custom Namespace | Low | XMP contextembed: |
+
+## CE Master Copy Guarantee
+
+**CRITICAL**: ContextEmbed always retains the authoritative master copy:
+- Original file with embedded metadata stored in CE storage
+- SHA-256 hash recorded in manifest
+- Governance decision permanently logged
+- Re-download from CE always returns full metadata
+
+**Conclusion**: Even when platforms strip metadata, CE users can always re-export from the authoritative master.
+
+---
+
+# Seed Businesses for Launch
+
+## Phase 1 Target Verticals
+
+| Business Type | Pain Point | CE Value Prop |
+|---------------|------------|---------------|
+| **Wedding Photographers** | 500+ images per event, no time for keywords | Batch metadata in minutes |
+| **Real Estate Photographers** | SEO for property listings, agent attribution | Location + agent proof fields |
+| **Portrait Studios** | Consistent branding across photographers | Profile-level brand settings |
+| **Product Photographers** | E-commerce SEO, category keywords | AI vision + category context |
+| **Home Service Contractors** | Proof-of-work authenticity | Governance + Startup Mode |
+| **Medical/Dental Practices** | Before/after credibility | Strict AI governance |
+| **Legal Firms** | Case documentation authenticity | Provenance chain, SHA-256 |
+| **Restaurant/Food Photographers** | Google Maps SEO, location signals | Local proof fields |
+
+## Seed Business Profiles (For Demo/Testing)
+
+### 1. Sarah Mitchell Photography (Wedding)
+- **Type**: Wedding & Portrait
+- **Location**: Austin, TX
+- **Volume**: ~15,000 images/year
+- **Pain**: 2 hours per wedding on keywords
+- **Plan**: Pro ($149/month)
+
+### 2. ClearView Property Photos (Real Estate)
+- **Type**: Real Estate Photography
+- **Location**: Miami, FL
+- **Volume**: ~30,000 images/year
+- **Pain**: Agent attribution, MLS SEO
+- **Plan**: Pro ($149/month)
+
+### 3. Hammer & Nail Renovations (Contractor)
+- **Type**: Home Renovation Contractor
+- **Location**: Denver, CO
+- **Volume**: ~500 images/year
+- **Pain**: Proving work is authentic, not AI
+- **Plan**: Starter ($49/month)
+- **Feature Focus**: Governance + Startup Mode
+
+### 4. Bright Smiles Dental (Medical)
+- **Type**: Dental Practice
+- **Location**: Seattle, WA
+- **Volume**: ~200 images/year
+- **Pain**: Before/after credibility
+- **Plan**: Starter ($49/month)
+- **Feature Focus**: Strict governance, HIPAA-aware
+
+### 5. FoodieFrame Studio (Food)
+- **Type**: Food & Restaurant Photography
+- **Location**: Los Angeles, CA
+- **Volume**: ~8,000 images/year
+- **Pain**: Google Maps SEO, location proof
+- **Plan**: Pro ($149/month)
+
+### 6. Vista Stock Contributors (Stock)
+- **Type**: Stock Photography Collective
+- **Location**: Remote (5 photographers)
+- **Volume**: ~50,000 images/year
+- **Pain**: Platform rejection, keyword optimization
+- **Plan**: Agency ($399/month)
+
+---
+
+# Call to Action
+
+**Website**: [contextembed.com]
+**Free Trial**: 3 uses per domain, no credit card required
+**Demo**: Schedule a personalized walkthrough
+
+---
+
 *Document prepared for Marketing team — February 2026*
 *Product Version: ContextEmbed 2.1*
 *Last Updated: February 11, 2026*

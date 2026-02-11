@@ -125,7 +125,7 @@ export function AssetGrid({
   return (
     <div>
       {/* Toolbar - Compact Pro Style */}
-      <div className="flex items-center justify-between gap-3 mb-2 pb-2 border-b border-gray-700">
+      <div className="flex items-center justify-between gap-3 mb-2 pb-2 border-b border-steel-700/50">
         <label className="flex items-center gap-2 cursor-pointer">
           <input
             type="checkbox"
@@ -134,26 +134,26 @@ export function AssetGrid({
               if (el) el.indeterminate = someSelected && !allSelected;
             }}
             onChange={(e) => onSelectAll(e.target.checked)}
-            className="w-4 h-4 rounded-sm border-gray-500 bg-gray-800 text-cyan-500 
-              focus:ring-cyan-500 focus:ring-offset-0"
+            className="w-4 h-4 rounded-sm border-steel-500 bg-steel-800 text-brand-500 
+              focus:ring-brand-500 focus:ring-offset-0"
           />
-          <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+          <span className="text-xs font-bold text-steel-400 uppercase tracking-wider">
             {selectedIds.size > 0 ? `${selectedIds.size} sel` : 'All'}
           </span>
         </label>
 
         {/* View toggle */}
-        <div className="flex items-center border border-gray-700 rounded overflow-hidden">
+        <div className="flex items-center border border-steel-700/50 overflow-hidden">
           <button
             onClick={() => setViewMode('grid')}
-            className={`p-1.5 transition-colors ${viewMode === 'grid' ? 'bg-gray-700 text-white' : 'bg-gray-800 text-gray-400 hover:text-white'}`}
+            className={`p-1.5 transition-colors ${viewMode === 'grid' ? 'bg-steel-700 text-white' : 'bg-black text-steel-400 hover:text-white'}`}
             title="Grid view"
           >
             <Grid3X3 className="w-4 h-4" />
           </button>
           <button
             onClick={() => setViewMode('filmstrip')}
-            className={`p-1.5 transition-colors ${viewMode === 'filmstrip' ? 'bg-gray-700 text-white' : 'bg-gray-800 text-gray-400 hover:text-white'}`}
+            className={`p-1.5 transition-colors ${viewMode === 'filmstrip' ? 'bg-steel-700 text-white' : 'bg-black text-steel-400 hover:text-white'}`}
             title="Filmstrip view"
           >
             <LayoutList className="w-4 h-4" />
@@ -201,11 +201,11 @@ export function AssetGrid({
             <div
               key={asset.id}
               className={`
-                group relative bg-gray-900 border overflow-hidden rounded
+                group relative bg-black border overflow-hidden
                 transition-all duration-75 cursor-pointer
                 ${isSelected 
-                  ? 'border-cyan-500 ring-1 ring-cyan-500/50 shadow-[0_0_8px_rgba(6,182,212,0.3)]' 
-                  : 'border-gray-700 hover:border-gray-500'}
+                  ? 'border-brand-500 shadow-glow-green' 
+                  : 'border-steel-700/50 hover:border-steel-500'}
               `}
             >
               {/* Checkbox - top left */}
@@ -217,8 +217,8 @@ export function AssetGrid({
                     e.stopPropagation();
                     onSelect(asset.id, e.target.checked);
                   }}
-                  className="w-3.5 h-3.5 rounded-sm border-gray-500 bg-gray-900/90 
-                    text-cyan-500 focus:ring-cyan-500 cursor-pointer"
+                  className="w-3.5 h-3.5 rounded-sm border-steel-500 bg-black/90 
+                    text-brand-500 focus:ring-brand-500 cursor-pointer"
                 />
               </div>
 
@@ -315,11 +315,11 @@ export function AssetGrid({
                   <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center z-10">
                     <div className="relative">
                       {/* Outer ring animation */}
-                      <div className="w-10 h-10 border-2 border-cyan-500/30 rounded-full absolute animate-ping" />
+                      <div className="w-10 h-10 border-2 border-brand-500/30 rounded-full absolute animate-ping" />
                       {/* Spinning loader */}
-                      <Loader2 className="w-10 h-10 text-cyan-400 animate-spin" />
+                      <Loader2 className="w-10 h-10 text-brand-400 animate-spin" />
                     </div>
-                    <span className="text-[10px] text-cyan-300 mt-2 font-medium uppercase tracking-wider">
+                    <span className="text-[10px] text-brand-300 mt-2 font-bold uppercase tracking-wider">
                       {asset.status === 'pending' ? 'Queued' : asset.status === 'analyzing' ? 'AI Analyzing' : 'Processing'}
                     </span>
                   </div>
@@ -346,12 +346,12 @@ export function AssetGrid({
               </div>
 
               {/* Footer - compact info bar */}
-              <div className="px-1 py-0.5 bg-gray-900/95 border-t border-gray-800">
-                <p className="text-[9px] text-gray-300 truncate font-mono leading-tight" 
+              <div className="px-1 py-0.5 bg-black border-t border-steel-700/50">
+                <p className="text-[9px] text-steel-300 truncate font-mono leading-tight" 
                   title={asset.originalFilename}>
                   {asset.originalFilename}
                 </p>
-                <div className="flex items-center justify-between text-[8px] text-gray-500 leading-tight">
+                <div className="flex items-center justify-between text-[8px] text-steel-500 leading-tight">
                   <span className="font-mono">{formatFileSize(asset.size)}</span>
                   <span className="uppercase font-medium">{status.textFull}</span>
                 </div>
@@ -362,8 +362,8 @@ export function AssetGrid({
       </div>
 
       {assets.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
-          <p className="text-sm font-medium">No assets. Drop images to begin.</p>
+        <div className="text-center py-8 text-steel-500">
+          <p className="text-sm font-bold uppercase tracking-wider">No assets. Drop images to begin.</p>
         </div>
       )}
     </div>

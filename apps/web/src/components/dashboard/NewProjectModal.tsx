@@ -105,22 +105,22 @@ export function NewProjectModal({ isOpen, onClose, onSubmit }: NewProjectModalPr
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-      <div className="bg-gray-900 border border-gray-700 rounded-xl w-full max-w-xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+      <div className="bg-black border border-steel-700/50 w-full max-w-xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-800">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-steel-700/50">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-cyan-600/20 rounded-lg flex items-center justify-center">
-              <Folder className="w-5 h-5 text-cyan-400" />
+            <div className="w-10 h-10 bg-brand-900/30 border border-brand-700/50 flex items-center justify-center">
+              <Folder className="w-5 h-5 text-brand-400" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-white">Create New Project</h2>
-              <p className="text-xs text-gray-500">Set up your gallery or album</p>
+              <h2 className="text-sm font-bold text-white uppercase tracking-wider">Create New Project</h2>
+              <p className="text-xs text-steel-500 font-mono">Set up your gallery or album</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-gray-500 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+            className="p-2 text-steel-500 hover:text-white hover:bg-steel-800/60 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -130,7 +130,7 @@ export function NewProjectModal({ isOpen, onClose, onSubmit }: NewProjectModalPr
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-5">
           {/* Project Type Templates */}
           <div>
-            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-3">
+            <label className="block text-xs font-bold text-steel-400 uppercase tracking-wider mb-3">
               Project Type
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -139,15 +139,15 @@ export function NewProjectModal({ isOpen, onClose, onSubmit }: NewProjectModalPr
                   key={template.id}
                   type="button"
                   onClick={() => handleTemplateSelect(template.id)}
-                  className={`p-3 rounded-lg border text-left transition-all ${
+                  className={`p-3 border text-left transition-all ${
                     selectedTemplate === template.id
-                      ? 'bg-cyan-600/20 border-cyan-500 ring-1 ring-cyan-500/50'
-                      : 'bg-gray-800/50 border-gray-700 hover:border-gray-600'
+                      ? 'bg-brand-900/20 border-brand-500'
+                      : 'bg-steel-900/50 border-steel-700/50 hover:border-steel-500'
                   }`}
                 >
                   <span className="text-xl mb-1 block">{template.icon}</span>
                   <span className={`text-xs font-medium ${
-                    selectedTemplate === template.id ? 'text-white' : 'text-gray-400'
+                    selectedTemplate === template.id ? 'text-white' : 'text-steel-400'
                   }`}>
                     {template.label}
                   </span>
@@ -158,7 +158,7 @@ export function NewProjectModal({ isOpen, onClose, onSubmit }: NewProjectModalPr
 
           {/* Project Name */}
           <div>
-            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-bold text-steel-400 uppercase tracking-wider mb-2">
               <Folder className="w-3.5 h-3.5 inline mr-1.5" />
               Project Name *
             </label>
@@ -167,8 +167,8 @@ export function NewProjectModal({ isOpen, onClose, onSubmit }: NewProjectModalPr
               value={formData.name}
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
               placeholder="e.g., Smith-Jones Wedding, Q1 Product Shoot"
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white 
-                placeholder-gray-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 
+              className="w-full px-4 py-3 bg-steel-900 border border-steel-700/50 text-white 
+                placeholder-steel-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500/50 
                 transition-all text-sm"
               required
             />
@@ -176,7 +176,7 @@ export function NewProjectModal({ isOpen, onClose, onSubmit }: NewProjectModalPr
 
           {/* Event Location */}
           <div>
-            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-bold text-steel-400 uppercase tracking-wider mb-2">
               <MapPin className="w-3.5 h-3.5 inline mr-1.5" />
               Event Location
             </label>
@@ -185,15 +185,15 @@ export function NewProjectModal({ isOpen, onClose, onSubmit }: NewProjectModalPr
               value={formData.eventLocation}
               onChange={(e) => setFormData(prev => ({ ...prev, eventLocation: e.target.value }))}
               placeholder="e.g., The Grand Hotel, Central Park, Studio A"
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white 
-                placeholder-gray-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 
+              className="w-full px-4 py-3 bg-steel-900 border border-steel-700/50 text-white 
+                placeholder-steel-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500/50 
                 transition-all text-sm"
             />
           </div>
 
           {/* Event Date */}
           <div>
-            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-bold text-steel-400 uppercase tracking-wider mb-2">
               <Calendar className="w-3.5 h-3.5 inline mr-1.5" />
               Event Date
             </label>
@@ -201,14 +201,14 @@ export function NewProjectModal({ isOpen, onClose, onSubmit }: NewProjectModalPr
               type="date"
               value={formData.eventDate}
               onChange={(e) => setFormData(prev => ({ ...prev, eventDate: e.target.value }))}
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white 
-                focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 transition-all text-sm"
+              className="w-full px-4 py-3 bg-steel-900 border border-steel-700/50 text-white 
+                focus:border-brand-500 focus:ring-1 focus:ring-brand-500/50 transition-all text-sm"
             />
           </div>
 
           {/* Gallery-Wide Context */}
           <div>
-            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-bold text-steel-400 uppercase tracking-wider mb-2">
               <Sparkles className="w-3.5 h-3.5 inline mr-1.5" />
               Gallery-Wide Context
             </label>
@@ -217,18 +217,18 @@ export function NewProjectModal({ isOpen, onClose, onSubmit }: NewProjectModalPr
               onChange={(e) => setFormData(prev => ({ ...prev, galleryContext: e.target.value }))}
               placeholder="Describe the overall context for all images in this project. This will be applied to every image during AI metadata generation."
               rows={3}
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white 
-                placeholder-gray-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 
+              className="w-full px-4 py-3 bg-steel-900 border border-steel-700/50 text-white 
+                placeholder-steel-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500/50 
                 transition-all text-sm resize-none"
             />
-            <p className="text-[10px] text-gray-600 mt-1.5">
+            <p className="text-[10px] text-steel-600 mt-1.5 font-mono">
               This context applies to all images. You can add per-image context later.
             </p>
           </div>
 
           {/* Description (Optional) */}
           <div>
-            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-bold text-steel-400 uppercase tracking-wider mb-2">
               <FileText className="w-3.5 h-3.5 inline mr-1.5" />
               Notes (Optional)
             </label>
@@ -237,16 +237,16 @@ export function NewProjectModal({ isOpen, onClose, onSubmit }: NewProjectModalPr
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               placeholder="Any additional notes for this project..."
               rows={2}
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white 
-                placeholder-gray-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 
+              className="w-full px-4 py-3 bg-steel-900 border border-steel-700/50 text-white 
+                placeholder-steel-500 focus:border-brand-500 focus:ring-1 focus:ring-brand-500/50 
                 transition-all text-sm resize-none"
             />
           </div>
         </form>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-800 bg-gray-900/80">
-          <p className="text-xs text-gray-500">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-steel-700/50 bg-black/80">
+          <p className="text-xs text-steel-500 font-mono">
             You can edit these settings later in project onboarding
           </p>
           <div className="flex gap-3">
@@ -254,17 +254,17 @@ export function NewProjectModal({ isOpen, onClose, onSubmit }: NewProjectModalPr
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="px-5 py-2.5 bg-gray-800 text-gray-300 rounded-lg text-sm font-medium 
-                hover:bg-gray-700 border border-gray-700 disabled:opacity-50 transition-all"
+              className="px-5 py-2.5 bg-steel-900 text-steel-300 text-sm font-bold uppercase tracking-wider
+                hover:bg-steel-800 border border-steel-700/50 disabled:opacity-50 transition-all"
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
               disabled={loading || !formData.name.trim()}
-              className="px-6 py-2.5 bg-gradient-to-r from-cyan-600 to-cyan-500 text-white rounded-lg 
-                text-sm font-semibold hover:from-cyan-500 hover:to-cyan-400 disabled:opacity-50 
-                disabled:cursor-not-allowed transition-all flex items-center gap-2 shadow-lg shadow-cyan-900/30"
+              className="px-6 py-2.5 bg-brand-600 border border-brand-500 text-white 
+                text-sm font-bold uppercase tracking-wider hover:bg-brand-500 disabled:opacity-50 
+                disabled:cursor-not-allowed transition-all flex items-center gap-2 shadow-glow-green"
             >
               {loading ? (
                 <>

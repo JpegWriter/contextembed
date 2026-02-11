@@ -2,15 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Pro Photo Tool Theme - Dark Steel */
+/* ContextEmbed — Black + Green Tech Tool Theme */
 :root {
   --foreground-rgb: 226, 232, 240;
-  --background-rgb: 13, 17, 23;
-  --surface-rgb: 22, 27, 34;
-  --border-rgb: 48, 54, 61;
+  --background-rgb: 3, 5, 7;
+  --surface-rgb: 10, 14, 20;
+  --border-rgb: 30, 36, 45;
+  --accent-green: 16, 185, 129;
 }
 
-/* Force dark mode for pro tool aesthetic */
+/* Force dark mode — pure black base */
 body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
@@ -19,10 +20,10 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Compact scrollbar */
+/* Compact scrollbar — green track */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -30,41 +31,41 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #374151;
-  border-radius: 2px;
+  background: #1a2e23;
+  border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #4b5563;
+  background: #10b981;
 }
 
-/* Pro focus states - crisp cyan ring */
+/* Pro focus states — sharp green ring */
 *:focus-visible {
-  outline: 2px solid #0ea5e9;
-  outline-offset: 1px;
+  outline: 1px solid #10b981;
+  outline-offset: 0px;
 }
 
 /* Selection ring for selected items */
 .ring-selected {
-  box-shadow: inset 0 0 0 2px #0ea5e9, 0 0 0 1px rgba(14, 165, 233, 0.3);
+  box-shadow: inset 0 0 0 1px #10b981, 0 0 0 1px rgba(16, 185, 129, 0.3);
 }
 
-/* Tool button base */
+/* Tool button base — sharp edges */
 .btn-tool {
   @apply px-3 py-1.5 text-sm font-medium border border-steel-600 
     bg-steel-800 hover:bg-steel-700 active:bg-steel-900
-    text-steel-100 rounded transition-colors;
+    text-steel-100 transition-colors;
 }
 
 .btn-tool-primary {
   @apply px-3 py-1.5 text-sm font-medium border border-brand-600
     bg-brand-600 hover:bg-brand-500 active:bg-brand-700
-    text-white rounded transition-colors;
+    text-white transition-colors;
 }
 
-/* Status chip */
+/* Status chip — square */
 .status-chip {
-  @apply inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded;
+  @apply inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium;
 }
 
 /* Inspector row */
@@ -80,23 +81,34 @@ body {
   @apply text-sm text-steel-100 font-mono;
 }
 
-/* Thumbnail grid item */
+/* Thumbnail grid item — sharp */
 .thumb-item {
-  @apply relative bg-steel-900 border border-steel-700 overflow-hidden
-    transition-all duration-100 cursor-pointer;
+  @apply relative bg-black border border-steel-700 overflow-hidden
+    transition-all duration-75 cursor-pointer;
 }
 
 .thumb-item:hover {
-  @apply border-steel-500;
+  @apply border-brand-500;
 }
 
 .thumb-item.selected {
-  @apply border-brand-500 ring-1 ring-brand-500/50;
+  @apply border-brand-500 shadow-glow-green;
 }
 
 /* Keyboard hint */
 .kbd {
   @apply inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1
     text-xs font-mono font-medium text-steel-400 bg-steel-800 
-    border border-steel-600 rounded;
+    border border-steel-600;
+}
+
+/* Green accent glow — for key interactive elements */
+.glow-green {
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.15), inset 0 1px 0 rgba(16, 185, 129, 0.05);
+}
+
+/* Thin separator lines */
+.border-thin {
+  border-width: 1px;
+  border-color: rgba(30, 36, 45, 0.6);
 }

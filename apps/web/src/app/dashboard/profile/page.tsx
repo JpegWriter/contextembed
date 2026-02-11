@@ -39,23 +39,23 @@ function CollapsibleSection({
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="border border-gray-800 rounded-lg bg-gray-900/50 overflow-hidden">
+    <div className="border border-steel-700/50 bg-black overflow-hidden">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-gray-800/50 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-steel-800/40 transition-colors"
       >
         <div className="flex items-center gap-2.5">
-          <Icon className="w-4 h-4 text-cyan-400" />
-          <span className="text-sm font-semibold text-white uppercase tracking-wider">
+          <Icon className="w-4 h-4 text-brand-400" />
+          <span className="text-xs font-bold text-white uppercase tracking-wider">
             {title}
           </span>
           {badge && (
-            <span className="px-2 py-0.5 text-[10px] font-medium bg-cyan-900/40 text-cyan-300 rounded-full border border-cyan-800/50">
+            <span className="px-2 py-0.5 text-[10px] font-bold bg-brand-900/40 text-brand-300 border border-brand-800/50">
               {badge}
             </span>
           )}
         </div>
-        <span className="text-gray-500 text-xs">{isOpen ? '−' : '+'}</span>
+        <span className="text-steel-500 text-xs">{isOpen ? '−' : '+'}</span>
       </button>
       {isOpen && <div className="px-5 pb-5 space-y-4">{children}</div>}
     </div>
@@ -80,11 +80,11 @@ function InputField({
   required?: boolean;
 }) {
   const baseClasses =
-    'w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 placeholder:text-gray-600 focus:border-cyan-600 focus:outline-none focus:ring-1 focus:ring-cyan-600/50';
+    'w-full px-3 py-2 bg-steel-900 border border-steel-700/50 text-sm text-steel-200 placeholder:text-steel-600 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500/50';
 
   return (
     <div>
-      <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">
+      <label className="block text-[10px] font-bold text-steel-500 uppercase tracking-wider mb-1">
         {label}
         {required && <span className="text-red-400 ml-0.5">*</span>}
       </label>
@@ -105,7 +105,7 @@ function InputField({
           className={baseClasses}
         />
       )}
-      {hint && <p className="text-[10px] text-gray-600 mt-1">{hint}</p>}
+      {hint && <p className="text-[10px] text-steel-600 mt-1">{hint}</p>}
     </div>
   );
 }
@@ -123,13 +123,13 @@ function SelectField({
 }) {
   return (
     <div>
-      <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">
+      <label className="block text-[10px] font-bold text-steel-500 uppercase tracking-wider mb-1">
         {label}
       </label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 focus:border-cyan-600 focus:outline-none"
+        className="w-full px-3 py-2 bg-steel-900 border border-steel-700/50 text-sm text-steel-200 focus:border-brand-500 focus:outline-none"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -194,12 +194,12 @@ function AiSummary({ profile }: { profile: ProfileFields }) {
 
   if (parts.length === 0) {
     return (
-      <div className="px-5 py-8 bg-gray-900/50 border border-gray-800 rounded-lg text-center">
-        <Sparkles className="w-6 h-6 mx-auto mb-2 text-gray-600" />
-        <p className="text-sm text-gray-500">
+      <div className="px-5 py-8 bg-black border border-steel-700/50 text-center">
+        <Sparkles className="w-6 h-6 mx-auto mb-2 text-steel-600" />
+        <p className="text-sm text-steel-500">
           Complete your profile fields below to see your AI-generated business summary.
         </p>
-        <p className="text-xs text-gray-600 mt-1">
+        <p className="text-xs text-steel-600 mt-1 font-mono">
           Or use the Website Analysis tool to auto-fill from your website.
         </p>
       </div>
@@ -207,17 +207,17 @@ function AiSummary({ profile }: { profile: ProfileFields }) {
   }
 
   return (
-    <div className="border border-cyan-900/50 rounded-lg bg-gradient-to-br from-cyan-950/30 to-gray-900/50 overflow-hidden">
-      <div className="px-5 py-3 border-b border-cyan-900/40 flex items-center gap-2">
-        <Sparkles className="w-4 h-4 text-cyan-400" />
-        <span className="text-xs font-semibold text-cyan-300 uppercase tracking-wider">
+    <div className="border border-brand-800/50 bg-brand-950/20 overflow-hidden">
+      <div className="px-5 py-3 border-b border-brand-800/40 flex items-center gap-2">
+        <Sparkles className="w-4 h-4 text-brand-400" />
+        <span className="text-xs font-bold text-brand-300 uppercase tracking-wider">
           AI Business Summary
         </span>
-        <span className="text-[10px] text-gray-600 ml-auto">
+        <span className="text-[10px] text-steel-600 ml-auto font-mono">
           Generated from your profile data
         </span>
       </div>
-      <div className="px-5 py-4 space-y-1.5 text-sm text-gray-300 leading-relaxed">
+      <div className="px-5 py-4 space-y-1.5 text-sm text-steel-300 leading-relaxed">
         {parts.map((part, i) => (
           <p
             key={i}
@@ -534,24 +534,24 @@ export default function ProfilePage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <div className="flex items-center gap-2.5">
-            <User className="w-5 h-5 text-cyan-400" />
-            <h1 className="text-lg font-bold text-white">Your Profile</h1>
+            <User className="w-5 h-5 text-brand-400" />
+            <h1 className="text-sm font-bold text-white uppercase tracking-wider">Your Profile</h1>
             {onboardingCompleted && (
-              <span className="flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium bg-emerald-900/40 text-emerald-400 rounded-full border border-emerald-800/50">
+              <span className="flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-brand-900/40 text-brand-400 border border-brand-800/50">
                 <CheckCircle2 className="w-3 h-3" />
                 Onboarding Complete
               </span>
             )}
           </div>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-xs text-steel-500 mt-0.5 font-mono">
             Business defaults applied to every project &amp; metadata embed
           </p>
         </div>
         <button
           onClick={handleSave}
           disabled={!hasChanges || saving}
-          className="flex items-center gap-2 px-5 py-2 bg-cyan-600 text-white rounded-lg text-sm font-medium
-            hover:bg-cyan-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors border border-cyan-500"
+          className="flex items-center gap-2 px-5 py-2 bg-brand-600 text-white text-sm font-bold uppercase tracking-wider
+            hover:bg-brand-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors border border-brand-500"
         >
           {saving ? (
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -559,7 +559,7 @@ export default function ProfilePage() {
             <Save className="w-4 h-4" />
           )}
           Save Changes
-          <kbd className="ml-1 text-cyan-200 text-[10px] opacity-60 font-mono">
+          <kbd className="ml-1 text-brand-200 text-[10px] opacity-60 font-mono">
             Ctrl+S
           </kbd>
         </button>
@@ -570,14 +570,14 @@ export default function ProfilePage() {
         <AiSummary profile={profile} />
 
         {/* Website Audit */}
-        <div className="border border-gray-800 rounded-lg bg-gray-900/50 p-5">
+        <div className="border border-steel-700/50 bg-black p-5">
           <div className="flex items-center gap-2 mb-3">
-            <Globe className="w-4 h-4 text-cyan-400" />
-            <span className="text-xs font-semibold text-white uppercase tracking-wider">
+            <Globe className="w-4 h-4 text-brand-400" />
+            <span className="text-xs font-bold text-white uppercase tracking-wider">
               Website Analysis
             </span>
           </div>
-          <p className="text-xs text-gray-500 mb-3">
+          <p className="text-xs text-steel-500 mb-3 font-mono">
             Enter your website URL and we&apos;ll scrape it to auto-fill your
             profile fields with AI-detected business context.
           </p>
@@ -587,7 +587,7 @@ export default function ProfilePage() {
               value={auditUrl}
               onChange={(e) => setAuditUrl(e.target.value)}
               placeholder="https://yourwebsite.com"
-              className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 placeholder:text-gray-600 focus:border-cyan-600 focus:outline-none focus:ring-1 focus:ring-cyan-600/50"
+              className="flex-1 px-3 py-2 bg-steel-900 border border-steel-700/50 text-sm text-steel-200 placeholder:text-steel-600 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500/50"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') handleUrlAudit();
               }}
@@ -595,7 +595,7 @@ export default function ProfilePage() {
             <button
               onClick={handleUrlAudit}
               disabled={auditing || !auditUrl}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-300 hover:bg-gray-700 hover:text-white disabled:opacity-40 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-steel-900 border border-steel-700/50 text-sm text-steel-300 hover:bg-steel-800 hover:text-white disabled:opacity-40 transition-colors"
             >
               {auditing ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -606,8 +606,8 @@ export default function ProfilePage() {
             </button>
           </div>
           {urlAuditWebsite && (
-            <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+            <div className="mt-3 flex items-center gap-2 text-xs text-steel-500">
+              <CheckCircle2 className="w-3.5 h-3.5 text-brand-500" />
               <span>Last analyzed:</span>
               <a
                 href={
@@ -617,7 +617,7 @@ export default function ProfilePage() {
                 }
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-cyan-400 hover:underline flex items-center gap-1"
+                className="text-brand-400 hover:underline flex items-center gap-1"
               >
                 {urlAuditWebsite}
                 <ExternalLink className="w-3 h-3" />
@@ -844,7 +844,7 @@ export default function ProfilePage() {
               ]}
             />
             <div>
-              <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">
+              <label className="block text-[10px] font-bold text-steel-500 uppercase tracking-wider mb-1">
                 Max Keywords
               </label>
               <input
@@ -855,7 +855,7 @@ export default function ProfilePage() {
                 onChange={(e) =>
                   updateField('maxKeywords', parseInt(e.target.value) || 15)
                 }
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-sm text-gray-200 focus:border-cyan-600 focus:outline-none"
+                className="w-full px-3 py-2 bg-steel-900 border border-steel-700/50 text-sm text-steel-200 focus:border-brand-500 focus:outline-none"
               />
             </div>
             <InputField
@@ -877,15 +877,15 @@ export default function ProfilePage() {
 
       {/* Unsaved changes toast */}
       <div
-        className={`fixed bottom-6 right-6 px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg shadow-xl transition-all duration-300 ${
+        className={`fixed bottom-6 right-6 px-4 py-2.5 bg-steel-900 border border-steel-700/50 shadow-xl transition-all duration-300 ${
           hasChanges
             ? 'opacity-100 translate-y-0'
             : 'opacity-0 translate-y-4 pointer-events-none'
         }`}
       >
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-steel-400">
           Unsaved changes • Press{' '}
-          <kbd className="px-1.5 py-0.5 bg-gray-700 rounded text-[10px] font-mono">
+          <kbd className="px-1.5 py-0.5 bg-steel-800 text-[10px] font-mono border border-steel-700/50">
             Ctrl+S
           </kbd>{' '}
           to save

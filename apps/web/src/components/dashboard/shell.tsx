@@ -66,11 +66,11 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
   ];
 
   return (
-    <div className="min-h-screen flex bg-[#0d1117]">
-      {/* Sidebar - Pro dark steel theme */}
-      <aside className="w-56 bg-gray-900 border-r border-gray-800 flex flex-col">
+    <div className="min-h-screen flex bg-black">
+      {/* Sidebar — Sharp black tech panel */}
+      <aside className="w-56 bg-black border-r border-steel-700/50 flex flex-col">
         {/* Logo */}
-        <div className="h-12 px-4 flex items-center border-b border-gray-800">
+        <div className="h-12 px-4 flex items-center border-b border-steel-700/50">
           <Link href="/dashboard" className="flex items-center gap-2">
             <Logo variant="full" size="sm" dark />
           </Link>
@@ -82,10 +82,10 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
             <Link
               key={item.name}
               href={item.href}
-              className={`flex items-center gap-2.5 px-3 py-2 rounded text-sm font-medium transition-colors ${
+              className={`flex items-center gap-2.5 px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${
                 item.active
-                  ? 'bg-gray-800 text-cyan-400 border-l-2 border-cyan-500'
-                  : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-200 border-l-2 border-transparent'
+                  ? 'bg-brand-900/30 text-brand-400 border-l-2 border-brand-500'
+                  : 'text-steel-400 hover:bg-steel-800/60 hover:text-steel-200 border-l-2 border-transparent'
               }`}
             >
               <item.icon className="h-4 w-4" />
@@ -95,25 +95,25 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
         </nav>
 
         {/* User menu */}
-        <div className="px-2 py-3 border-t border-gray-800" ref={menuRef}>
+        <div className="px-2 py-3 border-t border-steel-700/50" ref={menuRef}>
           <button
             onClick={() => setUserMenuOpen(!userMenuOpen)}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-800 transition-colors"
+            className="w-full flex items-center gap-2 px-3 py-2 hover:bg-steel-800/60 transition-colors"
           >
-            <div className="w-7 h-7 rounded bg-cyan-600 flex items-center justify-center text-white text-xs font-bold">
+            <div className="w-7 h-7 bg-brand-600 flex items-center justify-center text-white text-xs font-bold">
               {user.email?.[0].toUpperCase()}
             </div>
             <div className="flex-1 text-left truncate">
-              <p className="text-xs font-medium text-gray-300 truncate">{user.email}</p>
+              <p className="text-xs font-medium text-steel-300 truncate">{user.email}</p>
             </div>
-            <ChevronDown className="h-3.5 w-3.5 text-gray-500" />
+            <ChevronDown className="h-3.5 w-3.5 text-steel-500" />
           </button>
 
           {userMenuOpen && (
-            <div className="absolute bottom-16 left-2 right-2 bg-gray-800 rounded border border-gray-700 py-1 shadow-xl z-50">
+            <div className="absolute bottom-16 left-2 right-2 bg-steel-800 border border-steel-600 py-1 shadow-xl z-50">
               <button
                 onClick={handleSignOut}
-                className="w-full flex items-center gap-2 px-3 py-2 text-left text-xs text-red-400 hover:bg-gray-700"
+                className="w-full flex items-center gap-2 px-3 py-2 text-left text-xs text-red-400 hover:bg-steel-700"
               >
                 <LogOut className="h-3.5 w-3.5" />
                 Sign Out
@@ -124,7 +124,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 overflow-auto bg-[#0d1117]">
+      <main className="flex-1 overflow-auto bg-black">
         {children}
       </main>
     </div>

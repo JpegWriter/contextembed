@@ -93,7 +93,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-cyan-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-brand-500" />
       </div>
     );
   }
@@ -103,16 +103,16 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-lg font-bold text-white">Projects</h1>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <h1 className="text-sm font-bold text-white uppercase tracking-wider">Projects</h1>
+          <p className="text-xs text-steel-500 mt-0.5 font-mono">
             Manage your metadata embedding projects
           </p>
         </div>
         <button
           onClick={() => setShowNewProjectModal(true)}
-          className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-cyan-500 
-            text-white rounded-lg text-sm font-semibold hover:from-cyan-500 hover:to-cyan-400 
-            transition-all shadow-lg shadow-cyan-900/30"
+          className="flex items-center gap-2 px-5 py-2.5 bg-brand-600 border border-brand-500
+            text-white text-sm font-bold uppercase tracking-wider hover:bg-brand-500 
+            transition-all shadow-glow-green"
         >
           <Plus className="w-4 h-4" />
           New Project
@@ -120,17 +120,17 @@ export default function DashboardPage() {
       </div>
 
       {projects.length === 0 ? (
-        <div className="text-center py-16 bg-gray-900 border border-gray-800 rounded">
-          <Folder className="h-12 w-12 text-gray-700 mx-auto mb-4" />
-          <h2 className="text-sm font-semibold text-gray-300 mb-1">No projects yet</h2>
-          <p className="text-xs text-gray-500 mb-6">
+        <div className="text-center py-16 bg-black border border-steel-700/50">
+          <Folder className="h-12 w-12 text-steel-700 mx-auto mb-4" />
+          <h2 className="text-sm font-bold text-steel-300 mb-1 uppercase tracking-wider">No projects yet</h2>
+          <p className="text-xs text-steel-500 mb-6 font-mono">
             Create your first project to start embedding metadata
           </p>
           <button
             onClick={() => setShowNewProjectModal(true)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-cyan-500 
-              text-white rounded-lg text-sm font-semibold hover:from-cyan-500 hover:to-cyan-400 
-              transition-all shadow-lg shadow-cyan-900/30"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-600 border border-brand-500
+              text-white text-sm font-bold uppercase tracking-wider hover:bg-brand-500 
+              transition-all shadow-glow-green"
           >
             <Plus className="w-4 h-4" />
             Create Project
@@ -142,26 +142,26 @@ export default function DashboardPage() {
             <Link
               key={project.id}
               href={`/dashboard/projects/${project.id}`}
-              className="block p-4 bg-gray-900 border border-gray-800 rounded hover:border-gray-700 
-                hover:bg-gray-800/50 transition-colors group"
+              className="block p-4 bg-black border border-steel-700/50 hover:border-brand-600/50 
+                hover:shadow-glow-green transition-all group"
             >
               <div className="flex items-start justify-between mb-3">
-                <div className="p-2 bg-gray-800 rounded">
-                  <Folder className="h-5 w-5 text-cyan-400" />
+                <div className="p-2 bg-steel-900 border border-steel-700/50">
+                  <Folder className="h-5 w-5 text-brand-400" />
                 </div>
               </div>
-              <h3 className="text-sm font-semibold text-white mb-0.5">{project.name}</h3>
+              <h3 className="text-sm font-bold text-white mb-0.5">{project.name}</h3>
               {project.description && (
-                <p className="text-xs text-gray-500 mb-2 line-clamp-2">
+                <p className="text-xs text-steel-500 mb-2 line-clamp-2">
                   {project.description}
                 </p>
               )}
-              <div className="flex items-center justify-between text-[10px] text-gray-600">
+              <div className="flex items-center justify-between text-[10px] text-steel-600">
                 <span className="flex items-center gap-1 font-mono">
                   <Clock className="h-3 w-3" />
                   {new Date(project.createdAt).toLocaleDateString()}
                 </span>
-                <ArrowRight className="h-3 w-3 group-hover:text-cyan-400 transition-colors" />
+                <ArrowRight className="h-3 w-3 group-hover:text-brand-400 transition-colors" />
               </div>
             </Link>
           ))}

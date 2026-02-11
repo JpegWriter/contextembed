@@ -9,7 +9,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Pro tool palette - dark steel
+        // Pro tool palette — pure black + steel
         steel: {
           50: '#f6f7f8',
           100: '#e1e4e8',
@@ -17,27 +17,41 @@ module.exports = {
           300: '#9ca4af',
           400: '#6b7280',
           500: '#4b5563',
-          600: '#374151',
-          700: '#2d3748',
-          800: '#1f2937',
-          850: '#1a1f2e',
-          900: '#111827',
-          925: '#0d1117',
-          950: '#080b12',
+          600: '#30363d',
+          700: '#21262d',
+          800: '#161b22',
+          850: '#0d1117',
+          900: '#0a0e14',
+          925: '#060a10',
+          950: '#030507',
         },
+        // Brand green — sharp tech accent
         brand: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
+          50: '#ecfdf5',
+          100: '#d1fae5',
+          200: '#a7f3d0',
+          300: '#6ee7b7',
+          400: '#34d399',
+          500: '#10b981',
+          600: '#059669',
+          700: '#047857',
+          800: '#065f46',
+          900: '#064e3b',
         },
-        // Status colors - high contrast
+        // Accent green for glows and highlights
+        accent: {
+          50: '#f0fdf4',
+          100: '#dcfce7',
+          200: '#bbf7d0',
+          300: '#86efac',
+          400: '#4ade80',
+          500: '#22c55e',
+          600: '#16a34a',
+          700: '#15803d',
+          800: '#166534',
+          900: '#14532d',
+        },
+        // Status colors — high contrast
         status: {
           pending: '#6b7280',
           processing: '#3b82f6',
@@ -51,14 +65,20 @@ module.exports = {
       },
       borderRadius: {
         'none': '0',
-        'sm': '2px',
-        'DEFAULT': '4px',
-        'md': '4px',
-        'lg': '6px',
+        'sm': '0px',
+        'DEFAULT': '0px',
+        'md': '0px',
+        'lg': '0px',
+        'xl': '0px',
+        '2xl': '0px',
+        '3xl': '0px',
+        'full': '9999px',
       },
       boxShadow: {
         'inset-strong': 'inset 0 2px 4px 0 rgb(0 0 0 / 0.25)',
         'tool': '0 1px 2px 0 rgb(0 0 0 / 0.3)',
+        'glow-green': '0 0 12px rgba(16, 185, 129, 0.15)',
+        'glow-green-lg': '0 0 24px rgba(16, 185, 129, 0.2)',
       },
     },
   },

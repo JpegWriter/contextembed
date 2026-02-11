@@ -37,7 +37,7 @@ export function Logo({ variant = 'full', size = 'md', dark = true, className = '
     : 'text-slate-900';
 
   const mark = (
-    <div className={`${s.mark} ${markBg} rounded-lg flex items-center justify-center flex-shrink-0`}>
+    <div className={`${s.mark} ${markBg} flex items-center justify-center flex-shrink-0`}>
       <span className={`${markText} font-black ${s.letterSize} leading-none tracking-tighter`}>
         CE
       </span>

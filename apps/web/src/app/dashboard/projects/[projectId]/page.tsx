@@ -344,28 +344,28 @@ export default function ProjectPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950">
-      {/* Header - Compact, dark */}
-      <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-30">
+    <div className="min-h-screen bg-black">
+      {/* Header - Compact, black */}
+      <header className="bg-black border-b border-steel-700/50 sticky top-0 z-30">
         <div className="max-w-[1800px] mx-auto px-3">
           <div className="flex items-center justify-between h-12">
             <div className="flex items-center gap-3">
               <Link 
                 href="/dashboard"
-                className="p-1.5 hover:bg-gray-800 rounded transition-colors text-gray-400 hover:text-white"
+                className="p-1.5 hover:bg-steel-800/60 transition-colors text-steel-400 hover:text-white"
               >
                 <ArrowLeft className="w-4 h-4" />
               </Link>
               <div>
                 <h1 className="text-sm font-bold text-white">{project?.name}</h1>
-                <p className="text-xs text-gray-500 font-mono">{assets.length} assets</p>
+                <p className="text-xs text-steel-500 font-mono">{assets.length} assets</p>
               </div>
             </div>
 
             <div className="flex items-center gap-1">
               <Link
                 href={`/dashboard/projects/${projectId}/settings`}
-                className="p-1.5 hover:bg-gray-800 rounded transition-colors text-gray-400 hover:text-white"
+                className="p-1.5 hover:bg-steel-800/60 transition-colors text-steel-400 hover:text-white"
                 title="Project Settings"
               >
                 <Settings className="w-4 h-4" />
@@ -373,7 +373,7 @@ export default function ProjectPage() {
               
               <button
                 onClick={() => loadData()}
-                className="px-2 hover:bg-gray-800 rounded transition-colors text-gray-400 hover:text-white"
+                className="px-2 hover:bg-steel-800/60 transition-colors text-steel-400 hover:text-white"
                 title="Refresh"
               >
                 <RefreshCw className="w-4 h-4" />
@@ -385,78 +385,78 @@ export default function ProjectPage() {
 
       <main className="max-w-[1800px] mx-auto px-3 py-3">
         {/* Status Filter Pills */}
-        <div className="flex flex-wrap items-center gap-3 mb-4">
+        <div className="flex flex-wrap items-center gap-2 mb-4">
           <button
             onClick={() => setStatusFilter(statusFilter === 'pending' ? 'all' : 'pending')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all border ${
               statusFilter === 'pending'
-                ? 'bg-gray-700 text-white ring-2 ring-gray-500'
-                : 'bg-gray-800/50 text-gray-400 hover:bg-gray-800 hover:text-gray-300'
+                ? 'bg-steel-800 text-white border-steel-500'
+                : 'bg-black text-steel-400 border-steel-700/50 hover:border-steel-500 hover:text-steel-300'
             }`}
           >
-            <Clock className="w-4 h-4" />
+            <Clock className="w-3.5 h-3.5" />
             <span>{stats.pending} Pending</span>
           </button>
           
           <button
             onClick={() => setStatusFilter(statusFilter === 'processing' ? 'all' : 'processing')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all border ${
               statusFilter === 'processing'
-                ? 'bg-blue-600/30 text-blue-400 ring-2 ring-blue-500'
-                : 'bg-gray-800/50 text-gray-400 hover:bg-gray-800 hover:text-gray-300'
+                ? 'bg-blue-950/50 text-blue-400 border-blue-500'
+                : 'bg-black text-steel-400 border-steel-700/50 hover:border-steel-500 hover:text-steel-300'
             }`}
           >
-            <Loader2 className={`w-4 h-4 ${stats.processing > 0 ? 'animate-spin' : ''}`} />
+            <Loader2 className={`w-3.5 h-3.5 ${stats.processing > 0 ? 'animate-spin' : ''}`} />
             <span>{stats.processing} Processing</span>
           </button>
           
           <button
             onClick={() => setStatusFilter(statusFilter === 'completed' ? 'all' : 'completed')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all border ${
               statusFilter === 'completed'
-                ? 'bg-emerald-600/30 text-emerald-400 ring-2 ring-emerald-500'
-                : 'bg-gray-800/50 text-gray-400 hover:bg-gray-800 hover:text-gray-300'
+                ? 'bg-brand-950/50 text-brand-400 border-brand-500'
+                : 'bg-black text-steel-400 border-steel-700/50 hover:border-steel-500 hover:text-steel-300'
             }`}
           >
-            <CheckCircle2 className="w-4 h-4" />
+            <CheckCircle2 className="w-3.5 h-3.5" />
             <span>{stats.completed} Completed</span>
           </button>
           
           <button
             onClick={() => setStatusFilter(statusFilter === 'approved' ? 'all' : 'approved')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all border ${
               statusFilter === 'approved'
-                ? 'bg-green-600/30 text-green-400 ring-2 ring-green-500'
-                : 'bg-gray-800/50 text-gray-400 hover:bg-gray-800 hover:text-gray-300'
+                ? 'bg-green-950/50 text-green-400 border-green-500'
+                : 'bg-black text-steel-400 border-steel-700/50 hover:border-steel-500 hover:text-steel-300'
             }`}
           >
-            <CheckCircle2 className="w-4 h-4" />
+            <CheckCircle2 className="w-3.5 h-3.5" />
             <span>{stats.approved} Approved</span>
           </button>
           
           <button
             onClick={() => setStatusFilter(statusFilter === 'failed' ? 'all' : 'failed')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all border ${
               stats.failed === 0 ? 'hidden' : ''
             } ${
               statusFilter === 'failed'
-                ? 'bg-red-600/30 text-red-400 ring-2 ring-red-500'
-                : 'bg-red-900/30 text-red-400 hover:bg-red-900/50'
+                ? 'bg-red-950/50 text-red-400 border-red-500'
+                : 'bg-black text-red-400/60 border-red-900/50 hover:border-red-500'
             }`}
           >
-            <XCircle className="w-4 h-4" />
+            <XCircle className="w-3.5 h-3.5" />
             <span>{stats.failed} Failed</span>
           </button>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap items-center gap-3 mb-4 pb-4 border-b border-gray-800">
+        <div className="flex flex-wrap items-center gap-2 mb-4 pb-4 border-b border-steel-700/50">
           <button
             onClick={handleProcess}
             disabled={processing}
-            className="flex items-center gap-2.5 px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-cyan-500 
-              hover:from-cyan-500 hover:to-cyan-400 text-white rounded-lg text-sm font-semibold 
-              disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-cyan-900/30"
+            className="flex items-center gap-2.5 px-5 py-2.5 bg-brand-600 border border-brand-500
+              hover:bg-brand-500 text-white text-sm font-bold uppercase tracking-wider
+              disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-glow-green"
           >
             {processing ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -468,9 +468,9 @@ export default function ProjectPage() {
 
           <button
             onClick={() => setShowBatchContext(true)}
-            className={`flex items-center gap-2.5 px-5 py-2.5 bg-gradient-to-r from-amber-600 to-amber-500 
-              hover:from-amber-500 hover:to-amber-400 text-white rounded-lg text-sm font-semibold 
-              transition-all shadow-lg shadow-amber-900/30 ${selectedIds.size === 0 ? 'hidden' : ''}`}
+            className={`flex items-center gap-2.5 px-5 py-2.5 bg-amber-700 border border-amber-600
+              hover:bg-amber-600 text-white text-sm font-bold uppercase tracking-wider
+              transition-all ${selectedIds.size === 0 ? 'hidden' : ''}`}
           >
             <MessageSquarePlus className="w-4 h-4" />
             Add Context
@@ -479,8 +479,8 @@ export default function ProjectPage() {
           <button
             onClick={handleExport}
             disabled={exporting || stats.completed + stats.approved === 0}
-            className="flex items-center gap-2.5 px-5 py-2.5 bg-gray-800 hover:bg-gray-700
-              text-white rounded-lg text-sm font-semibold border border-gray-600
+            className="flex items-center gap-2.5 px-5 py-2.5 bg-black hover:bg-steel-800
+              text-white text-sm font-bold uppercase tracking-wider border border-steel-600
               disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {exporting ? (
@@ -493,23 +493,23 @@ export default function ProjectPage() {
 
           <button
             onClick={() => setStatusFilter('all')}
-            className={`flex items-center gap-2 px-4 py-2 text-sm text-gray-400 
-              hover:text-white hover:bg-gray-800 rounded-lg transition-all ${statusFilter === 'all' ? 'hidden' : ''}`}
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider text-steel-400 
+              hover:text-white hover:bg-steel-800/60 transition-all ${statusFilter === 'all' ? 'hidden' : ''}`}
           >
             <Filter className="w-4 h-4" />
             Clear Filter
           </button>
         </div>
 
-        {/* Upload Zone - Compact, dark */}
+        {/* Upload Zone — Sharp, black */}
         <div
           {...getRootProps()}
           className={`
-            mb-3 border border-dashed rounded p-4 text-center cursor-pointer
-            transition-all duration-100
+            mb-3 border border-dashed p-4 text-center cursor-pointer
+            transition-all duration-75
             ${isDragActive 
-              ? 'border-cyan-500 bg-cyan-900/20' 
-              : 'border-gray-700 hover:border-gray-600 bg-gray-900/50'
+              ? 'border-brand-500 bg-brand-950/20' 
+              : 'border-steel-700/50 hover:border-steel-500 bg-black'
             }
             ${uploading ? 'opacity-50 pointer-events-none' : ''}
           `}
@@ -517,14 +517,14 @@ export default function ProjectPage() {
           <input {...getInputProps()} />
           <div className="flex flex-col items-center">
             {uploading ? (
-              <Loader2 className="w-6 h-6 text-cyan-500 animate-spin mb-2" />
+              <Loader2 className="w-6 h-6 text-brand-500 animate-spin mb-2" />
             ) : (
-              <Upload className="w-6 h-6 text-gray-500 mb-2" />
+              <Upload className="w-6 h-6 text-steel-500 mb-2" />
             )}
-            <p className="text-sm font-medium text-gray-300">
+            <p className="text-sm font-bold text-steel-300 uppercase tracking-wider">
               {isDragActive ? 'Drop files' : 'Drop images or click'}
             </p>
-            <p className="text-xs text-gray-500 mt-0.5">
+            <p className="text-xs text-steel-500 mt-0.5 font-mono">
               JPG, PNG up to 50MB
             </p>
           </div>

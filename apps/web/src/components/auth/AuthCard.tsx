@@ -12,7 +12,7 @@ interface AuthCardProps {
 
 export function AuthCard({ children, title, subtitle, helperText }: AuthCardProps) {
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950">
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-black">
       {/* Subtle grid pattern overlay */}
       <div 
         className="absolute inset-0 opacity-[0.02]"
@@ -23,9 +23,9 @@ export function AuthCard({ children, title, subtitle, helperText }: AuthCardProp
       
       <div className="relative max-w-md w-full">
         {/* Card */}
-        <div className="bg-gray-900/95 backdrop-blur-sm rounded-2xl shadow-2xl shadow-black/20 overflow-hidden border border-gray-800/50">
+        <div className="bg-black/95 backdrop-blur-sm shadow-2xl shadow-black/20 overflow-hidden border border-steel-700/50">
           {/* Header Zone */}
-          <div className="px-8 pt-8 pb-6 border-b border-gray-800/50">
+          <div className="px-8 pt-8 pb-6 border-b border-steel-700/50">
             <Link href="/" className="inline-flex items-center gap-2 mb-6 group">
               <Logo variant="full" size="lg" dark />
             </Link>
@@ -33,10 +33,10 @@ export function AuthCard({ children, title, subtitle, helperText }: AuthCardProp
             <h1 className="text-2xl font-bold text-white">
               {title}
             </h1>
-            <p className="mt-2 text-gray-400 text-sm">
+            <p className="mt-2 text-steel-400 text-sm">
               {subtitle}
             </p>
-            <p className="mt-1.5 text-xs text-gray-500">
+            <p className="mt-1.5 text-xs text-steel-500">
               {helperText}
             </p>
           </div>
@@ -101,12 +101,11 @@ export function AuthInput({
           minLength={minLength}
           className={`
             w-full py-3 px-4 ${icon ? 'pl-10' : ''}
-            bg-gray-800 
-            border border-gray-700 
-            rounded-lg 
+            bg-steel-900 
+            border border-steel-700/50 
             text-white
-            placeholder-gray-500
-            focus:ring-2 focus:ring-cyan-500/30 focus:border-cyan-500 
+            placeholder-steel-500
+            focus:ring-1 focus:ring-brand-500/30 focus:border-brand-500 
             transition-colors
           `}
           placeholder={placeholder}
@@ -138,12 +137,12 @@ export function AuthButton({
   children,
   variant = 'primary' 
 }: AuthButtonProps) {
-  const baseStyles = 'w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'w-full flex items-center justify-center gap-2 px-4 py-3 font-bold uppercase tracking-wider text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variants = {
-    primary: 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-900/20',
-    secondary: 'bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-700',
-    ghost: 'bg-transparent hover:bg-gray-800 text-gray-400',
+    primary: 'bg-brand-600 hover:bg-brand-500 text-white border border-brand-500 shadow-glow-green',
+    secondary: 'bg-steel-900 hover:bg-steel-800 text-steel-300 border border-steel-700/50',
+    ghost: 'bg-transparent hover:bg-steel-800/60 text-steel-400',
   };
 
   return (
@@ -174,7 +173,7 @@ interface AuthLinkProps {
 }
 
 export function AuthLink({ href, onClick, children, className = '' }: AuthLinkProps) {
-  const styles = `text-cyan-400 hover:text-cyan-300 font-medium transition-colors ${className}`;
+  const styles = `text-brand-400 hover:text-brand-300 font-medium transition-colors ${className}`;
   
   if (href) {
     return <Link href={href} className={styles}>{children}</Link>;
@@ -195,7 +194,7 @@ export function AuthDivider({ text }: AuthDividerProps) {
   return (
     <div className="relative my-5">
       <div className="absolute inset-0 flex items-center">
-        <div className="w-full border-t border-gray-700" />
+        <div className="w-full border-t border-steel-700/50" />
       </div>
       <div className="relative flex justify-center text-xs">
         <span className="px-3 bg-gray-900 text-gray-500">

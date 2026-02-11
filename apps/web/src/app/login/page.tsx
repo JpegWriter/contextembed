@@ -110,7 +110,7 @@ export default function LoginPage() {
   // Show configuration warning if Supabase is not set up
   if (!configured) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4 bg-gray-950">
+      <div className="min-h-screen flex items-center justify-center px-4 bg-black">
         <div className="max-w-md w-full">
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-2">
@@ -188,7 +188,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key`}
           Don't have an account?{' '}
           <Link 
             href="/auth/signup" 
-            className="text-cyan-400 hover:text-cyan-300 font-medium"
+            className="text-brand-400 hover:text-brand-300 font-medium"
           >
             Create one
           </Link>

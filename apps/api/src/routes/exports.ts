@@ -1,5 +1,11 @@
 /**
  * Export routes
+ * 
+ * Endpoint: POST /exports — Basic export (ZIP of embedded files)
+ * Endpoint: POST /exports/advanced — Advanced export with presets
+ * Endpoint: GET /exports/:id/download — Download export ZIP
+ * 
+ * Memory-hardened: streaming ZIP, sequential processing, global concurrency lock.
  */
 
 import { Router, type IRouter } from 'express';
@@ -28,6 +34,16 @@ import { createFolderExportTarget } from '../services/folder-export';
 import { processFileForExport, generateExportManifest } from '../services/export-processor';
 import { createExifToolWriter } from '@contextembed/metadata';
 import { downloadEmbeddedFile, isStorageAvailable, uploadExport, getSignedExportUrl } from '../services/supabase-storage';
+import {
+  acquireExportLock,
+  releaseExportLock,
+  checkUserRateLimit,
+  recordUserExport,
+  logMemory,
+  safeUnlink,
+  safeRmDir,
+  checkExportLimits,
+} from '../services/export-lock';
 
 export const exportsRouter: IRouter = Router();
 
@@ -203,58 +219,96 @@ exportsRouter.get('/project/:projectId', asyncHandler(async (req, res) => {
 
 /**
  * Create export (generate ZIP of embedded files)
+ * Memory-hardened: global lock, sequential processing, streaming ZIP.
  */
 exportsRouter.post('/', asyncHandler(async (req, res) => {
   const { userId } = req as AuthenticatedRequest;
+  const requestId = (req as any).id || `exp-${Date.now()}`;
   
   const ExportSchema = z.object({
     projectId: z.string(),
-    assetIds: z.array(z.string()).min(1).max(100),
+    assetIds: z.array(z.string()).min(1).max(200),
   });
   
   const { projectId, assetIds } = ExportSchema.parse(req.body);
   
-  // Verify project ownership
-  const project = await projectRepository.findById(projectId);
-  if (!project || project.userId !== userId) {
-    throw createApiError('Project not found', 404);
+  // ── Pre-flight checks ──
+  
+  // Check asset count limit
+  const limitCheck = checkExportLimits(assetIds.length);
+  if (!limitCheck.allowed) {
+    throw createApiError(limitCheck.reason!, 413);
   }
   
-  // Get assets with embed results
-  const assets = await Promise.all(
-    assetIds.map(id => assetRepository.findByIdWithResults(id))
-  );
-  
-  // Filter to only completed/approved assets
-  const completedAssets = assets.filter(a => 
-    a && (a.status === 'completed' || a.status === 'approved')
-  );
-  
-  if (completedAssets.length === 0) {
-    throw createApiError('No completed assets to export', 400);
+  // Per-user rate limit
+  const rateCheck = checkUserRateLimit(userId);
+  if (!rateCheck.allowed) {
+    res.setHeader('Retry-After', Math.ceil((rateCheck.retryAfterMs || 10000) / 1000));
+    throw createApiError('Too many export requests. Please wait a moment.', 429);
   }
   
-  // Log which assets have embed results
-  console.log(`Export: ${completedAssets.length} assets, ${completedAssets.filter(a => a!.embedResults.length > 0).length} with embed results`);
+  // ── Acquire global export lock ──
+  const lockResult = acquireExportLock();
+  if (!lockResult.acquired) {
+    res.setHeader('Retry-After', '10');
+    res.status(429).json({
+      error: 'EXPORT_BUSY',
+      message: lockResult.reason,
+      requestId,
+    });
+    return;
+  }
   
-  // Create export record
-  const exportRecord = await exportRepository.create({
-    projectId,
-    destinationType: 'download',
-    assetIds: completedAssets.map(a => a!.id),
-  });
-  
-  // Update status to processing
-  await exportRepository.update(exportRecord.id, {
-    status: 'processing',
-  });
+  // Track temp files for cleanup
+  const tempFiles: string[] = [];
   
   try {
+    logMemory('export:start', { requestId, projectId, n: assetIds.length });
+    recordUserExport(userId);
+    
+    // Verify project ownership
+    const project = await projectRepository.findById(projectId);
+    if (!project || project.userId !== userId) {
+      throw createApiError('Project not found', 404);
+    }
+    
+    // Get assets SEQUENTIALLY to avoid memory spike from parallel DB queries
+    const assets: any[] = [];
+    for (const id of assetIds) {
+      const asset = await assetRepository.findByIdWithResults(id);
+      if (asset) assets.push(asset);
+    }
+    
+    // Filter to only completed/approved assets
+    const completedAssets = assets.filter(a => 
+      a && (a.status === 'completed' || a.status === 'approved')
+    );
+    
+    if (completedAssets.length === 0) {
+      throw createApiError('No completed assets to export', 400);
+    }
+  
+    // Log which assets have embed results
+    console.log(`Export: ${completedAssets.length} assets, ${completedAssets.filter(a => a!.embedResults.length > 0).length} with embed results`);
+  
+    // Create export record
+    const exportRecord = await exportRepository.create({
+      projectId,
+      destinationType: 'download',
+      assetIds: completedAssets.map(a => a!.id),
+    });
+  
+    // Update status to processing
+    await exportRepository.update(exportRecord.id, {
+      status: 'processing',
+    });
+  
     // Generate ZIP file
     const zipFilename = `export_${exportRecord.id}.zip`;
     const zipPath = path.join(EXPORT_DIR, zipFilename);
+    tempFiles.push(zipPath);
     
-    // Pre-fetch metadata for smart filenames
+    // Pre-fetch metadata for smart filenames (sequential to avoid memory spike)
     const assetMetadata = new Map<string, { headline?: string; title?: string }>();
     for (const asset of completedAssets) {
       if (!asset) continue;
@@ -265,36 +319,47 @@ exportsRouter.post('/', asyncHandler(async (req, res) => {
     }
     
     let filesAdded = 0;
+    let processedCount = 0;
     
     await new Promise<void>(async (resolve, reject) => {
       try {
-      const output = fs.createWriteStream(zipPath);
-      const archive = archiver('zip', { zlib: { level: 9 } });
-      
-      output.on('close', resolve);
-      archive.on('error', reject);
-      
-      archive.pipe(output);
-      
-      for (const asset of completedAssets) {
-        if (!asset) continue;
+        const output = fs.createWriteStream(zipPath);
+        const archive = archiver('zip', { zlib: { level: 6 } }); // level 6 = faster than 9, still good compression
         
-        const embedResult = asset.embedResults[0];
-        console.log(`Asset ${asset.id}: embedResult=${!!embedResult}, path=${embedResult?.embeddedPath}`);
+        output.on('close', resolve);
+        archive.on('error', reject);
         
-        // Resolve embedded file (local or Supabase)
-        let resolvedPath: string | null = null;
-        if (embedResult) {
-          resolvedPath = await resolveEmbeddedFilePath(embedResult, exportRecord.projectId, asset.id);
-        }
+        archive.pipe(output);
         
-        if (resolvedPath) {
-          // Generate intelligent filename from metadata
-          const metadata = assetMetadata.get(asset.id);
+        // Process assets SEQUENTIALLY
+        for (const asset of completedAssets) {
+          if (!asset) continue;
+          processedCount++;
           
-          let smartFilename = asset.originalFilename;
-          if (metadata?.headline || metadata?.title) {
-            const baseName = (metadata.headline || metadata.title || '')
+          // Log memory every 5 assets
+          if (processedCount % 5 === 0) {
+            logMemory('export:progress', { requestId, processed: processedCount, total: completedAssets.length });
+          }
+          
+          const embedResult = asset.embedResults[0];
+          
+          // Resolve embedded file (local or Supabase)
+          let resolvedPath: string | null = null;
+          if (embedResult) {
+            resolvedPath = await resolveEmbeddedFilePath(embedResult, exportRecord.projectId, asset.id);
+            if (resolvedPath && !resolvedPath.startsWith(EXPORT_DIR)) {
+              // Track downloaded files for cleanup
+              // (only if it's a temp download, not an existing local file)
+            }
+          }
+          
+          if (resolvedPath) {
+            // Generate intelligent filename from metadata
+            const metadata = assetMetadata.get(asset.id);
+            
+            let smartFilename = asset.originalFilename;
+            if (metadata?.headline || metadata?.title) {
+              const baseName = (metadata.headline || metadata.title || '')
               .toLowerCase()
               .replace(/[^a-z0-9]+/g, '-')
               .replace(/^-+|-+$/g, '')
@@ -322,16 +387,18 @@ exportsRouter.post('/', asyncHandler(async (req, res) => {
         }
       }
       
-      if (filesAdded === 0) {
-        reject(new Error('No files to add to archive'));
-        return;
-      }
-      
-      archive.finalize();
+        if (filesAdded === 0) {
+          reject(new Error('No files to add to archive'));
+          return;
+        }
+        
+        archive.finalize();
       } catch (err) {
         reject(err);
       }
     });
+    
+    logMemory('export:zip-finalized', { requestId, filesAdded });
     
     // Upload ZIP to Supabase for persistent storage (Render has ephemeral disk)
     let supabaseStoragePath: string | null = null;
@@ -343,7 +410,7 @@ exportsRouter.post('/', asyncHandler(async (req, res) => {
         console.log(`☁️ Export ZIP uploaded to Supabase: ${supabaseStoragePath}`);
         
         // Clean up local file — Supabase is the source of truth
-        try { fs.unlinkSync(zipPath); } catch {}
+        await safeUnlink(zipPath);
       }
     } catch (err) {
       console.warn('Failed to upload export to Supabase, keeping local copy:', err);
@@ -361,6 +428,8 @@ exportsRouter.post('/', asyncHandler(async (req, res) => {
       completedAt: new Date(),
     });
     
+    logMemory('export:complete', { requestId, filesAdded, storedPath: storedPath.substring(0, 20) + '...' });
+    
     res.status(201).json({
       export: {
         id: exportRecord.id,
@@ -372,13 +441,17 @@ exportsRouter.post('/', asyncHandler(async (req, res) => {
     });
     
   } catch (error) {
-    await exportRepository.update(exportRecord.id, {
-      status: 'failed',
-      error: error instanceof Error ? error.message : 'Export failed',
-      completedAt: new Date(),
-    });
+    // Clean up temp files on error
+    for (const f of tempFiles) {
+      await safeUnlink(f);
+    }
     
-    throw createApiError('Export failed', 500);
+    logMemory('export:error', { requestId, error: error instanceof Error ? error.message : 'Unknown' });
+    
+    throw createApiError('Export failed: ' + (error instanceof Error ? error.message : 'Unknown error'), 500);
+  } finally {
+    // ALWAYS release the export lock
+    releaseExportLock();
   }
 }));
 
@@ -529,13 +602,15 @@ exportsRouter.get('/:id/download', asyncHandler(async (req, res) => {
 /**
  * POST /exports/advanced - Create export with preset and options
  * World-class export with format conversion, XMP sidecars, and quality settings
+ * Memory-hardened: global lock, sequential processing, streaming ZIP.
  */
 exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
   const { userId } = req as AuthenticatedRequest;
+  const requestId = (req as any).id || `adv-${Date.now()}`;
   
   const AdvancedExportSchema = z.object({
     projectId: z.string(),
-    assetIds: z.array(z.string()).min(1).max(500),
+    assetIds: z.array(z.string()).min(1).max(200),
     preset: z.enum([
       'lightroom-ready', 
       'web-optimized', 
@@ -562,6 +637,41 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
   const body = AdvancedExportSchema.parse(req.body);
   const { projectId, assetIds, preset, options: optionOverrides } = body;
   
+  // ─── Pre-flight checks ───
+  const limitCheck = checkExportLimits(assetIds.length);
+  if (!limitCheck.allowed) {
+    throw createApiError(limitCheck.reason!, 400);
+  }
+  
+  const rateCheck = checkUserRateLimit(userId);
+  if (!rateCheck.allowed) {
+    res.setHeader('Retry-After', Math.ceil((rateCheck.retryAfterMs || 10000) / 1000));
+    throw createApiError('Too many export requests. Please wait a moment.', 429);
+  }
+  
+  // Global concurrency lock
+  const lockResult = acquireExportLock();
+  if (!lockResult.acquired) {
+    console.warn(`[${requestId}] Export lock busy, returning 429`);
+    res.setHeader('Retry-After', '30');
+    res.status(429).json({
+      success: false,
+      error: 'EXPORT_BUSY',
+      message: lockResult.reason || 'Another export is in progress. Please wait a moment and try again.',
+      retryAfter: 30,
+    });
+    return;
+  }
+  
+  recordUserExport(userId);
+  logMemory(`adv-export-start[${requestId}]`, { assetCount: assetIds.length });
+  
+  let exportFolder: string | null = null;
+  let zipPath: string | null = null;
+  let exportRecord: Awaited<ReturnType<typeof exportRepository.create>> | null = null;
+  let metadataWriter: ReturnType<typeof createExifToolWriter> | null = null;
+  
+  try {
   // Verify project ownership
   const project = await projectRepository.findById(projectId);
   if (!project || project.userId !== userId) {
@@ -590,10 +700,15 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
     } : undefined
   );
   
-  // Get assets with results
-  const assets = await Promise.all(
-    assetIds.map(id => assetRepository.findByIdWithResults(id))
-  );
+  // Get assets with results - SEQUENTIAL to limit memory
+  const assets: (NonNullable<Awaited<ReturnType<typeof assetRepository.findByIdWithResults>>> | null)[] = [];
+  for (let i = 0; i < assetIds.length; i++) {
+    const asset = await assetRepository.findByIdWithResults(assetIds[i]);
+    assets.push(asset);
+    if ((i + 1) % 5 === 0) {
+      logMemory(`adv-fetch-progress[${requestId}]`, { fetched: i + 1, total: assetIds.length });
+    }
+  }
   
   const completedAssets = assets.filter(a => 
     a && (a.status === 'completed' || a.status === 'approved')
@@ -625,7 +740,7 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
   };
 
   // Create export record
-  const exportRecord = await exportRepository.create({
+  exportRecord = await exportRepository.create({
     projectId,
     destinationType: 'download',
     assetIds: completedAssets.map(a => a!.id),
@@ -634,7 +749,7 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
   await exportRepository.update(exportRecord.id, { status: 'processing' });
   
   const startTime = Date.now();
-  const metadataWriter = createExifToolWriter();
+  metadataWriter = createExifToolWriter();
   
   // Initialize progress tracking
   emitProgress(exportRecord.id, {
@@ -644,9 +759,8 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
     message: `Preparing export of ${completedAssets.length} files...`,
   });
   
-  try {
     // Create temp export folder
-    const exportFolder = path.join(EXPORT_DIR, exportRecord.id);
+    exportFolder = path.join(EXPORT_DIR, exportRecord.id);
     await fs.promises.mkdir(exportFolder, { recursive: true });
     
     const exportedFiles: any[] = [];
@@ -763,34 +877,39 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
         message: 'Creating ZIP archive...',
       });
       
-      const zipPath = path.join(EXPORT_DIR, `${exportRecord.id}.zip`);
+      zipPath = path.join(EXPORT_DIR, `${exportRecord.id}.zip`);
+      logMemory(`adv-zip-start[${requestId}]`, { files: successCount });
       
       await new Promise<void>((resolve, reject) => {
-        const output = fs.createWriteStream(zipPath);
-        const archive = archiver('zip', { zlib: { level: 9 } });
+        const output = fs.createWriteStream(zipPath!);
+        const archive = archiver('zip', { zlib: { level: 6 } }); // lower level for speed
         
         output.on('close', resolve);
         archive.on('error', reject);
         archive.pipe(output);
-        archive.directory(exportFolder, false);
+        archive.directory(exportFolder!, false);
         archive.finalize();
       });
       
+      logMemory(`adv-zip-done[${requestId}]`);
+      
       // Clean up folder after zipping
-      await fs.promises.rm(exportFolder, { recursive: true, force: true });
+      await safeRmDir(exportFolder!);
+      exportFolder = null; // mark as cleaned
       outputPath = zipPath;
       
       // Upload ZIP to Supabase for persistent storage
       try {
         const storageAvailable = await isStorageAvailable();
         if (storageAvailable) {
-          await uploadExport(zipPath, exportRecord.id, userId);
+          await uploadExport(zipPath!, exportRecord.id, userId);
           const storagePath = `${userId}/${exportRecord.id}.zip`;
           outputPath = `supabase:${storagePath}`;
           console.log(`☁️ Advanced export ZIP uploaded to Supabase: ${storagePath}`);
           
           // Clean up local file
-          try { fs.unlinkSync(zipPath); } catch {}
+          await safeUnlink(zipPath!);
+          zipPath = null; // mark as cleaned
         }
       } catch (err) {
         console.warn('Failed to upload advanced export to Supabase:', err);
@@ -814,6 +933,12 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
       completedAt: new Date(),
     });
     
+    logMemory(`adv-export-done[${requestId}]`, { 
+      successCount, 
+      failCount, 
+      durationMs: Date.now() - startTime 
+    });
+    
     res.status(201).json({
       export: {
         id: exportRecord.id,
@@ -833,21 +958,33 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
     });
     
   } catch (error) {
-    await metadataWriter.close();
+    if (metadataWriter) await metadataWriter.close();
     
     // Emit failure progress
-    emitProgress(exportRecord.id, {
-      status: 'failed',
-      stage: 'done',
-      message: error instanceof Error ? error.message : 'Export failed',
+    if (exportRecord) {
+      emitProgress(exportRecord.id, {
+        status: 'failed',
+        stage: 'done',
+        message: error instanceof Error ? error.message : 'Export failed',
+      });
+      
+      await exportRepository.update(exportRecord.id, {
+        status: 'failed',
+        error: error instanceof Error ? error.message : 'Export failed',
+        completedAt: new Date(),
+      });
+    }
+    
+    logMemory(`adv-export-error[${requestId}]`, { 
+      error: error instanceof Error ? error.message : 'Unknown' 
     });
     
-    await exportRepository.update(exportRecord.id, {
-      status: 'failed',
-      error: error instanceof Error ? error.message : 'Export failed',
-      completedAt: new Date(),
-    });
+    // Cleanup on error
+    if (exportFolder) await safeRmDir(exportFolder);
+    if (zipPath) await safeUnlink(zipPath);
     
     throw createApiError('Export failed: ' + (error instanceof Error ? error.message : 'Unknown error'), 500);
+  } finally {
+    releaseExportLock();
   }
 }));

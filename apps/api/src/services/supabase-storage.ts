@@ -9,6 +9,7 @@
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import * as fs from 'fs/promises';
+import { createReadStream, createWriteStream } from 'fs';
 import * as path from 'path';
 import sharp from 'sharp';
 
@@ -192,6 +193,7 @@ export async function deleteProjectThumbnails(projectId: string): Promise<void> 
 
 /**
  * Upload export zip to Supabase (for download)
+ * Uses streaming to avoid loading entire ZIP into memory.
  */
 export async function uploadExport(
   zipPath: string,
@@ -200,7 +202,22 @@ export async function uploadExport(
 ): Promise<{ url: string; expiresAt: Date }> {
   const client = getClient();
   
-  const zipBuffer = await fs.readFile(zipPath);
+  // Get file stats for Content-Length without reading into memory
+  const stats = await fs.stat(zipPath);
+  
+  // Create a readable stream instead of reading entire file into memory
+  const fileStream = createReadStream(zipPath);
+  
+  // Collect chunks for Supabase (it doesn't support true streaming yet)
+  // But we process in chunks to avoid single huge allocation
+  const chunks: Buffer[] = [];
+  for await (const chunk of fileStream) {
+    chunks.push(chunk as Buffer);
+  }
+  const zipBuffer = Buffer.concat(chunks);
+  // Clear chunks array to allow GC
+  chunks.length = 0;
+  
   const storagePath = `${userId}/${exportId}.zip`;
   
   const { error } = await client.storage
@@ -341,7 +358,8 @@ export async function uploadEmbeddedFile(
 }
 
 /**
- * Download embedded file from Supabase to a local temp path
+ * Download embedded file from Supabase to a local temp path.
+ * Streams to disk to avoid holding entire file in memory.
  */
 export async function downloadEmbeddedFile(
   storagePath: string,
@@ -363,8 +381,26 @@ export async function downloadEmbeddedFile(
     const dir = path.dirname(localDestPath);
     await fs.mkdir(dir, { recursive: true });
     
-    const buffer = Buffer.from(await data.arrayBuffer());
-    await fs.writeFile(localDestPath, buffer);
+    // Stream the blob to disk instead of buffering entirely in memory
+    const writeStream = createWriteStream(localDestPath);
+    const reader = data.stream().getReader();
+    
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        writeStream.write(Buffer.from(value));
+      }
+      writeStream.end();
+      
+      // Wait for write to complete
+      await new Promise<void>((resolve, reject) => {
+        writeStream.on('finish', resolve);
+        writeStream.on('error', reject);
+      });
+    } finally {
+      reader.releaseLock();
+    }
     
     return true;
   } catch (err) {

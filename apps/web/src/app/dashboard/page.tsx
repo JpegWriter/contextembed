@@ -72,13 +72,15 @@ export default function DashboardPage() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      // Create project with form data
+      // Create project with form data including new industry-agnostic fields
       const data = await projectsApi.create(session.access_token, { 
         name: formData.name,
         description: formData.description,
         eventLocation: formData.eventLocation,
         eventDate: formData.eventDate,
         galleryContext: formData.galleryContext,
+        contextScope: formData.contextScope,
+        primaryContext: formData.primaryContext,
       });
       
       setProjects(prev => [data.project, ...prev]);

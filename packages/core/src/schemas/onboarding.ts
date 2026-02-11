@@ -68,6 +68,10 @@ export const ConfirmedContextSchema = z.object({
   location: ConfirmedLocationSchema.optional(),
   additionalContext: z.string().max(2000).optional(),
   
+  // Industry-agnostic context fields
+  contextScope: z.string().max(100).optional(),
+  primaryContext: z.string().max(2000).optional(),
+  
   // Authority & Expertise fields (NEW)
   yearsExperience: z.number().int().min(0).max(100).optional(),
   credentials: z.array(z.string().max(200)).max(10).optional(),
@@ -130,6 +134,9 @@ export const CreateProjectInputSchema = z.object({
   eventLocation: z.string().max(256).optional(),
   eventDate: z.string().optional(),
   galleryContext: z.string().max(5000).optional(),
+  // New industry-agnostic fields
+  contextScope: z.string().max(100).optional(),
+  primaryContext: z.string().max(2000).optional(),
 });
 
 export const UrlAuditInputSchema = z.object({

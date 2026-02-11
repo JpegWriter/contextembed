@@ -113,6 +113,10 @@ export interface ConfirmedContext {
   location?: ConfirmedLocation;
   additionalContext?: string;
   
+  // Industry-agnostic context fields
+  contextScope?: string;
+  primaryContext?: string;
+  
   // Authority & Expertise fields (NEW)
   yearsExperience?: number;
   credentials?: string[];

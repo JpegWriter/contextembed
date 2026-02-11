@@ -70,6 +70,11 @@ projectsRouter.post('/', asyncHandler(async (req, res) => {
   
   const input = CreateProjectInputSchema.parse(req.body);
   
+  // Validate primaryContext length if provided
+  if (input.primaryContext && input.primaryContext.trim().length < 20) {
+    throw createApiError('Primary context must be at least 20 characters', 400, 'PRIMARY_CONTEXT_TOO_SHORT');
+  }
+  
   const project = await projectRepository.create({
     userId,
     name: input.name,
@@ -77,7 +82,7 @@ projectsRouter.post('/', asyncHandler(async (req, res) => {
   });
   
   // Auto-create onboarding profile with initial data from project creation modal
-  if (input.eventLocation || input.eventDate || input.galleryContext || input.description) {
+  if (input.eventLocation || input.eventDate || input.galleryContext || input.description || input.contextScope || input.primaryContext) {
     await onboardingProfileRepository.upsertInitial({
       projectId: project.id,
       projectName: input.name,
@@ -87,6 +92,9 @@ projectsRouter.post('/', asyncHandler(async (req, res) => {
         eventLocation: input.eventLocation || '',
         eventDate: input.eventDate || '',
         galleryContext: input.galleryContext || '',
+        // New industry-agnostic fields
+        contextScope: input.contextScope || '',
+        primaryContext: input.primaryContext || '',
       },
     });
   }

@@ -72,6 +72,13 @@ export default function ProjectPage() {
     return localStorage.getItem(`ce_embed_confirmed_${projectId}`) === 'true';
   });
 
+  // ── 4-Step Flow: Animation triggers (fire once per step per page load) ──
+  const [animateStep1, setAnimateStep1] = useState(false);
+  const [animateStep2, setAnimateStep2] = useState(false);
+  const [animateStep3, setAnimateStep3] = useState(false);
+  const [animateStep4, setAnimateStep4] = useState(false);
+  const [exportClickedSuccessfully, setExportClickedSuccessfully] = useState(false);
+
   const loadData = useCallback(async () => {
     try {
       if (!supabase) return;
@@ -355,7 +362,7 @@ export default function ProjectPage() {
     failed: assets.filter(a => a.status === 'failed').length,
   };
 
-  // ── ABC Flow: derived state booleans ──
+  // ── 4-Step Flow: derived state booleans ──
   const hasAssets = assets.length > 0;
 
   // Context is considered "present" if the asset has a userComment
@@ -365,36 +372,76 @@ export default function ProjectPage() {
   const hasRequiredContext = hasAssets && assetsToCheck.length > 0 &&
     assetsToCheck.every(a => !!a.userComment);
 
-  const embedReady = hasAssets && hasRequiredContext;
-  const embedCompleted = (stats.completed + stats.approved) > 0;
-  const exportReady = embedCompleted && embedConfirmed;
+  // Step 1: Add Context
+  const step1Done = hasRequiredContext;
 
-  // Determine current ABC step for guidance
+  // Step 2: Run ContextEmbed
+  const embedReady = hasAssets && step1Done;
+  const embedCompleted = (stats.completed + stats.approved) > 0 && stats.pending === 0 && stats.processing === 0;
+  const step2Done = embedCompleted;
+
+  // Step 3: Confirm Embed
+  const step3Done = embedConfirmed;
+
+  // Step 4: Export
+  const exportReady = step3Done;
+  const step4Done = exportClickedSuccessfully;
+
+  // ── Animation triggers: fire once when step becomes actionable ──
+  useEffect(() => {
+    if (hasAssets && !animateStep1) {
+      setAnimateStep1(true);
+      const t = setTimeout(() => setAnimateStep1(false), 1200);
+      return () => clearTimeout(t);
+    }
+  }, [hasAssets]);
+
+  useEffect(() => {
+    if (step1Done && !step2Done && !animateStep2) {
+      setAnimateStep2(true);
+      const t = setTimeout(() => setAnimateStep2(false), 1200);
+      return () => clearTimeout(t);
+    }
+  }, [step1Done, step2Done]);
+
+  useEffect(() => {
+    if (step2Done && !step3Done && !animateStep3) {
+      setAnimateStep3(true);
+      const t = setTimeout(() => setAnimateStep3(false), 1200);
+      return () => clearTimeout(t);
+    }
+  }, [step2Done, step3Done]);
+
+  useEffect(() => {
+    if (step3Done && !step4Done && !animateStep4) {
+      setAnimateStep4(true);
+      const t = setTimeout(() => setAnimateStep4(false), 1200);
+      return () => clearTimeout(t);
+    }
+  }, [step3Done, step4Done]);
+
+  // Determine current step for guidance
   type FlowStep = 'upload' | 'context' | 'run' | 'confirm' | 'export';
   const currentStep: FlowStep = !hasAssets
     ? 'upload'
-    : !hasRequiredContext
+    : !step1Done
     ? 'context'
-    : !embedCompleted
+    : !step2Done
     ? 'run'
-    : !embedConfirmed
+    : !step3Done
     ? 'confirm'
     : 'export';
 
-  // Dynamic button labels
+  // Dynamic button labels (keep for reference)
   const runEmbedLabel = !hasAssets
-    ? 'Run Embed (upload images first)'
-    : !hasRequiredContext
-    ? 'Run Embed (add context first)'
+    ? 'Run ContextEmbed'
+    : !step1Done
+    ? 'Run ContextEmbed'
     : selectedIds.size > 0
-    ? `Run Embed (${selectedIds.size})`
-    : 'Run Embed';
+    ? `Run ContextEmbed (${selectedIds.size})`
+    : 'Run ContextEmbed';
 
-  const exportLabel = !embedCompleted
-    ? 'Export (run embed first)'
-    : !embedConfirmed
-    ? 'Export (confirm embed first)'
-    : 'Export Images';
+  const exportLabel = 'Export Images';
 
   function handleConfirmEmbed() {
     setEmbedConfirmed(true);
@@ -529,34 +576,23 @@ export default function ProjectPage() {
           </button>
         </div>
 
-        {/* Action Buttons — ABC Flow */}
+        {/* 4-Step Action Buttons */}
         <div className="flex flex-wrap items-center gap-2 mb-4 pb-4 border-b border-steel-700/50">
-          {/* A → B → C: Run Embed */}
-          <button
-            onClick={handleProcess}
-            disabled={processing || !embedReady}
-            className="flex items-center gap-2.5 px-5 py-2.5 bg-brand-600 border border-brand-500
-              hover:bg-brand-500 text-white text-sm font-bold uppercase tracking-wider
-              disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-glow-green"
-          >
-            {processing ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Play className="w-4 h-4" />
-            )}
-            {runEmbedLabel}
-          </button>
-
-          {/* B: Add Context — visible when assets exist */}
+          
+          {/* Step 1: Add Context */}
           {hasAssets && (
             <div className="relative">
               <button
                 onClick={() => setShowContextMenu(!showContextMenu)}
-                className="flex items-center gap-2.5 px-5 py-2.5 bg-amber-700 border border-amber-600
-                  hover:bg-amber-600 text-white text-sm font-bold uppercase tracking-wider transition-all"
+                className={`flex items-center gap-2 px-4 py-2.5 text-sm font-bold uppercase tracking-wider transition-all border
+                  ${animateStep1 ? 'animate-step-in' : ''}
+                  ${step1Done
+                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500 ring-2 ring-emerald-400/30'
+                    : 'bg-red-600 hover:bg-red-500 text-white border-red-500 ring-2 ring-red-400/40 animate-pulse-ring'
+                  }`}
               >
                 <MessageSquarePlus className="w-4 h-4" />
-                Add Context
+                1. Add Context
                 <ChevronDown className="w-3.5 h-3.5" />
               </button>
               {showContextMenu && (
@@ -564,14 +600,14 @@ export default function ProjectPage() {
                   {selectedIds.size > 0 && (
                     <button
                       onClick={handleBatchContextSelected}
-                      className="w-full text-left px-4 py-2.5 text-sm text-gray-200 hover:bg-steel-800 transition-colors"
+                      className="w-full text-left px-4 py-2.5 text-sm text-steel-200 hover:bg-steel-800 transition-colors"
                     >
                       Add to selected ({selectedIds.size})
                     </button>
                   )}
                   <button
                     onClick={handleBatchContextAll}
-                    className="w-full text-left px-4 py-2.5 text-sm text-gray-200 hover:bg-steel-800 transition-colors"
+                    className="w-full text-left px-4 py-2.5 text-sm text-steel-200 hover:bg-steel-800 transition-colors"
                   >
                     Add to all ({assets.length})
                   </button>
@@ -580,54 +616,78 @@ export default function ProjectPage() {
             </div>
           )}
 
-          {/* C: Export — disabled until embed confirmed */}
+          {/* Step 2: Run ContextEmbed */}
+          <button
+            onClick={handleProcess}
+            disabled={processing || !embedReady}
+            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-bold uppercase tracking-wider transition-all border
+              ${animateStep2 ? 'animate-step-in' : ''}
+              ${!embedReady
+                ? 'bg-neutral-800 text-neutral-500 border-neutral-700 cursor-not-allowed'
+                : step2Done
+                ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500 ring-2 ring-emerald-400/30'
+                : 'bg-red-600 hover:bg-red-500 text-white border-red-500 ring-2 ring-red-400/40'
+              }`}
+          >
+            {processing ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Play className="w-4 h-4" />
+            )}
+            2. Run ContextEmbed
+          </button>
+
+          {/* Step 3: Confirm Embed Images */}
+          <button
+            onClick={handleConfirmEmbed}
+            disabled={!step2Done || step3Done}
+            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-bold uppercase tracking-wider transition-all border
+              ${animateStep3 ? 'animate-step-in' : ''}
+              ${!step2Done
+                ? 'bg-neutral-800 text-neutral-500 border-neutral-700 cursor-not-allowed'
+                : step3Done
+                ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500 ring-2 ring-emerald-400/30'
+                : 'bg-red-600 hover:bg-red-500 text-white border-red-500 ring-2 ring-red-400/40 animate-pulse-ring'
+              }`}
+          >
+            <ShieldCheck className="w-4 h-4" />
+            3. Confirm Embed Images
+          </button>
+
+          {/* Step 4: Export Images */}
           <button
             onClick={handleExport}
             disabled={exporting || !exportReady}
-            className="flex items-center gap-2.5 px-5 py-2.5 bg-black hover:bg-steel-800
-              text-white text-sm font-bold uppercase tracking-wider border border-steel-600
-              disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-bold uppercase tracking-wider transition-all border
+              ${animateStep4 ? 'animate-step-in' : ''}
+              ${!exportReady
+                ? 'bg-neutral-800 text-neutral-500 border-neutral-700 cursor-not-allowed'
+                : step4Done
+                ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500 ring-2 ring-emerald-400/30'
+                : 'bg-red-600 hover:bg-red-500 text-white border-red-500 ring-2 ring-red-400/40'
+              }`}
           >
             {exporting ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               <Download className="w-4 h-4" />
             )}
-            {exportLabel}
+            Export Images
           </button>
 
-          <button
-            onClick={() => setStatusFilter('all')}
-            className={`flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider text-steel-400 
-              hover:text-white hover:bg-steel-800/60 transition-all ${statusFilter === 'all' ? 'hidden' : ''}`}
-          >
-            <Filter className="w-4 h-4" />
-            Clear Filter
-          </button>
+          {statusFilter !== 'all' && (
+            <button
+              onClick={() => setStatusFilter('all')}
+              className="flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider text-steel-400 
+                hover:text-white hover:bg-steel-800/60 transition-all"
+            >
+              <Filter className="w-4 h-4" />
+              Clear Filter
+            </button>
+          )}
         </div>
 
-        {/* Confirm Embed Callout — shows between embed completion and confirmation */}
-        {embedCompleted && !embedConfirmed && (
-          <div className="mb-4 border border-brand-700/50 bg-brand-950/30 p-4 flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-bold text-brand-400 uppercase tracking-wider">Step C — Confirm Embed</h3>
-              <p className="text-xs text-gray-400 mt-0.5">
-                Quick check: previews look right? Confirm to unlock export.
-              </p>
-            </div>
-            <button
-              onClick={handleConfirmEmbed}
-              className="flex items-center gap-2 px-5 py-2.5 bg-brand-600 border border-brand-500
-                hover:bg-brand-500 text-white text-sm font-bold uppercase tracking-wider
-                transition-all shadow-glow-green"
-            >
-              <ShieldCheck className="w-4 h-4" />
-              Confirm Embed
-            </button>
-          </div>
-        )}
-
-        {/* Upload Zone — Step A */}
+        {/* Upload Zone — Step 0 */}
         <div
           {...getRootProps()}
           className={`
@@ -658,28 +718,36 @@ export default function ProjectPage() {
 
         {/* Step Guidance — contextual message above grid */}
         {hasAssets && currentStep === 'context' && (
-          <div className="mb-3 border border-amber-700/50 bg-amber-950/20 p-3">
-            <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider">Step B — Add Context</h3>
-            <p className="text-xs text-gray-400 mt-0.5">
+          <div className="mb-3 border border-red-700/50 bg-red-950/20 p-3">
+            <h3 className="text-xs font-bold text-red-400 uppercase tracking-wider">Step 1 — Add Context</h3>
+            <p className="text-xs text-steel-400 mt-0.5">
               {selectedIds.size > 0
                 ? `${assetsToCheck.filter(a => !a.userComment).length} of ${assetsToCheck.length} selected images still need context.`
                 : `${assets.filter(a => !a.userComment).length} of ${assets.length} images still need context.`
-              }{' '}Use "Add Context" above to apply to selected or all images.
+              }{' '}Use "1. Add Context" above to apply to selected or all images.
             </p>
           </div>
         )}
         {hasAssets && currentStep === 'run' && (
-          <div className="mb-3 border border-brand-700/50 bg-brand-950/20 p-3">
-            <h3 className="text-xs font-bold text-brand-400 uppercase tracking-wider">Step C — Run Embed</h3>
-            <p className="text-xs text-gray-400 mt-0.5">
-              Ready when you are. Hit "Run Embed" to write ContextEmbed metadata into your images.
+          <div className="mb-3 border border-red-700/50 bg-red-950/20 p-3">
+            <h3 className="text-xs font-bold text-red-400 uppercase tracking-wider">Step 2 — Run ContextEmbed</h3>
+            <p className="text-xs text-steel-400 mt-0.5">
+              Ready when you are. Hit "2. Run ContextEmbed" to write metadata into your images.
             </p>
           </div>
         )}
-        {exportReady && (
-          <div className="mb-3 border border-green-700/50 bg-green-950/20 p-3">
-            <h3 className="text-xs font-bold text-green-400 uppercase tracking-wider">Export Ready</h3>
-            <p className="text-xs text-gray-400 mt-0.5">
+        {hasAssets && currentStep === 'confirm' && (
+          <div className="mb-3 border border-red-700/50 bg-red-950/20 p-3">
+            <h3 className="text-xs font-bold text-red-400 uppercase tracking-wider">Step 3 — Confirm Embed Images</h3>
+            <p className="text-xs text-steel-400 mt-0.5">
+              Quick check: previews look right? Hit "3. Confirm Embed Images" to unlock export.
+            </p>
+          </div>
+        )}
+        {hasAssets && currentStep === 'export' && (
+          <div className="mb-3 border border-emerald-700/50 bg-emerald-950/20 p-3">
+            <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Step 4 — Export Images</h3>
+            <p className="text-xs text-steel-400 mt-0.5">
               Your embedded images are ready. Hit "Export Images" to download.
             </p>
           </div>
@@ -758,6 +826,7 @@ export default function ProjectPage() {
       <ExportModal
         isOpen={showExportModal}
         onClose={() => setShowExportModal(false)}
+        onSuccess={() => setExportClickedSuccessfully(true)}
         projectId={projectId}
         assetIds={exportAssetIds}
         assetCount={exportAssetIds.length}

@@ -112,3 +112,33 @@ body {
   border-width: 1px;
   border-color: rgba(30, 36, 45, 0.6);
 }
+
+/* ── 4-Step Flow Animations ── */
+@keyframes step-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-step-in {
+  animation: step-in 0.4s ease-out forwards;
+}
+
+/* Subtle pulse ring for active step */
+@keyframes pulse-ring {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0);
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2s ease-in-out infinite;
+}

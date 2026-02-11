@@ -84,6 +84,7 @@ interface ExportOptions {
 interface ExportModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
   projectId: string;
   assetIds: string[];
   assetCount: number;
@@ -92,7 +93,8 @@ interface ExportModalProps {
 
 export function ExportModal({ 
   isOpen, 
-  onClose, 
+  onClose,
+  onSuccess,
   projectId, 
   assetIds, 
   assetCount,
@@ -255,6 +257,9 @@ export function ExportModal({
       };
       
       setExportResult(result.export);
+      
+      // Notify parent of successful export
+      onSuccess?.();
       
       if (result.export.downloadUrl) {
         // Auto-download for ZIP exports

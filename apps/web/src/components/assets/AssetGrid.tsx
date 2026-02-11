@@ -5,6 +5,7 @@ import {
   Clock, 
   Loader2, 
   Eye,
+  Upload,
   MessageSquarePlus,
   CheckCircle2,
   XCircle,
@@ -140,6 +141,11 @@ export function AssetGrid({
           <span className="text-xs font-bold text-steel-400 uppercase tracking-wider">
             {selectedIds.size > 0 ? `${selectedIds.size} sel` : 'All'}
           </span>
+          {selectedIds.size === 0 && assets.length > 0 && (
+            <span className="text-[10px] text-steel-600 normal-case tracking-normal">
+              No selection = applies to all
+            </span>
+          )}
         </label>
 
         {/* View toggle */}
@@ -362,8 +368,10 @@ export function AssetGrid({
       </div>
 
       {assets.length === 0 && (
-        <div className="text-center py-8 text-steel-500">
-          <p className="text-sm font-bold uppercase tracking-wider">No assets. Drop images to begin.</p>
+        <div className="text-center py-12 text-steel-500">
+          <Upload className="w-8 h-8 mx-auto mb-3 text-steel-600" />
+          <p className="text-sm font-bold uppercase tracking-wider text-steel-400">Step A — Upload Images</p>
+          <p className="text-xs text-steel-500 mt-1">Drop images above or click the upload zone to begin.</p>
         </div>
       )}
     </div>

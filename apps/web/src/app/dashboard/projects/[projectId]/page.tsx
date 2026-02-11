@@ -16,6 +16,8 @@ import {
   Loader2,
   Settings,
   Filter,
+  ShieldCheck,
+  ChevronDown,
 } from 'lucide-react';
 import { useSupabase } from '@/lib/supabase-provider';
 import { projectsApi, assetsApi, jobsApi, exportsApi, userProfileApi } from '@/lib/api';
@@ -62,6 +64,13 @@ export default function ProjectPage() {
   const [showBatchUpload, setShowBatchUpload] = useState(false);
   const [batchUploadFiles, setBatchUploadFiles] = useState<File[]>([]);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [showContextMenu, setShowContextMenu] = useState(false);
+
+  // Embed confirmation (persisted per project in localStorage)
+  const [embedConfirmed, setEmbedConfirmed] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem(`ce_embed_confirmed_${projectId}`) === 'true';
+  });
 
   const loadData = useCallback(async () => {
     try {
@@ -113,6 +122,14 @@ export default function ProjectPage() {
     const interval = setInterval(loadData, 5000);
     return () => clearInterval(interval);
   }, [loadData]);
+
+  // Close context dropdown on outside click
+  useEffect(() => {
+    if (!showContextMenu) return;
+    const handleClick = () => setShowContextMenu(false);
+    const timer = setTimeout(() => document.addEventListener('click', handleClick), 0);
+    return () => { clearTimeout(timer); document.removeEventListener('click', handleClick); };
+  }, [showContextMenu]);
 
   // Load full asset details when selected
   useEffect(() => {
@@ -210,6 +227,9 @@ export default function ProjectPage() {
 
       await assetsApi.process(session.access_token, projectId, assetIds);
       toast.success(`Processing ${assetIds.length} assets`);
+      // Reset embed confirmation — user must re-confirm after new embed
+      setEmbedConfirmed(false);
+      localStorage.removeItem(`ce_embed_confirmed_${projectId}`);
       setSelectedIds(new Set());
       loadData();
     } catch (error) {
@@ -335,6 +355,66 @@ export default function ProjectPage() {
     failed: assets.filter(a => a.status === 'failed').length,
   };
 
+  // ── ABC Flow: derived state booleans ──
+  const hasAssets = assets.length > 0;
+
+  // Context is considered "present" if the asset has a userComment
+  const assetsToCheck = selectedIds.size > 0
+    ? assets.filter(a => selectedIds.has(a.id))
+    : assets;
+  const hasRequiredContext = hasAssets && assetsToCheck.length > 0 &&
+    assetsToCheck.every(a => !!a.userComment);
+
+  const embedReady = hasAssets && hasRequiredContext;
+  const embedCompleted = (stats.completed + stats.approved) > 0;
+  const exportReady = embedCompleted && embedConfirmed;
+
+  // Determine current ABC step for guidance
+  type FlowStep = 'upload' | 'context' | 'run' | 'confirm' | 'export';
+  const currentStep: FlowStep = !hasAssets
+    ? 'upload'
+    : !hasRequiredContext
+    ? 'context'
+    : !embedCompleted
+    ? 'run'
+    : !embedConfirmed
+    ? 'confirm'
+    : 'export';
+
+  // Dynamic button labels
+  const runEmbedLabel = !hasAssets
+    ? 'Run Embed (upload images first)'
+    : !hasRequiredContext
+    ? 'Run Embed (add context first)'
+    : selectedIds.size > 0
+    ? `Run Embed (${selectedIds.size})`
+    : 'Run Embed';
+
+  const exportLabel = !embedCompleted
+    ? 'Export (run embed first)'
+    : !embedConfirmed
+    ? 'Export (confirm embed first)'
+    : 'Export Images';
+
+  function handleConfirmEmbed() {
+    setEmbedConfirmed(true);
+    localStorage.setItem(`ce_embed_confirmed_${projectId}`, 'true');
+    toast.success('Embed confirmed — export unlocked');
+  }
+
+  // Open batch context modal for all assets (no selection required)
+  function handleBatchContextAll() {
+    setSelectedIds(new Set(assets.map(a => a.id)));
+    setShowBatchContext(true);
+    setShowContextMenu(false);
+  }
+
+  // Open batch context modal for selected assets only
+  function handleBatchContextSelected() {
+    setShowBatchContext(true);
+    setShowContextMenu(false);
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -449,11 +529,12 @@ export default function ProjectPage() {
           </button>
         </div>
 
-        {/* Action Buttons */}
+        {/* Action Buttons — ABC Flow */}
         <div className="flex flex-wrap items-center gap-2 mb-4 pb-4 border-b border-steel-700/50">
+          {/* A → B → C: Run Embed */}
           <button
             onClick={handleProcess}
-            disabled={processing}
+            disabled={processing || !embedReady}
             className="flex items-center gap-2.5 px-5 py-2.5 bg-brand-600 border border-brand-500
               hover:bg-brand-500 text-white text-sm font-bold uppercase tracking-wider
               disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-glow-green"
@@ -463,22 +544,46 @@ export default function ProjectPage() {
             ) : (
               <Play className="w-4 h-4" />
             )}
-            {selectedIds.size > 0 ? `Run Embed (${selectedIds.size})` : 'Run Embed'}
+            {runEmbedLabel}
           </button>
 
-          <button
-            onClick={() => setShowBatchContext(true)}
-            className={`flex items-center gap-2.5 px-5 py-2.5 bg-amber-700 border border-amber-600
-              hover:bg-amber-600 text-white text-sm font-bold uppercase tracking-wider
-              transition-all ${selectedIds.size === 0 ? 'hidden' : ''}`}
-          >
-            <MessageSquarePlus className="w-4 h-4" />
-            Add Context
-          </button>
+          {/* B: Add Context — visible when assets exist */}
+          {hasAssets && (
+            <div className="relative">
+              <button
+                onClick={() => setShowContextMenu(!showContextMenu)}
+                className="flex items-center gap-2.5 px-5 py-2.5 bg-amber-700 border border-amber-600
+                  hover:bg-amber-600 text-white text-sm font-bold uppercase tracking-wider transition-all"
+              >
+                <MessageSquarePlus className="w-4 h-4" />
+                Add Context
+                <ChevronDown className="w-3.5 h-3.5" />
+              </button>
+              {showContextMenu && (
+                <div className="absolute top-full left-0 mt-1 z-50 bg-steel-900 border border-steel-700/50 shadow-xl min-w-[220px]">
+                  {selectedIds.size > 0 && (
+                    <button
+                      onClick={handleBatchContextSelected}
+                      className="w-full text-left px-4 py-2.5 text-sm text-gray-200 hover:bg-steel-800 transition-colors"
+                    >
+                      Add to selected ({selectedIds.size})
+                    </button>
+                  )}
+                  <button
+                    onClick={handleBatchContextAll}
+                    className="w-full text-left px-4 py-2.5 text-sm text-gray-200 hover:bg-steel-800 transition-colors"
+                  >
+                    Add to all ({assets.length})
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
+          {/* C: Export — disabled until embed confirmed */}
           <button
             onClick={handleExport}
-            disabled={exporting || stats.completed + stats.approved === 0}
+            disabled={exporting || !exportReady}
             className="flex items-center gap-2.5 px-5 py-2.5 bg-black hover:bg-steel-800
               text-white text-sm font-bold uppercase tracking-wider border border-steel-600
               disabled:opacity-50 disabled:cursor-not-allowed transition-all"
@@ -488,7 +593,7 @@ export default function ProjectPage() {
             ) : (
               <Download className="w-4 h-4" />
             )}
-            Export Images
+            {exportLabel}
           </button>
 
           <button
@@ -501,7 +606,28 @@ export default function ProjectPage() {
           </button>
         </div>
 
-        {/* Upload Zone — Sharp, black */}
+        {/* Confirm Embed Callout — shows between embed completion and confirmation */}
+        {embedCompleted && !embedConfirmed && (
+          <div className="mb-4 border border-brand-700/50 bg-brand-950/30 p-4 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-bold text-brand-400 uppercase tracking-wider">Step C — Confirm Embed</h3>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Quick check: previews look right? Confirm to unlock export.
+              </p>
+            </div>
+            <button
+              onClick={handleConfirmEmbed}
+              className="flex items-center gap-2 px-5 py-2.5 bg-brand-600 border border-brand-500
+                hover:bg-brand-500 text-white text-sm font-bold uppercase tracking-wider
+                transition-all shadow-glow-green"
+            >
+              <ShieldCheck className="w-4 h-4" />
+              Confirm Embed
+            </button>
+          </div>
+        )}
+
+        {/* Upload Zone — Step A */}
         <div
           {...getRootProps()}
           className={`
@@ -522,13 +648,42 @@ export default function ProjectPage() {
               <Upload className="w-6 h-6 text-steel-500 mb-2" />
             )}
             <p className="text-sm font-bold text-steel-300 uppercase tracking-wider">
-              {isDragActive ? 'Drop files' : 'Drop images or click'}
+              {isDragActive ? 'Drop files' : currentStep === 'upload' ? 'Step A — Upload Images' : 'Drop more images or click'}
             </p>
             <p className="text-xs text-steel-500 mt-0.5 font-mono">
-              JPG, PNG up to 50MB
+              JPG, PNG, TIFF, WebP up to 50MB
             </p>
           </div>
         </div>
+
+        {/* Step Guidance — contextual message above grid */}
+        {hasAssets && currentStep === 'context' && (
+          <div className="mb-3 border border-amber-700/50 bg-amber-950/20 p-3">
+            <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider">Step B — Add Context</h3>
+            <p className="text-xs text-gray-400 mt-0.5">
+              {selectedIds.size > 0
+                ? `${assetsToCheck.filter(a => !a.userComment).length} of ${assetsToCheck.length} selected images still need context.`
+                : `${assets.filter(a => !a.userComment).length} of ${assets.length} images still need context.`
+              }{' '}Use "Add Context" above to apply to selected or all images.
+            </p>
+          </div>
+        )}
+        {hasAssets && currentStep === 'run' && (
+          <div className="mb-3 border border-brand-700/50 bg-brand-950/20 p-3">
+            <h3 className="text-xs font-bold text-brand-400 uppercase tracking-wider">Step C — Run Embed</h3>
+            <p className="text-xs text-gray-400 mt-0.5">
+              Ready when you are. Hit "Run Embed" to write ContextEmbed metadata into your images.
+            </p>
+          </div>
+        )}
+        {exportReady && (
+          <div className="mb-3 border border-green-700/50 bg-green-950/20 p-3">
+            <h3 className="text-xs font-bold text-green-400 uppercase tracking-wider">Export Ready</h3>
+            <p className="text-xs text-gray-400 mt-0.5">
+              Your embedded images are ready. Hit "Export Images" to download.
+            </p>
+          </div>
+        )}
 
         {/* Asset Grid */}
         <AssetGrid

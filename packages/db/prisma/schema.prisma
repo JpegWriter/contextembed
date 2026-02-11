@@ -90,21 +90,172 @@ model UserProfile {
 }
 
 // ============================================
+// Workspaces & Billing
+// ============================================
+
+model Workspace {
+  id            String   @id @default(cuid())
+  ownerUserId   String
+  name          String   @default("My Workspace")
+  
+  members       WorkspaceMember[]
+  subscription  Subscription?
+  projects      Project[]
+  domainUsages  DomainUsage[]
+  usageEvents   UsageEvent[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([ownerUserId])
+  @@map("workspaces")
+}
+
+model WorkspaceMember {
+  id          String   @id @default(cuid())
+  workspaceId String
+  userId      String
+  role        WorkspaceRole @default(member)
+  
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+  
+  @@unique([workspaceId, userId])
+  @@index([userId])
+  @@map("workspace_members")
+}
+
+enum WorkspaceRole {
+  owner
+  admin
+  member
+}
+
+model Subscription {
+  id                    String   @id @default(cuid())
+  workspaceId           String   @unique
+  
+  stripeCustomerId      String?
+  stripeSubscriptionId  String?
+  status                SubscriptionStatus @default(inactive)
+  plan                  SubscriptionPlan   @default(free)
+  currentPeriodEnd      DateTime?
+  
+  workspace             Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  @@index([stripeCustomerId])
+  @@index([stripeSubscriptionId])
+  @@map("subscriptions")
+}
+
+enum SubscriptionStatus {
+  inactive
+  trialing
+  active
+  past_due
+  canceled
+  unpaid
+}
+
+enum SubscriptionPlan {
+  free
+  pro
+  agency
+}
+
+model DomainUsage {
+  id                  String   @id @default(cuid())
+  workspaceId         String
+  userId              String
+  registrableDomain   String
+  freeUsesConsumed    Int      @default(0)
+  
+  firstSeenAt         DateTime @default(now())
+  lastSeenAt          DateTime @default(now())
+  lastIpHash          String?
+  lastDeviceId        String?
+  
+  status              DomainUsageStatus @default(active)
+  blockReason         String?
+  
+  workspace           Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  
+  createdAt           DateTime @default(now())
+  
+  @@unique([workspaceId, registrableDomain])
+  @@index([userId])
+  @@index([registrableDomain])
+  @@map("domain_usage")
+}
+
+enum DomainUsageStatus {
+  active
+  throttled
+  blocked
+}
+
+model UsageEvent {
+  id                  String   @id @default(cuid())
+  workspaceId         String
+  userId              String
+  projectId           String?
+  
+  action              UsageAction
+  registrableDomain   String?
+  imagesCount         Int?
+  bytesTotal          BigInt?
+  success             Boolean  @default(false)
+  errorCode           String?
+  
+  workspace           Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  
+  createdAt           DateTime @default(now())
+  
+  @@index([workspaceId])
+  @@index([userId])
+  @@index([projectId])
+  @@index([createdAt])
+  @@map("usage_events")
+}
+
+enum UsageAction {
+  run_ce
+  export
+  web_pack
+  survival
+}
+
+// ============================================
 // Projects & Onboarding
 // ============================================
 
 model Project {
   id                        String   @id @default(cuid())
   userId                    String
+  workspaceId               String?
   name                      String
   goal                      ProjectGoal
   onboardingCompleted       Boolean  @default(false)
+  
+  // Primary domain for usage tracking (eTLD+1)
+  primaryDomain             String?
+  
+  // Retention policy (free tier = 24h expiry)
+  retentionPolicy           RetentionPolicy @default(free_24h)
+  retentionHours            Int      @default(24)
+  expiresAt                 DateTime?
+  lastActivityAt            DateTime @default(now())
   
   // Governance settings
   visualAuthenticityPolicy  VisualAuthenticityPolicy?  // NULL = 'conditional' in code
   startupModeEnabled        Boolean  @default(false)   // When true, policy locked to 'deny_ai_proof'
   
   user                      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspace                 Workspace? @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
   onboardingProfile         OnboardingProfile?
   assets                    Asset[]
   jobs                      Job[]
@@ -116,7 +267,16 @@ model Project {
   updatedAt                 DateTime @updatedAt
   
   @@index([userId])
+  @@index([workspaceId])
+  @@index([expiresAt])
   @@map("projects")
+}
+
+enum RetentionPolicy {
+  free_24h
+  pro_7d
+  agency_14d
+  unlimited
 }
 
 enum VisualAuthenticityPolicy {

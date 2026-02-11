@@ -5,9 +5,10 @@
 import { Router, type IRouter } from 'express';
 import { z } from 'zod';
 import { projectRepository, assetRepository, onboardingProfileRepository } from '@contextembed/db';
-import { CreateProjectInputSchema } from '@contextembed/core';
+import { CreateProjectInputSchema, normalizeDomain } from '@contextembed/core';
 import { asyncHandler, createApiError } from '../middleware/error-handler';
 import { AuthenticatedRequest } from '../middleware/auth';
+import { ensureWorkspaceForUser, getWorkspaceEntitlements, getRetentionPolicy } from '../services/workspace';
 
 export const projectsRouter: IRouter = Router();
 
@@ -88,10 +89,28 @@ projectsRouter.post('/', asyncHandler(async (req, res) => {
     throw createApiError('Primary context must be at least 20 characters', 400, 'PRIMARY_CONTEXT_TOO_SHORT');
   }
   
+  // ─── Workspace Bootstrap ───
+  // Ensure user has a workspace and get entitlements
+  const ws = await ensureWorkspaceForUser(userId);
+  const entitlements = await getWorkspaceEntitlements(ws.workspaceId);
+  const retention = getRetentionPolicy(entitlements.isPaid, entitlements.plan);
+  
+  // Extract primary domain from onboarding context or URL audit
+  // (Will be set later during onboarding if not available at creation)
+  const primaryDomain: string | undefined = undefined;
+  
+  // Calculate expiry time
+  const expiresAt = new Date(Date.now() + retention.hours * 60 * 60 * 1000);
+  
   const project = await projectRepository.create({
     userId,
     name: input.name,
     goal: input.goal,
+    workspaceId: ws.workspaceId,
+    primaryDomain,
+    retentionPolicy: retention.policy,
+    retentionHours: retention.hours,
+    expiresAt,
   });
   
   // Auto-create onboarding profile with initial data from project creation modal

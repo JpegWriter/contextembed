@@ -37,6 +37,7 @@ export * from './authorship';
 export * from './utils/hash';
 export * from './utils/validators';
 export * from './utils/field-lengths';
+export * from './utils/domain';
 
 // Information Architecture (IA Content OS)
 export * from './ia';

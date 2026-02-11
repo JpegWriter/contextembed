@@ -618,3 +618,22 @@ export const survivalLabApi = {
   exportCsv: (token: string, runId: string) =>
     `${API_URL}/survival/runs/${runId}/export.csv?token=${token}`,
 };
+
+// Billing
+export const billingApi = {
+  getStatus: (token: string) =>
+    fetchWithAuth('/billing/status', { token }),
+  
+  createCheckout: (token: string, plan: 'pro' | 'agency', options?: { successUrl?: string; cancelUrl?: string }) =>
+    fetchWithAuth('/billing/checkout', {
+      token,
+      method: 'POST',
+      body: JSON.stringify({ plan, ...options }),
+    }),
+  
+  createPortal: (token: string) =>
+    fetchWithAuth('/billing/portal', {
+      token,
+      method: 'POST',
+    }),
+};

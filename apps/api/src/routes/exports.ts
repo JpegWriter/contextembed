@@ -50,6 +50,7 @@ import {
   resolveCredit,
   type WebVariantOptions,
 } from '../services/web-preview-generator';
+import { assertEntitledOrThrow, recordSuccessfulAction } from '../services/entitlements';
 
 export const exportsRouter: IRouter = Router();
 
@@ -693,6 +694,18 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
     throw createApiError('Project not found', 404);
   }
   
+  // ─── Entitlement Gating ───
+  // Check if user is entitled to export
+  // This is the "value moment" where we increment usage on success
+  const gating = await assertEntitledOrThrow({
+    userId,
+    workspaceId: project.workspaceId || undefined,
+    projectId,
+    action: 'export',
+    ipAddress: req.ip,
+    deviceId: req.headers['x-device-id'] as string | undefined,
+  });
+  
   // Get preset and merge with overrides
   const exportOptions = mergeExportOptions(
     preset as ExportPresetId,
@@ -1022,6 +1035,21 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
       outputPath,
       completedAt: new Date(),
     });
+    
+    // ─── Record successful action for usage tracking ───
+    // This increments domain usage for free tier
+    if (gating.usageEventId) {
+      await recordSuccessfulAction(
+        gating.workspaceId,
+        gating.domain,
+        gating.usageEventId,
+        {
+          ipAddress: req.ip || undefined,
+          deviceId: req.headers['x-device-id'] as string | undefined,
+          imagesCount: successCount,
+        }
+      );
+    }
     
     logMemory(`adv-export-done[${requestId}]`, { 
       successCount, 

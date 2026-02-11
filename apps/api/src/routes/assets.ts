@@ -27,6 +27,7 @@ import {
 import { asyncHandler, createApiError } from '../middleware/error-handler';
 import { AuthenticatedRequest } from '../middleware/auth';
 import { uploadThumbnail, isStorageAvailable } from '../services/storage';
+import { assertEntitledOrThrow } from '../services/entitlements';
 
 export const assetsRouter: IRouter = Router();
 
@@ -381,6 +382,7 @@ assetsRouter.delete('/:id', asyncHandler(async (req, res) => {
 
 /**
  * Process assets (create pipeline jobs)
+ * GATED: Free tier limited to 3 successful exports per domain
  */
 assetsRouter.post('/process', asyncHandler(async (req, res) => {
   const { userId } = req as AuthenticatedRequest;
@@ -397,6 +399,18 @@ assetsRouter.post('/process', asyncHandler(async (req, res) => {
   if (!project || project.userId !== userId) {
     throw createApiError('Project not found', 404);
   }
+  
+  // ─── Entitlement Gating ───
+  // Check if user is entitled to run ContextEmbed
+  // Note: We check at run_ce but only increment usage at export (value moment)
+  const gating = await assertEntitledOrThrow({
+    userId,
+    workspaceId: project.workspaceId || undefined,
+    projectId,
+    action: 'run_ce',
+    ipAddress: req.ip,
+    deviceId: req.headers['x-device-id'] as string | undefined,
+  });
   
   // Create jobs for each asset
   const jobs = await Promise.all(

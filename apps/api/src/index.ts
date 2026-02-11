@@ -23,6 +23,7 @@ import { altTextRouter } from './routes/alt-text';
 import iaRouter from './routes/ia';
 import copilotRouter from './routes/copilot';
 import { operatorRouter } from './routes/operator';
+import { billingRouter, handleStripeWebhook } from './routes/billing';
 import { errorHandler } from './middleware/error-handler';
 import { authMiddleware, optionalAuthMiddleware } from './middleware/auth';
 import { startJobRunner, stopJobRunner } from './services/job-runner';
@@ -52,6 +53,9 @@ const limiter = rateLimit({
   message: { error: 'Too many requests, please try again later' },
 });
 app.use(limiter);
+
+// Stripe webhook needs raw body (before JSON parsing)
+app.post('/billing/webhook', express.raw({ type: 'application/json' }), handleStripeWebhook);
 
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
@@ -104,6 +108,7 @@ app.use('/alt-text', authMiddleware, altTextRouter);    // Alt Text Engine
 app.use('/copilot', copilotRouter); // Copilot AI assistant (has own auth)
 app.use('/survival', authMiddleware, survivalLabRouter); // Survival Lab - Metadata Study
 app.use('/operator', authMiddleware, operatorRouter); // CE Support Operator v1
+app.use('/billing', authMiddleware, billingRouter); // Stripe billing (checkout, portal, status)
 
 // Admin routes (consider adding admin auth middleware)
 app.use('/admin/ia', iaRouter);

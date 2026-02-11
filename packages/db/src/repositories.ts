@@ -134,11 +134,20 @@ export const projectRepository = {
     })) as (Project & { coverAssetId?: string })[];
   },
   
-  async create(data: { userId: string; name: string; goal: ProjectGoal }): Promise<Project> {
+  async create(data: { 
+    userId: string; 
+    name: string; 
+    goal: ProjectGoal;
+    workspaceId?: string;
+    primaryDomain?: string;
+    retentionPolicy?: 'free_24h' | 'pro_7d' | 'agency_14d' | 'unlimited';
+    retentionHours?: number;
+    expiresAt?: Date;
+  }): Promise<Project> {
     return prisma.project.create({ data });
   },
   
-  async update(id: string, data: Partial<Pick<Project, 'name' | 'goal' | 'onboardingCompleted' | 'visualAuthenticityPolicy' | 'startupModeEnabled'>>): Promise<Project> {
+  async update(id: string, data: Partial<Pick<Project, 'name' | 'goal' | 'onboardingCompleted' | 'visualAuthenticityPolicy' | 'startupModeEnabled' | 'workspaceId' | 'primaryDomain' | 'retentionPolicy' | 'retentionHours' | 'expiresAt' | 'lastActivityAt'>>): Promise<Project> {
     return prisma.project.update({ where: { id }, data });
   },
   
@@ -1226,6 +1235,286 @@ export const ceSupportTicketRepository = {
     return prisma.ceSupportTicket.update({
       where: { id },
       data: { status },
+    });
+  },
+};
+
+// ============================================
+// Workspace Repository
+// ============================================
+
+export const workspaceRepository = {
+  async findById(id: string) {
+    return prisma.workspace.findUnique({
+      where: { id },
+      include: {
+        subscription: true,
+        members: true,
+      },
+    });
+  },
+
+  async findByOwnerId(userId: string) {
+    return prisma.workspace.findFirst({
+      where: { ownerUserId: userId },
+      include: {
+        subscription: true,
+        members: true,
+      },
+    });
+  },
+
+  async findByMemberId(userId: string) {
+    return prisma.workspace.findMany({
+      where: {
+        members: {
+          some: { userId },
+        },
+      },
+      include: {
+        subscription: true,
+        members: true,
+      },
+    });
+  },
+
+  async create(data: { ownerUserId: string; name?: string }) {
+    return prisma.workspace.create({
+      data: {
+        ownerUserId: data.ownerUserId,
+        name: data.name || 'My Workspace',
+        members: {
+          create: {
+            userId: data.ownerUserId,
+            role: 'owner',
+          },
+        },
+        subscription: {
+          create: {
+            plan: 'free',
+            status: 'inactive',
+          },
+        },
+      },
+      include: {
+        subscription: true,
+        members: true,
+      },
+    });
+  },
+
+  async addMember(workspaceId: string, userId: string, role: 'admin' | 'member' = 'member') {
+    return prisma.workspaceMember.create({
+      data: {
+        workspaceId,
+        userId,
+        role,
+      },
+    });
+  },
+
+  async isMember(workspaceId: string, userId: string): Promise<boolean> {
+    const member = await prisma.workspaceMember.findUnique({
+      where: {
+        workspaceId_userId: { workspaceId, userId },
+      },
+    });
+    return Boolean(member);
+  },
+
+  async getMemberRole(workspaceId: string, userId: string): Promise<string | null> {
+    const member = await prisma.workspaceMember.findUnique({
+      where: {
+        workspaceId_userId: { workspaceId, userId },
+      },
+    });
+    return member?.role ?? null;
+  },
+};
+
+// ============================================
+// Subscription Repository
+// ============================================
+
+export const subscriptionRepository = {
+  async findByWorkspaceId(workspaceId: string) {
+    return prisma.subscription.findUnique({
+      where: { workspaceId },
+    });
+  },
+
+  async findByStripeCustomerId(stripeCustomerId: string) {
+    return prisma.subscription.findFirst({
+      where: { stripeCustomerId },
+    });
+  },
+
+  async findByStripeSubscriptionId(stripeSubscriptionId: string) {
+    return prisma.subscription.findFirst({
+      where: { stripeSubscriptionId },
+    });
+  },
+
+  async update(workspaceId: string, data: {
+    stripeCustomerId?: string;
+    stripeSubscriptionId?: string;
+    status?: 'inactive' | 'trialing' | 'active' | 'past_due' | 'canceled' | 'unpaid';
+    plan?: 'free' | 'pro' | 'agency';
+    currentPeriodEnd?: Date | null;
+  }) {
+    return prisma.subscription.update({
+      where: { workspaceId },
+      data,
+    });
+  },
+
+  async upsert(workspaceId: string, data: {
+    stripeCustomerId?: string;
+    stripeSubscriptionId?: string;
+    status?: 'inactive' | 'trialing' | 'active' | 'past_due' | 'canceled' | 'unpaid';
+    plan?: 'free' | 'pro' | 'agency';
+    currentPeriodEnd?: Date | null;
+  }) {
+    return prisma.subscription.upsert({
+      where: { workspaceId },
+      create: {
+        workspaceId,
+        ...data,
+      },
+      update: data,
+    });
+  },
+};
+
+// ============================================
+// Domain Usage Repository
+// ============================================
+
+export const domainUsageRepository = {
+  async findByWorkspaceAndDomain(workspaceId: string, registrableDomain: string) {
+    return prisma.domainUsage.findUnique({
+      where: {
+        workspaceId_registrableDomain: { workspaceId, registrableDomain },
+      },
+    });
+  },
+
+  async findByWorkspace(workspaceId: string) {
+    return prisma.domainUsage.findMany({
+      where: { workspaceId },
+      orderBy: { lastSeenAt: 'desc' },
+    });
+  },
+
+  async upsert(workspaceId: string, userId: string, registrableDomain: string) {
+    return prisma.domainUsage.upsert({
+      where: {
+        workspaceId_registrableDomain: { workspaceId, registrableDomain },
+      },
+      create: {
+        workspaceId,
+        userId,
+        registrableDomain,
+        freeUsesConsumed: 0,
+      },
+      update: {
+        lastSeenAt: new Date(),
+      },
+    });
+  },
+
+  async incrementUsage(workspaceId: string, registrableDomain: string, data?: {
+    lastIpHash?: string;
+    lastDeviceId?: string;
+  }) {
+    return prisma.domainUsage.update({
+      where: {
+        workspaceId_registrableDomain: { workspaceId, registrableDomain },
+      },
+      data: {
+        freeUsesConsumed: { increment: 1 },
+        lastSeenAt: new Date(),
+        lastIpHash: data?.lastIpHash,
+        lastDeviceId: data?.lastDeviceId,
+      },
+    });
+  },
+
+  async setStatus(workspaceId: string, registrableDomain: string, status: 'active' | 'throttled' | 'blocked', reason?: string) {
+    return prisma.domainUsage.update({
+      where: {
+        workspaceId_registrableDomain: { workspaceId, registrableDomain },
+      },
+      data: {
+        status,
+        blockReason: reason,
+      },
+    });
+  },
+};
+
+// ============================================
+// Usage Events Repository
+// ============================================
+
+export const usageEventRepository = {
+  async create(data: {
+    workspaceId: string;
+    userId: string;
+    projectId?: string;
+    action: 'run_ce' | 'export' | 'web_pack' | 'survival';
+    registrableDomain?: string;
+    imagesCount?: number;
+    bytesTotal?: bigint;
+    success?: boolean;
+    errorCode?: string;
+  }) {
+    return prisma.usageEvent.create({
+      data: {
+        workspaceId: data.workspaceId,
+        userId: data.userId,
+        projectId: data.projectId,
+        action: data.action,
+        registrableDomain: data.registrableDomain,
+        imagesCount: data.imagesCount,
+        bytesTotal: data.bytesTotal,
+        success: data.success ?? false,
+        errorCode: data.errorCode,
+      },
+    });
+  },
+
+  async markSuccess(id: string) {
+    return prisma.usageEvent.update({
+      where: { id },
+      data: { success: true },
+    });
+  },
+
+  async findByWorkspace(workspaceId: string, limit = 100) {
+    return prisma.usageEvent.findMany({
+      where: { workspaceId },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
+  },
+
+  async findByProject(projectId: string, limit = 100) {
+    return prisma.usageEvent.findMany({
+      where: { projectId },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
+  },
+
+  async countByActionInPeriod(workspaceId: string, action: 'run_ce' | 'export' | 'web_pack' | 'survival', since: Date) {
+    return prisma.usageEvent.count({
+      where: {
+        workspaceId,
+        action,
+        success: true,
+        createdAt: { gte: since },
+      },
     });
   },
 };

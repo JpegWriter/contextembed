@@ -12,11 +12,12 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "zod": "^3.22.4",
-    "nanoid": "^5.0.4",
-    "mime-types": "^2.1.35",
+    "@types/mime-types": "^2.1.4",
     "@types/node": "^20.11.0",
-    "@types/mime-types": "^2.1.4"
+    "mime-types": "^2.1.35",
+    "nanoid": "^5.0.4",
+    "tldts": "^7.0.23",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "rimraf": "^5.0.5",

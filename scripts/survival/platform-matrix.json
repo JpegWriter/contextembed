@@ -1,0 +1,154 @@
+{
+  "version": "1.0",
+  "description": "Platform survival matrix for XMP metadata testing",
+  "platforms": [
+    {
+      "id": "wordpress",
+      "name": "WordPress (Native)",
+      "category": "cms",
+      "expectedSurvival": {
+        "iptc_core": true,
+        "xmp_dc": true,
+        "xmp_contextembed": false,
+        "exif": true
+      },
+      "notes": "Core IPTC preserved; custom XMP namespaces may be stripped depending on media handling settings",
+      "testMethod": "manual_upload"
+    },
+    {
+      "id": "wordpress_with_plugin",
+      "name": "WordPress + Media Library Assistant",
+      "category": "cms",
+      "expectedSurvival": {
+        "iptc_core": true,
+        "xmp_dc": true,
+        "xmp_contextembed": true,
+        "exif": true
+      },
+      "notes": "Plugin preserves full metadata including custom namespaces",
+      "testMethod": "manual_upload"
+    },
+    {
+      "id": "squarespace",
+      "name": "Squarespace",
+      "category": "cms",
+      "expectedSurvival": {
+        "iptc_core": "partial",
+        "xmp_dc": false,
+        "xmp_contextembed": false,
+        "exif": "partial"
+      },
+      "notes": "Heavy image processing; most metadata stripped for optimization",
+      "testMethod": "manual_upload"
+    },
+    {
+      "id": "dropbox",
+      "name": "Dropbox",
+      "category": "cloud_storage",
+      "expectedSurvival": {
+        "iptc_core": true,
+        "xmp_dc": true,
+        "xmp_contextembed": true,
+        "exif": true
+      },
+      "notes": "Full metadata preserved; no image processing",
+      "testMethod": "api_upload"
+    },
+    {
+      "id": "google_drive",
+      "name": "Google Drive",
+      "category": "cloud_storage",
+      "expectedSurvival": {
+        "iptc_core": true,
+        "xmp_dc": true,
+        "xmp_contextembed": true,
+        "exif": true
+      },
+      "notes": "Full metadata preserved; no image processing",
+      "testMethod": "api_upload"
+    },
+    {
+      "id": "instagram",
+      "name": "Instagram",
+      "category": "social",
+      "expectedSurvival": {
+        "iptc_core": false,
+        "xmp_dc": false,
+        "xmp_contextembed": false,
+        "exif": false
+      },
+      "notes": "ALL metadata stripped; heavy re-encoding",
+      "testMethod": "manual_upload"
+    },
+    {
+      "id": "facebook",
+      "name": "Facebook",
+      "category": "social",
+      "expectedSurvival": {
+        "iptc_core": false,
+        "xmp_dc": false,
+        "xmp_contextembed": false,
+        "exif": "partial"
+      },
+      "notes": "Most metadata stripped; some EXIF may survive in high-res mode",
+      "testMethod": "manual_upload"
+    },
+    {
+      "id": "linkedin",
+      "name": "LinkedIn",
+      "category": "social",
+      "expectedSurvival": {
+        "iptc_core": false,
+        "xmp_dc": false,
+        "xmp_contextembed": false,
+        "exif": false
+      },
+      "notes": "ALL metadata stripped; aggressive image processing",
+      "testMethod": "manual_upload"
+    },
+    {
+      "id": "photoshelter",
+      "name": "PhotoShelter",
+      "category": "dam",
+      "expectedSurvival": {
+        "iptc_core": true,
+        "xmp_dc": true,
+        "xmp_contextembed": true,
+        "exif": true
+      },
+      "notes": "Full metadata preserved; designed for photographers",
+      "testMethod": "api_upload"
+    },
+    {
+      "id": "smugmug",
+      "name": "SmugMug",
+      "category": "dam",
+      "expectedSurvival": {
+        "iptc_core": true,
+        "xmp_dc": true,
+        "xmp_contextembed": true,
+        "exif": true
+      },
+      "notes": "Full metadata preserved; original file download available",
+      "testMethod": "manual_upload"
+    },
+    {
+      "id": "adobe_lightroom_cc",
+      "name": "Adobe Lightroom CC (Cloud)",
+      "category": "editor",
+      "expectedSurvival": {
+        "iptc_core": true,
+        "xmp_dc": true,
+        "xmp_contextembed": "partial",
+        "exif": true
+      },
+      "notes": "Custom namespaces may not sync to cloud catalog",
+      "testMethod": "manual_upload"
+    }
+  ],
+  "survivalCategories": {
+    "full": "All ContextEmbed metadata preserved",
+    "partial": "Some metadata stripped, manifest recommended",
+    "none": "All metadata stripped, manifest required"
+  }
+}

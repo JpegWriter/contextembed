@@ -1,0 +1,174 @@
+{
+  "version": "1.0",
+  "description": "Seed cohort photographer types for controlled launch",
+  "cohorts": [
+    {
+      "id": "wedding",
+      "name": "Wedding Photography",
+      "defaults": {
+        "serviceCategory": "Wedding Photography",
+        "jobType": "service-proof",
+        "geoFocusPattern": "{city}, {state}",
+        "typicalProofRole": "money"
+      },
+      "characteristics": {
+        "averageSessionSize": 500,
+        "typicalDeliverables": ["gallery", "album", "prints"],
+        "metadataPriority": ["location", "date", "couple_names"],
+        "keywordCategories": ["wedding", "ceremony", "reception", "bridal"]
+      },
+      "survivalConcerns": ["social_sharing", "vendor_collaboration"]
+    },
+    {
+      "id": "newborn_family",
+      "name": "Newborn & Family Photography",
+      "defaults": {
+        "serviceCategory": "Family Portrait",
+        "jobType": "service-proof",
+        "geoFocusPattern": "{city}, {state}",
+        "typicalProofRole": "trust"
+      },
+      "characteristics": {
+        "averageSessionSize": 50,
+        "typicalDeliverables": ["gallery", "prints"],
+        "metadataPriority": ["safety_validation", "family_context"],
+        "keywordCategories": ["newborn", "family", "portrait", "studio"]
+      },
+      "survivalConcerns": ["privacy", "social_sharing"],
+      "notes": "Safety validation required for newborn content"
+    },
+    {
+      "id": "commercial_product",
+      "name": "Commercial & Product Photography",
+      "defaults": {
+        "serviceCategory": "Product Photography",
+        "jobType": "case-study",
+        "geoFocusPattern": "{city}, {country}",
+        "typicalProofRole": "authority"
+      },
+      "characteristics": {
+        "averageSessionSize": 100,
+        "typicalDeliverables": ["web_images", "print_ready", "raw"],
+        "metadataPriority": ["brand_attribution", "usage_rights"],
+        "keywordCategories": ["product", "commercial", "ecommerce", "catalog"]
+      },
+      "survivalConcerns": ["ecommerce_platforms", "dam_integration"]
+    },
+    {
+      "id": "real_estate",
+      "name": "Real Estate Photography",
+      "defaults": {
+        "serviceCategory": "Real Estate",
+        "jobType": "service-proof",
+        "geoFocusPattern": "{address}, {city}",
+        "typicalProofRole": "money"
+      },
+      "characteristics": {
+        "averageSessionSize": 30,
+        "typicalDeliverables": ["mls_ready", "virtual_tour"],
+        "metadataPriority": ["location", "property_context"],
+        "keywordCategories": ["real_estate", "interior", "exterior", "architecture"]
+      },
+      "survivalConcerns": ["mls_upload", "agent_websites"]
+    },
+    {
+      "id": "corporate_headshots",
+      "name": "Corporate Headshots",
+      "defaults": {
+        "serviceCategory": "Corporate Headshot",
+        "jobType": "service-proof",
+        "geoFocusPattern": "{city}, {state}",
+        "typicalProofRole": "trust"
+      },
+      "characteristics": {
+        "averageSessionSize": 20,
+        "typicalDeliverables": ["linkedin_ready", "company_directory"],
+        "metadataPriority": ["professional_context", "brand_attribution"],
+        "keywordCategories": ["headshot", "corporate", "professional", "business"]
+      },
+      "survivalConcerns": ["linkedin_upload", "company_dam"]
+    },
+    {
+      "id": "events",
+      "name": "Event Photography",
+      "defaults": {
+        "serviceCategory": "Event Coverage",
+        "jobType": "service-proof",
+        "geoFocusPattern": "{venue}, {city}",
+        "typicalProofRole": "authority"
+      },
+      "characteristics": {
+        "averageSessionSize": 300,
+        "typicalDeliverables": ["gallery", "press_kit"],
+        "metadataPriority": ["event_name", "date", "location"],
+        "keywordCategories": ["event", "conference", "gala", "corporate"]
+      },
+      "survivalConcerns": ["press_distribution", "social_sharing"]
+    },
+    {
+      "id": "landscape_fine_art",
+      "name": "Landscape & Fine Art",
+      "defaults": {
+        "serviceCategory": "Fine Art",
+        "jobType": "portfolio",
+        "geoFocusPattern": "{location_name}, {country}",
+        "typicalProofRole": "authority"
+      },
+      "characteristics": {
+        "averageSessionSize": 25,
+        "typicalDeliverables": ["prints", "gallery_submission"],
+        "metadataPriority": ["location", "artistic_intent"],
+        "keywordCategories": ["landscape", "nature", "fine_art", "scenic"]
+      },
+      "survivalConcerns": ["print_labs", "gallery_websites"]
+    },
+    {
+      "id": "stock_contributor",
+      "name": "Stock Photography Contributor",
+      "defaults": {
+        "serviceCategory": "Stock Photography",
+        "jobType": "portfolio",
+        "geoFocusPattern": "{city}, {country}",
+        "typicalProofRole": "support"
+      },
+      "characteristics": {
+        "averageSessionSize": 50,
+        "typicalDeliverables": ["stock_agency_upload"],
+        "metadataPriority": ["keywords", "model_releases", "property_releases"],
+        "keywordCategories": ["concept", "lifestyle", "business", "technology"]
+      },
+      "survivalConcerns": ["stock_agency_processing"],
+      "notes": "Heavy keyword requirements; agencies may override metadata"
+    },
+    {
+      "id": "automotive_action",
+      "name": "Automotive & Action Photography",
+      "defaults": {
+        "serviceCategory": "Automotive Photography",
+        "jobType": "case-study",
+        "geoFocusPattern": "{track_name}, {country}",
+        "typicalProofRole": "authority"
+      },
+      "characteristics": {
+        "averageSessionSize": 200,
+        "typicalDeliverables": ["press_kit", "social_media", "magazine"],
+        "metadataPriority": ["brand_attribution", "event_context"],
+        "keywordCategories": ["automotive", "motorsport", "action", "racing"]
+      },
+      "survivalConcerns": ["press_distribution", "brand_websites"]
+    }
+  ],
+  "proofRoles": {
+    "money": "Service pages that convert (direct revenue generation)",
+    "trust": "Testimonials, reviews, about pages (credibility building)",
+    "support": "Blog, educational content (engagement)",
+    "authority": "Case studies, press, awards (expertise demonstration)"
+  },
+  "jobTypes": {
+    "service-proof": "Real work for real clients (highest proof value)",
+    "case-study": "Documented project outcome",
+    "portfolio": "Creative showcase",
+    "testimonial": "Client-approved highlight",
+    "before-after": "Transformation documentation"
+  }
+}

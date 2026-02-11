@@ -290,18 +290,86 @@ async function processJob(jobId: string): Promise<void> {
 }
 
 /**
- * Resolve onboarding profile: try project-level, fall back to user profile
+ * Resolve onboarding profile: try project-level, fall back to user profile.
+ * CRITICAL: Always merges with current user profile to fill any gaps —
+ * because the project profile may have been snapshotted before the user
+ * completed their profile (creator name, copyright, location, etc).
  */
 async function resolveProfile(projectId: string): Promise<any> {
-  // Try project-level onboarding profile first
-  const profile = await onboardingProfileRepository.findByProjectId(projectId);
-  if (profile) return profile;
-
-  // Fall back to user profile defaults
   const project = await projectRepository.findById(projectId);
   if (!project) throw new Error('Project not found');
 
   const userProfile = await userProfileRepository.findByUserId(project.userId);
+
+  // Try project-level onboarding profile first
+  const profile = await onboardingProfileRepository.findByProjectId(projectId);
+  
+  if (profile) {
+    // Merge: fill empty rights/location fields from current user profile
+    if (userProfile) {
+      const rights = (profile.rights || {}) as Record<string, any>;
+      const context = (profile.confirmedContext || {}) as Record<string, any>;
+      const prefs = (profile.preferences || {}) as Record<string, any>;
+      
+      // ── Rights: fill gaps from user profile ──
+      const mergedRights = {
+        ...rights,
+        creatorName: rights.creatorName || userProfile.creatorName || userProfile.businessName || '',
+        studioName: rights.studioName || userProfile.businessName || undefined,
+        copyrightTemplate: rights.copyrightTemplate || userProfile.copyrightTemplate
+          || `\u00a9 ${new Date().getFullYear()} ${userProfile.creatorName || userProfile.businessName || ''}. All rights reserved.`,
+        creditTemplate: rights.creditTemplate || userProfile.creditTemplate
+          || userProfile.creatorName || userProfile.businessName || '',
+        usageTermsTemplate: rights.usageTermsTemplate || userProfile.usageTerms
+          || 'All Rights Reserved. Contact for licensing.',
+        website: rights.website || userProfile.website || undefined,
+        email: rights.email || userProfile.contactEmail || undefined,
+      };
+
+      // ── Location: fill gaps from user profile ──
+      const existingLocation = context.location || {};
+      const hasProfileLocation = userProfile.city || userProfile.state || userProfile.country;
+      const mergedLocation = hasProfileLocation ? {
+        city: existingLocation.city || userProfile.city || undefined,
+        state: existingLocation.state || userProfile.state || undefined,
+        country: existingLocation.country || userProfile.country || undefined,
+        isStrict: existingLocation.isStrict ?? false,
+      } : existingLocation;
+
+      // ── Context: fill gaps from user profile ──
+      const mergedContext = {
+        ...context,
+        brandName: context.brandName || userProfile.businessName || '',
+        tagline: context.tagline || userProfile.tagline || undefined,
+        industry: context.industry || userProfile.industry || undefined,
+        niche: context.niche || userProfile.niche || undefined,
+        location: mergedLocation,
+        yearsExperience: context.yearsExperience
+          || (userProfile.yearsExperience ? parseInt(userProfile.yearsExperience) || undefined : undefined),
+        credentials: context.credentials?.length ? context.credentials
+          : (userProfile.credentials ? userProfile.credentials.split(',').map((s: string) => s.trim()) : undefined),
+        specializations: context.specializations?.length ? context.specializations
+          : (userProfile.specializations ? userProfile.specializations.split(',').map((s: string) => s.trim()) : undefined),
+        keyDifferentiator: context.keyDifferentiator || userProfile.keyDifferentiator || undefined,
+        brandVoice: context.brandVoice || userProfile.brandVoice || undefined,
+        targetAudience: context.targetAudience || userProfile.targetAudience || undefined,
+      };
+
+      return {
+        ...profile,
+        rights: mergedRights,
+        confirmedContext: mergedContext,
+        preferences: {
+          ...prefs,
+          locationBehavior: prefs.locationBehavior || 'infer',
+        },
+      };
+    }
+    
+    return profile;
+  }
+
+  // No project profile at all — build entirely from user profile
   if (!userProfile) {
     throw new Error('No onboarding profile or user profile found. Complete onboarding first.');
   }

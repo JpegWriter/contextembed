@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Plus, Folder, Clock, ArrowRight, Loader2 } from 'lucide-react';
+import { Plus, Folder, Clock, ArrowRight, Loader2, ImageIcon } from 'lucide-react';
 import { useSupabase } from '@/lib/supabase-provider';
 import { projectsApi, userProfileApi, assetsApi } from '@/lib/api';
 import toast from 'react-hot-toast';
@@ -146,36 +146,32 @@ export default function DashboardPage() {
             <Link
               key={project.id}
               href={`/dashboard/projects/${project.id}`}
-              className="block bg-black border border-steel-700/50 hover:border-brand-600/50 
-                hover:shadow-glow-green transition-all group overflow-hidden"
+              className="block bg-steel-950 border border-steel-700/50 hover:border-brand-600/50 
+                hover:shadow-glow-green transition-all group overflow-hidden rounded-lg"
             >
-              {/* Cover Image */}
-              <div className="relative w-full h-40 bg-steel-900">
+              {/* Cover Image - 4:3 aspect ratio with object-contain (no crop) */}
+              <div className="relative w-full aspect-[4/3] bg-steel-900 overflow-hidden">
                 {project.coverAssetId ? (
-                  <Image
-                    src={assetsApi.getFileUrl(project.coverAssetId, 'thumbnail')}
-                    alt={project.name}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  />
+                  <div className="absolute inset-0 flex items-center justify-center p-2">
+                    <Image
+                      src={assetsApi.getFileUrl(project.coverAssetId, 'thumbnail')}
+                      alt={project.name}
+                      fill
+                      className="object-contain group-hover:scale-[1.02] transition-transform duration-300"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
+                  </div>
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Folder className="h-12 w-12 text-steel-700" />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-steel-600">
+                    <ImageIcon className="h-10 w-10" />
+                    <span className="text-[10px] uppercase tracking-wider font-mono">No cover yet</span>
                   </div>
                 )}
-                {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
               </div>
               
-              {/* Content */}
-              <div className="p-4">
-                <h3 className="text-sm font-bold text-white mb-0.5">{project.name}</h3>
-                {project.description && (
-                  <p className="text-xs text-steel-500 mb-2 line-clamp-2">
-                    {project.description}
-                  </p>
-                )}
+              {/* Content - separate section below image */}
+              <div className="p-4 border-t border-steel-800/50">
+                <h3 className="text-sm font-bold text-white mb-0.5 truncate">{project.name}</h3>
                 <div className="flex items-center justify-between text-[10px] text-steel-600">
                   <span className="flex items-center gap-1 font-mono">
                     <Clock className="h-3 w-3" />

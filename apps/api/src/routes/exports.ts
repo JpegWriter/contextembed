@@ -27,7 +27,7 @@ import { AuthenticatedRequest } from '../middleware/auth';
 import { createFolderExportTarget } from '../services/folder-export';
 import { processFileForExport, generateExportManifest } from '../services/export-processor';
 import { createExifToolWriter } from '@contextembed/metadata';
-import { downloadEmbeddedFile, isStorageAvailable } from '../services/supabase-storage';
+import { downloadEmbeddedFile, isStorageAvailable, uploadExport, getSignedExportUrl } from '../services/supabase-storage';
 
 export const exportsRouter: IRouter = Router();
 
@@ -333,10 +333,31 @@ exportsRouter.post('/', asyncHandler(async (req, res) => {
       }
     });
     
+    // Upload ZIP to Supabase for persistent storage (Render has ephemeral disk)
+    let supabaseStoragePath: string | null = null;
+    try {
+      const storageAvailable = await isStorageAvailable();
+      if (storageAvailable) {
+        const { url } = await uploadExport(zipPath, exportRecord.id, userId);
+        supabaseStoragePath = `${userId}/${exportRecord.id}.zip`;
+        console.log(`☁️ Export ZIP uploaded to Supabase: ${supabaseStoragePath}`);
+        
+        // Clean up local file — Supabase is the source of truth
+        try { fs.unlinkSync(zipPath); } catch {}
+      }
+    } catch (err) {
+      console.warn('Failed to upload export to Supabase, keeping local copy:', err);
+    }
+    
+    // Store Supabase path (prefixed) or local path
+    const storedPath = supabaseStoragePath 
+      ? `supabase:${supabaseStoragePath}` 
+      : zipPath;
+    
     // Update export record
     await exportRepository.update(exportRecord.id, {
       status: 'completed',
-      outputPath: zipPath,
+      outputPath: storedPath,
       completedAt: new Date(),
     });
     
@@ -344,7 +365,7 @@ exportsRouter.post('/', asyncHandler(async (req, res) => {
       export: {
         id: exportRecord.id,
         status: 'completed',
-        outputPath: zipPath,
+        outputPath: storedPath,
         downloadUrl: `/exports/${exportRecord.id}/download`,
         assetCount: completedAssets.length,
       },
@@ -364,6 +385,11 @@ exportsRouter.post('/', asyncHandler(async (req, res) => {
 /**
  * Download export ZIP
  * Supports both auth header and token query param for direct browser downloads
+ * 
+ * Storage strategy:
+ * - outputPath starting with "supabase:" → stored in Supabase Storage (persistent)
+ * - outputPath without prefix → local file path (ephemeral on Render)
+ * - Legacy exports with missing local files attempt Supabase rebuild
  */
 exportsRouter.get('/:id/download', asyncHandler(async (req, res) => {
   const { id } = req.params;
@@ -396,24 +422,43 @@ exportsRouter.get('/:id/download', asyncHandler(async (req, res) => {
     throw createApiError('Export not ready', 400);
   }
   
-  // If local file is missing (e.g. after Render deploy), try to rebuild the ZIP
-  if (!fs.existsSync(exportRecord.outputPath)) {
-    console.log(`⚠️ Export file missing locally, attempting rebuild: ${exportRecord.outputPath}`);
+  // ── Strategy A: Supabase-stored export (new exports) ──────────────
+  if (exportRecord.outputPath.startsWith('supabase:')) {
+    const storagePath = exportRecord.outputPath.replace('supabase:', '');
+    console.log(`☁️ Serving export from Supabase: ${storagePath}`);
     
-    // Get the export's assets (findById includes exportAssets relation but TS type is narrow)
-    const exportAssets = (exportRecord as any).exportAssets || [];
-    if (exportAssets.length === 0) {
-      throw createApiError('Export file not found and no assets to rebuild', 404);
+    const signedUrl = await getSignedExportUrl(storagePath);
+    if (signedUrl) {
+      // Set download filename header, then redirect to Supabase signed URL
+      res.setHeader('Content-Disposition', `attachment; filename="contextembed_export_${id}.zip"`);
+      return res.redirect(signedUrl);
     }
     
-    try {
-      const zipPath = exportRecord.outputPath;
-      const zipDir = path.dirname(zipPath);
-      fs.mkdirSync(zipDir, { recursive: true });
-      
-      let filesAdded = 0;
-      
-      await new Promise<void>(async (resolve, reject) => {
+    // If signed URL fails, fall through to rebuild
+    console.warn('⚠️ Failed to get signed URL for Supabase export, attempting rebuild');
+  }
+  
+  // ── Strategy B: Local file still exists ───────────────────────────
+  if (!exportRecord.outputPath.startsWith('supabase:') && fs.existsSync(exportRecord.outputPath)) {
+    return res.download(exportRecord.outputPath, `contextembed_export_${id}.zip`);
+  }
+  
+  // ── Strategy C: Rebuild from Supabase embedded files (legacy) ─────
+  console.log(`⚠️ Export file missing, attempting rebuild for: ${id}`);
+  
+  const exportAssets = (exportRecord as any).exportAssets || [];
+  if (exportAssets.length === 0) {
+    throw createApiError('Export file expired. Please create a new export.', 404);
+  }
+  
+  try {
+    const zipPath = path.join(EXPORT_DIR, `export_${id}_rebuild.zip`);
+    fs.mkdirSync(path.dirname(zipPath), { recursive: true });
+    
+    let filesAdded = 0;
+    
+    await new Promise<void>(async (resolve, reject) => {
+      try {
         const output = fs.createWriteStream(zipPath);
         const archive = archiver('zip', { zlib: { level: 9 } });
         
@@ -425,7 +470,6 @@ exportsRouter.get('/:id/download', asyncHandler(async (req, res) => {
           const asset = ea.asset;
           if (!asset) continue;
           
-          // Get embed result
           const embedResults = await embedResultRepository.findByAsset(asset.id);
           const embedResult = embedResults[0];
           
@@ -437,7 +481,6 @@ exportsRouter.get('/:id/download', asyncHandler(async (req, res) => {
             );
             
             if (resolvedPath) {
-              const ext = path.extname(asset.originalFilename);
               const smartFilename = asset.originalFilename.replace(/\.[^.]+$/, '_embedded$&');
               archive.file(resolvedPath, { name: smartFilename });
               filesAdded++;
@@ -451,16 +494,36 @@ exportsRouter.get('/:id/download', asyncHandler(async (req, res) => {
         }
         
         archive.finalize();
-      });
-      
-      console.log(`✅ Rebuilt export ZIP with ${filesAdded} files`);
+      } catch (err) {
+        reject(err);
+      }
+    });
+    
+    console.log(`✅ Rebuilt export ZIP with ${filesAdded} files`);
+    
+    // Upload rebuilt ZIP to Supabase so future downloads are instant
+    try {
+      const storageAvailable = await isStorageAvailable();
+      if (storageAvailable) {
+        const userId = project.userId;
+        await uploadExport(zipPath, id, userId);
+        const storagePath = `${userId}/${id}.zip`;
+        await exportRepository.update(id, { outputPath: `supabase:${storagePath}` });
+        console.log(`☁️ Rebuilt export uploaded to Supabase: ${storagePath}`);
+      }
     } catch (err) {
-      console.error('Failed to rebuild export:', err);
-      throw createApiError('Export file not found. Please re-export your images.', 404);
+      console.warn('Failed to upload rebuilt export to Supabase:', err);
     }
+    
+    // Serve the rebuilt file
+    res.download(zipPath, `contextembed_export_${id}.zip`, () => {
+      // Clean up temp file after download
+      try { fs.unlinkSync(zipPath); } catch {}
+    });
+  } catch (err) {
+    console.error('Failed to rebuild export:', err);
+    throw createApiError('Export file expired. Please create a new export.', 404);
   }
-  
-  res.download(exportRecord.outputPath, `contextembed_export_${id}.zip`);
 }));
 
 /**
@@ -716,6 +779,23 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
       // Clean up folder after zipping
       await fs.promises.rm(exportFolder, { recursive: true, force: true });
       outputPath = zipPath;
+      
+      // Upload ZIP to Supabase for persistent storage
+      try {
+        const storageAvailable = await isStorageAvailable();
+        if (storageAvailable) {
+          await uploadExport(zipPath, exportRecord.id, userId);
+          const storagePath = `${userId}/${exportRecord.id}.zip`;
+          outputPath = `supabase:${storagePath}`;
+          console.log(`☁️ Advanced export ZIP uploaded to Supabase: ${storagePath}`);
+          
+          // Clean up local file
+          try { fs.unlinkSync(zipPath); } catch {}
+        }
+      } catch (err) {
+        console.warn('Failed to upload advanced export to Supabase:', err);
+        // Keep local path as fallback
+      }
     }
     
     await metadataWriter.close();

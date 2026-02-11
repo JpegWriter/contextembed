@@ -233,6 +233,30 @@ export async function uploadExport(
 }
 
 /**
+ * Get a fresh signed URL for an existing export in Supabase
+ */
+export async function getSignedExportUrl(
+  storagePath: string,
+  expiresInSeconds = 24 * 60 * 60,
+): Promise<string | null> {
+  try {
+    const client = getClient();
+    const { data, error } = await client.storage
+      .from(BUCKETS.EXPORTS)
+      .createSignedUrl(storagePath, expiresInSeconds);
+
+    if (error || !data) {
+      console.warn(`Failed to create signed URL for export ${storagePath}:`, error?.message);
+      return null;
+    }
+    return data.signedUrl;
+  } catch (err) {
+    console.warn('Error creating signed export URL:', err);
+    return null;
+  }
+}
+
+/**
  * Delete export
  */
 export async function deleteExport(

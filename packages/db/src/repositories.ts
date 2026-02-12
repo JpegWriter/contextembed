@@ -1185,13 +1185,83 @@ export const survivalComparisonRepository = {
     dimsChanged: boolean;
     filenameChanged: boolean;
     fieldsMissing?: string[];
+    scoreV2?: number;
+    survivalClass?: string;
+    diffReport?: object;
   }) {
     return prisma.survivalComparison.create({
       data: {
         ...data,
         fieldsMissing: data.fieldsMissing ?? [],
+        diffReport: data.diffReport ?? undefined,
       },
     });
+  },
+};
+
+// ============================================
+// Survival Lab — Platform Stats & Trends
+// ============================================
+
+export const survivalPlatformStatsRepository = {
+  async findByPlatformId(platformId: string) {
+    return prisma.survivalPlatformStats.findUnique({
+      where: { platformId },
+    });
+  },
+
+  async findAll() {
+    return prisma.survivalPlatformStats.findMany({
+      include: { platform: true },
+      orderBy: { avgScoreV2: 'desc' },
+    });
+  },
+
+  async upsert(platformId: string, data: {
+    totalRuns: number;
+    totalScenarios: number;
+    avgScore: number;
+    avgScoreV2: number;
+    bestScore: number;
+    worstScore: number;
+    exifRetention: number;
+    xmpRetention: number;
+    iptcRetention: number;
+    creatorSurvived: number;
+    creatorTotal: number;
+    copyrightSurvived: number;
+    copyrightTotal: number;
+    creditSurvived: number;
+    creditTotal: number;
+    descSurvived: number;
+    descTotal: number;
+  }) {
+    return prisma.survivalPlatformStats.upsert({
+      where: { platformId },
+      create: { platformId, ...data },
+      update: data,
+    });
+  },
+};
+
+export const survivalPlatformTrendRepository = {
+  async findByPlatform(platformId: string, limit = 100) {
+    return prisma.survivalPlatformTrend.findMany({
+      where: { platformId },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
+  },
+
+  async create(data: {
+    platformId: string;
+    scenarioUploadId: string;
+    score: number;
+    scoreV2?: number;
+    survivalClass?: string;
+    scenario: string;
+  }) {
+    return prisma.survivalPlatformTrend.create({ data });
   },
 };
 

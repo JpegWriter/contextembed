@@ -628,6 +628,13 @@ export const survivalLabApi = {
   
   exportCsv: (token: string, runId: string) =>
     `${API_URL}/survival/runs/${runId}/export.csv?token=${token}`,
+  
+  // Analytics
+  getAnalyticsSummary: (token: string) =>
+    fetchWithAuth('/survival/analytics/summary', { token }),
+  
+  getPlatformAnalytics: (token: string, slug: string) =>
+    fetchWithAuth(`/survival/analytics/platform/${slug}`, { token }),
 };
 
 // Billing

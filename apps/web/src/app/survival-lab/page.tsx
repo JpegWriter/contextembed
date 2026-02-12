@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
   Plus, FlaskConical, Database, PlayCircle, 
-  CheckCircle2, Loader2, AlertCircle, RefreshCw 
+  CheckCircle2, Loader2, AlertCircle, RefreshCw, BarChart3
 } from 'lucide-react';
 import { useSupabase } from '@/lib/supabase-provider';
 import { survivalLabApi } from '@/lib/api';
@@ -149,6 +149,14 @@ export default function SurvivalLabPage() {
           </div>
         </div>
         <div className="flex gap-2">
+          <Link
+            href="/survival-lab/analytics"
+            className="flex items-center gap-2 px-4 py-2 bg-steel-800 border border-steel-700
+              text-white text-sm font-medium hover:bg-steel-700 transition-all"
+          >
+            <BarChart3 className="w-4 h-4" />
+            Analytics
+          </Link>
           <Link
             href="/survival-lab/baselines"
             className="flex items-center gap-2 px-4 py-2 bg-steel-800 border border-steel-700

@@ -11,6 +11,12 @@ import { useSupabase } from '@/lib/supabase-provider';
 import { survivalLabApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 
+function getScoreColor(score: number): string {
+  if (score >= 80) return 'text-green-400';
+  if (score >= 50) return 'text-yellow-400';
+  return 'text-red-400';
+}
+
 interface Platform {
   id: string;
   slug: string;
@@ -47,6 +53,28 @@ interface Comparison {
   dimsChanged: boolean;
   filenameChanged: boolean;
   fieldsMissing: string[];
+  // v2 additions
+  scoreV2?: number;
+  survivalClass?: string;
+  diffReport?: {
+    fields: DiffField[];
+    containerRetention: { container: string; baselineCount: number; survivedCount: number; retentionPct: number }[];
+    statusCounts: Record<string, number>;
+    perfectSurvival: boolean;
+    fieldSurvivalRate: number;
+  };
+}
+
+interface DiffField {
+  canonical: string;
+  label: string;
+  weight: number;
+  status: string;
+  baselineValue: string | null;
+  scenarioValue: string | null;
+  baselineContainers: string[];
+  scenarioContainers: string[];
+  note: string | null;
 }
 
 interface ScenarioUpload {
@@ -217,12 +245,6 @@ export default function TestRunPage() {
     } finally {
       setUploading(false);
     }
-  }
-
-  function getScoreColor(score: number): string {
-    if (score >= 80) return 'text-green-400';
-    if (score >= 50) return 'text-yellow-400';
-    return 'text-red-400';
   }
 
   function formatBytes(bytes: number): string {
@@ -480,6 +502,8 @@ export default function TestRunPage() {
                     <th className="pb-2">Baseline</th>
                     <th className="pb-2">Scenario</th>
                     <th className="pb-2">Score</th>
+                    <th className="pb-2">v2</th>
+                    <th className="pb-2">Class</th>
                     <th className="pb-2">EXIF</th>
                     <th className="pb-2">XMP</th>
                     <th className="pb-2">IPTC</th>
@@ -490,19 +514,7 @@ export default function TestRunPage() {
                 </thead>
                 <tbody>
                   {scenarios.map(s => (
-                    <tr key={s.id} className="border-b border-steel-800">
-                      <td className="py-2 text-brand-400">{s.baselineLabel}</td>
-                      <td className="py-2 text-steel-300">{s.scenario}</td>
-                      <td className={`py-2 font-bold ${getScoreColor(s.comparison?.survivalScore || 0)}`}>
-                        {s.comparison?.survivalScore || 0}/100
-                      </td>
-                      <td className="py-2"><StatusBadge ok={s.metadata?.exifPresent} /></td>
-                      <td className="py-2"><StatusBadge ok={s.metadata?.xmpPresent} /></td>
-                      <td className="py-2"><StatusBadge ok={s.metadata?.iptcPresent} /></td>
-                      <td className="py-2"><StatusBadge ok={s.comparison?.creatorOk} /></td>
-                      <td className="py-2"><StatusBadge ok={s.comparison?.rightsOk} /></td>
-                      <td className="py-2"><StatusBadge ok={!s.comparison?.dimsChanged} inverted /></td>
-                    </tr>
+                    <ScenarioResultRow key={s.id} scenario={s} />
                   ))}
                 </tbody>
               </table>
@@ -597,6 +609,7 @@ export default function TestRunPage() {
 
 function ScenarioRow({ scenario }: { scenario: ScenarioUpload }) {
   const score = scenario.comparison?.survivalScore || 0;
+  const v2 = scenario.comparison?.scoreV2;
   
   return (
     <div className="flex items-center justify-between py-2 px-3 bg-steel-800/50">
@@ -610,11 +623,164 @@ function ScenarioRow({ scenario }: { scenario: ScenarioUpload }) {
         }`}>
           {score}/100
         </span>
+        {v2 !== undefined && (
+          <span className={`text-xs ${
+            v2 >= 80 ? 'text-green-400' : v2 >= 50 ? 'text-yellow-400' : 'text-red-400'
+          }`}>
+            v2:{v2}
+          </span>
+        )}
         <div className="flex gap-1">
           <MicroBadge label="E" ok={scenario.metadata?.exifPresent} />
           <MicroBadge label="X" ok={scenario.metadata?.xmpPresent} />
           <MicroBadge label="I" ok={scenario.metadata?.iptcPresent} />
         </div>
+      </div>
+    </div>
+  );
+}
+
+function ScenarioResultRow({ scenario }: { scenario: ScenarioUpload }) {
+  const [expanded, setExpanded] = useState(false);
+  const comp = scenario.comparison;
+  const score = comp?.survivalScore || 0;
+  const v2 = comp?.scoreV2;
+  const cls = comp?.survivalClass;
+  const diff = comp?.diffReport;
+
+  const classColor: Record<string, string> = {
+    PRISTINE: 'text-green-400 bg-green-900/50',
+    SAFE: 'text-green-300 bg-green-900/30',
+    DEGRADED: 'text-yellow-400 bg-yellow-900/50',
+    HOSTILE: 'text-orange-400 bg-orange-900/50',
+    DESTRUCTIVE: 'text-red-400 bg-red-900/50',
+  };
+
+  return (
+    <>
+      <tr
+        className="border-b border-steel-800 cursor-pointer hover:bg-steel-900/50"
+        onClick={() => setExpanded(!expanded)}
+      >
+        <td className="py-2 text-brand-400">{scenario.baselineLabel}</td>
+        <td className="py-2 text-steel-300">{scenario.scenario}</td>
+        <td className={`py-2 font-bold ${getScoreColor(score)}`}>
+          {score}/100
+        </td>
+        <td className={`py-2 font-bold ${v2 !== undefined ? getScoreColor(v2) : 'text-steel-600'}`}>
+          {v2 !== undefined ? `${v2}` : '-'}
+        </td>
+        <td className="py-2">
+          {cls ? (
+            <span className={`px-1.5 py-0.5 text-[10px] uppercase font-bold ${classColor[cls] || 'text-steel-400'}`}>
+              {cls}
+            </span>
+          ) : (
+            <span className="text-steel-600">-</span>
+          )}
+        </td>
+        <td className="py-2"><StatusBadge ok={scenario.metadata?.exifPresent} /></td>
+        <td className="py-2"><StatusBadge ok={scenario.metadata?.xmpPresent} /></td>
+        <td className="py-2"><StatusBadge ok={scenario.metadata?.iptcPresent} /></td>
+        <td className="py-2"><StatusBadge ok={comp?.creatorOk} /></td>
+        <td className="py-2"><StatusBadge ok={comp?.rightsOk} /></td>
+        <td className="py-2"><StatusBadge ok={!comp?.dimsChanged} inverted /></td>
+      </tr>
+      {expanded && diff && (
+        <tr>
+          <td colSpan={11} className="p-0">
+            <DiffDetailPanel diff={diff} />
+          </td>
+        </tr>
+      )}
+    </>
+  );
+}
+
+function DiffDetailPanel({ diff }: { diff: NonNullable<Comparison['diffReport']> }) {
+  const statusIcon: Record<string, string> = {
+    PRESERVED: '✓',
+    MIGRATED: '↻',
+    TRUNCATED: '⚠',
+    ENCODING_MUTATION: '⚠',
+    MODIFIED: '△',
+    STRIPPED: '✗',
+    REGENERATED: '⊕',
+    ABSENT: '—',
+  };
+
+  const statusColor: Record<string, string> = {
+    PRESERVED: 'text-green-400',
+    MIGRATED: 'text-blue-400',
+    TRUNCATED: 'text-yellow-400',
+    ENCODING_MUTATION: 'text-orange-400',
+    MODIFIED: 'text-yellow-300',
+    STRIPPED: 'text-red-400',
+    REGENERATED: 'text-steel-500',
+    ABSENT: 'text-steel-600',
+  };
+
+  const authoredFields = diff.fields.filter(f => f.status !== 'ABSENT');
+
+  return (
+    <div className="bg-steel-950 border-t border-steel-700 p-4">
+      {/* Summary row */}
+      <div className="flex items-center gap-4 mb-3">
+        <span className="text-xs text-steel-500 uppercase font-medium">Field Diff</span>
+        <span className="text-xs text-steel-400">
+          Survival rate: {Math.round(diff.fieldSurvivalRate * 100)}%
+        </span>
+        {diff.perfectSurvival && (
+          <span className="text-xs text-green-400 font-medium">
+            ✓ Perfect Survival
+          </span>
+        )}
+        {/* Container retention chips */}
+        {diff.containerRetention.filter(c => c.baselineCount > 0).map(c => (
+          <span key={c.container} className="text-[10px] text-steel-400">
+            {c.container}: {c.retentionPct}%
+          </span>
+        ))}
+      </div>
+
+      {/* Field-level diff table */}
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="text-steel-500 uppercase border-b border-steel-800">
+              <th className="pb-1.5 text-left">Field</th>
+              <th className="pb-1.5 text-left">Status</th>
+              <th className="pb-1.5 text-left">Baseline</th>
+              <th className="pb-1.5 text-left">Scenario</th>
+              <th className="pb-1.5 text-left">Containers</th>
+              <th className="pb-1.5 text-left">Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            {authoredFields.map(f => (
+              <tr key={f.canonical} className="border-b border-steel-800/50">
+                <td className="py-1.5 text-steel-300 font-medium">{f.label}</td>
+                <td className={`py-1.5 font-mono ${statusColor[f.status] || 'text-steel-400'}`}>
+                  {statusIcon[f.status] || '?'} {f.status}
+                </td>
+                <td className="py-1.5 text-steel-400 max-w-[200px] truncate" title={f.baselineValue || ''}>
+                  {f.baselineValue || <span className="text-steel-600">—</span>}
+                </td>
+                <td className="py-1.5 text-steel-400 max-w-[200px] truncate" title={f.scenarioValue || ''}>
+                  {f.scenarioValue || <span className="text-steel-600">—</span>}
+                </td>
+                <td className="py-1.5 text-steel-500">
+                  {f.baselineContainers.join('+') || '—'}
+                  {' → '}
+                  {f.scenarioContainers.join('+') || '—'}
+                </td>
+                <td className="py-1.5 text-steel-500 max-w-[200px] truncate" title={f.note || ''}>
+                  {f.note || ''}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

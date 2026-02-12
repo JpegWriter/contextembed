@@ -986,6 +986,8 @@ model SurvivalPlatform {
   notes       String?  @db.Text
   
   testRuns    SurvivalTestRun[]
+  stats       SurvivalPlatformStats?
+  trends      SurvivalPlatformTrend[]
   
   createdAt   DateTime @default(now())
   
@@ -1113,7 +1115,7 @@ model SurvivalComparison {
   baselineImageId   String
   scenarioUploadId  String
   
-  survivalScore     Int      // 0-100
+  survivalScore     Int      // 0-100 (legacy penalty-based)
   creatorOk         Boolean
   rightsOk          Boolean
   creditOk          Boolean
@@ -1121,6 +1123,11 @@ model SurvivalComparison {
   dimsChanged       Boolean
   filenameChanged   Boolean
   fieldsMissing     Json     @default("[]") // list of missing fields
+  
+  // v2 additions — weighted canonical scoring
+  scoreV2           Int?     // 0-100 (weighted canonical-field score)
+  survivalClass     String?  // PRISTINE | SAFE | DEGRADED | HOSTILE | DESTRUCTIVE
+  diffReport        Json?    // Full MetadataDiffReport (field-level diff)
   
   baselineImage     SurvivalBaselineImage @relation(fields: [baselineImageId], references: [id], onDelete: Cascade)
   scenarioUpload    SurvivalScenarioUpload @relation(fields: [scenarioUploadId], references: [id], onDelete: Cascade)
@@ -1130,6 +1137,61 @@ model SurvivalComparison {
   @@unique([scenarioUploadId])
   @@index([baselineImageId])
   @@map("survival_comparisons")
+}
+
+/// Aggregated statistics per platform (updated after each scenario upload)
+model SurvivalPlatformStats {
+  id              String   @id @default(cuid())
+  platformId      String
+  
+  totalRuns       Int      @default(0)
+  totalScenarios  Int      @default(0)
+  avgScore        Float    @default(0)     // legacy score average
+  avgScoreV2      Float    @default(0)     // v2 weighted average
+  bestScore       Int      @default(0)
+  worstScore      Int      @default(100)
+  
+  // Container retention rates (0.0 – 1.0)
+  exifRetention   Float    @default(0)
+  xmpRetention    Float    @default(0)
+  iptcRetention   Float    @default(0)
+  
+  // Field survival counts
+  creatorSurvived   Int    @default(0)
+  creatorTotal      Int    @default(0)
+  copyrightSurvived Int    @default(0)
+  copyrightTotal    Int    @default(0)
+  creditSurvived    Int    @default(0)
+  creditTotal       Int    @default(0)
+  descSurvived      Int    @default(0)
+  descTotal         Int    @default(0)
+  
+  platform        SurvivalPlatform @relation(fields: [platformId], references: [id], onDelete: Cascade)
+  
+  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now())
+  
+  @@unique([platformId])
+  @@map("survival_platform_stats")
+}
+
+/// Time-series trend data per platform (one row per scenario upload)
+model SurvivalPlatformTrend {
+  id              String   @id @default(cuid())
+  platformId      String
+  scenarioUploadId String
+  
+  score           Int      // legacy score
+  scoreV2         Int?     // v2 weighted score
+  survivalClass   String?
+  scenario        String   // upload_original, download_preview, etc.
+  
+  platform        SurvivalPlatform @relation(fields: [platformId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime @default(now())
+  
+  @@index([platformId, createdAt])
+  @@map("survival_platform_trends")
 }
 
 // ============================================

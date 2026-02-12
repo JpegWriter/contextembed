@@ -36,6 +36,7 @@ import {
   isStorageAvailable,
 } from '../services/survival-lab/storage';
 import { compareToBaseline, generateComparisonSummary } from '../services/survival-lab/comparison';
+import { updatePlatformStats, recordTrend, getAnalyticsSummary, getPlatformAnalytics } from '../services/survival-lab/analytics';
 
 export const survivalLabRouter: IRouter = Router();
 
@@ -484,6 +485,7 @@ survivalLabRouter.post('/runs/:id/upload-scenario', upload.single('file'), async
         exifPresent: baselineReport.exifPresent,
         xmpPresent: baselineReport.xmpPresent,
         iptcPresent: baselineReport.iptcPresent,
+        rawJson: baselineReport.rawJson as Record<string, unknown> ?? undefined,
       },
       scenario: {
         creatorValue: metadata.creatorValue,
@@ -496,6 +498,7 @@ survivalLabRouter.post('/runs/:id/upload-scenario', upload.single('file'), async
         exifPresent: metadata.exifPresent,
         xmpPresent: metadata.xmpPresent,
         iptcPresent: metadata.iptcPresent,
+        rawJson: metadata.rawJson,
       },
     });
     
@@ -511,7 +514,22 @@ survivalLabRouter.post('/runs/:id/upload-scenario', upload.single('file'), async
       dimsChanged: comparison.dimsChanged,
       filenameChanged: comparison.filenameChanged,
       fieldsMissing: comparison.fieldsMissing,
+      scoreV2: comparison.scoreV2,
+      survivalClass: comparison.survivalClass,
+      diffReport: comparison.diffReport ? JSON.parse(JSON.stringify(comparison.diffReport)) : undefined,
     });
+    
+    // Update platform analytics (non-blocking)
+    const platformId = run.platformId;
+    updatePlatformStats(platformId).catch(() => {});
+    recordTrend(
+      platformId,
+      scenarioUpload.id,
+      comparison.survivalScore,
+      comparison.scoreV2,
+      comparison.survivalClass,
+      scenario,
+    ).catch(() => {});
     
     res.status(201).json({
       scenarioUpload: {
@@ -659,6 +677,33 @@ survivalLabRouter.get('/runs/:id/export.csv', asyncHandler(async (req, res) => {
   res.setHeader('Content-Type', 'text/csv');
   res.setHeader('Content-Disposition', `attachment; filename="survival_lab_${run.platform.slug}_${id}.csv"`);
   res.send(csvContent);
+}));
+
+// ============================================
+// Analytics
+// ============================================
+
+/**
+ * GET /survival/analytics/summary - Cross-platform analytics dashboard
+ */
+survivalLabRouter.get('/analytics/summary', asyncHandler(async (_req, res) => {
+  const data = await getAnalyticsSummary();
+  res.json(data);
+}));
+
+/**
+ * GET /survival/analytics/platform/:slug - Per-platform analytics with trend data
+ */
+survivalLabRouter.get('/analytics/platform/:slug', asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+  const data = await getPlatformAnalytics(slug);
+  
+  if (!data.summary) {
+    res.json({ summary: null, trends: [], message: 'No data for this platform yet' });
+    return;
+  }
+  
+  res.json(data);
 }));
 
 export default survivalLabRouter;

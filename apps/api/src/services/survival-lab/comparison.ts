@@ -3,7 +3,15 @@
  * 
  * Compares scenario uploads against their baseline images.
  * Generates survival scores and field-by-field comparison results.
+ *
+ * v2 additions:
+ *   - scoreV2 (weighted, canonical-field-based)
+ *   - diffReport (field-level diff from diff-engine)
+ *   - survivalClass (PRISTINE / SAFE / DEGRADED / HOSTILE / DESTRUCTIVE)
  */
+
+import { generateMetadataDiff, type MetadataDiffReport } from './diff-engine';
+import { classifyDiff, type SurvivalClass, type ClassificationResult } from './classifier';
 
 export interface ComparisonInput {
   baseline: {
@@ -17,6 +25,8 @@ export interface ComparisonInput {
     exifPresent: boolean;
     xmpPresent: boolean;
     iptcPresent: boolean;
+    /** Raw ExifTool JSON — required for v2 diff engine (optional for backward compat) */
+    rawJson?: Record<string, unknown>;
   };
   scenario: {
     creatorValue: string | null;
@@ -29,6 +39,8 @@ export interface ComparisonInput {
     exifPresent: boolean;
     xmpPresent: boolean;
     iptcPresent: boolean;
+    /** Raw ExifTool JSON — required for v2 diff engine (optional for backward compat) */
+    rawJson?: Record<string, unknown>;
   };
 }
 
@@ -41,6 +53,16 @@ export interface ComparisonResult {
   dimsChanged: boolean;
   filenameChanged: boolean;
   fieldsMissing: string[];
+
+  // ── v2 additions (optional for backward compat) ──
+  /** Weighted canonical-field score 0–100 */
+  scoreV2?: number;
+  /** High-level classification */
+  survivalClass?: SurvivalClass;
+  /** Full diff report (field-level detail) */
+  diffReport?: MetadataDiffReport;
+  /** Per-field score breakdown */
+  classification?: ClassificationResult;
 }
 
 /**
@@ -159,6 +181,19 @@ export function compareToBaseline(input: ComparisonInput): ComparisonResult {
   // Clamp to 0-100
   survivalScore = Math.max(0, Math.min(100, survivalScore));
   
+  // ── v2: Canonical diff + weighted scoring ──
+  let scoreV2: number | undefined;
+  let survivalClass: SurvivalClass | undefined;
+  let diffReport: MetadataDiffReport | undefined;
+  let classification: ClassificationResult | undefined;
+
+  if (baseline.rawJson && scenario.rawJson) {
+    diffReport = generateMetadataDiff(baseline.rawJson, scenario.rawJson);
+    classification = classifyDiff(diffReport);
+    scoreV2 = classification.scoreV2;
+    survivalClass = classification.survivalClass;
+  }
+
   return {
     survivalScore,
     creatorOk,
@@ -168,6 +203,10 @@ export function compareToBaseline(input: ComparisonInput): ComparisonResult {
     dimsChanged,
     filenameChanged,
     fieldsMissing,
+    scoreV2,
+    survivalClass,
+    diffReport,
+    classification,
   };
 }
 

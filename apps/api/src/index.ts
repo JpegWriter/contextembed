@@ -24,6 +24,7 @@ import iaRouter from './routes/ia';
 import copilotRouter from './routes/copilot';
 import { operatorRouter } from './routes/operator';
 import { billingRouter, handleStripeWebhook } from './routes/billing';
+import { verificationRouter } from './routes/verification';
 import { errorHandler } from './middleware/error-handler';
 import { authMiddleware, optionalAuthMiddleware } from './middleware/auth';
 import { startJobRunner, stopJobRunner } from './services/job-runner';
@@ -109,6 +110,10 @@ app.use('/copilot', copilotRouter); // Copilot AI assistant (has own auth)
 app.use('/survival', authMiddleware, survivalLabRouter); // Survival Lab - Metadata Study
 app.use('/operator', authMiddleware, operatorRouter); // CE Support Operator v1
 app.use('/billing', authMiddleware, billingRouter); // Stripe billing (checkout, portal, status)
+
+// Verification routes (mixed auth: some public, some authenticated)
+app.use('/verification', verificationRouter); // Authenticated asset/project verification management
+app.use('/verify', verificationRouter); // Public verification endpoint (no auth, rate limited)
 
 // Admin routes (consider adding admin auth middleware)
 app.use('/admin/ia', iaRouter);

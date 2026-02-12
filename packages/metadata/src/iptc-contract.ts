@@ -290,6 +290,11 @@ export interface XMPContextEmbedContract {
   
   // --- Governance Attestation (NEW v2.2 - portable proof) ---
   governance?: GovernanceAttestation;
+  
+  // --- Public Verification (NEW v2.3 - forensic-grade verification) ---
+  // Optional verification link embedding (requires project opt-in)
+  verificationToken?: string;   // UUID token for verification
+  verificationURL?: string;     // Full verification URL
 }
 
 // =============================================================================

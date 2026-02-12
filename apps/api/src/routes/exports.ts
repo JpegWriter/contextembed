@@ -21,12 +21,14 @@ import {
   metadataResultRepository,
   onboardingProfileRepository,
   userProfileRepository,
+  prisma,
 } from '@contextembed/db';
 import { 
   EXPORT_PRESETS,
   mergeExportOptions,
   ExportPresetId,
   AdvancedExportOptions,
+  buildVerificationUrl,
 } from '@contextembed/core';
 import { asyncHandler, createApiError } from '../middleware/error-handler';
 import { AuthenticatedRequest } from '../middleware/auth';
@@ -780,7 +782,12 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
       || userProfile?.usageTerms || 'All Rights Reserved. Contact for licensing.',
     sessionType: project.name,
     governance: governanceAttestation,
+    // Verification will be added per-asset if embedVerificationLink is enabled
+    verification: undefined as { token?: string; url?: string } | undefined,
   };
+  
+  // Check if project has verification link embedding enabled
+  const embedVerificationLink = (project as any).embedVerificationLink === true;
 
   // Create export record
   exportRecord = await exportRepository.create({
@@ -858,6 +865,35 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
           message: `Embedding metadata in ${asset.originalFilename}`,
         });
         
+        // Build per-asset business context with verification if enabled
+        let assetBusinessContext = businessContext;
+        if (embedVerificationLink) {
+          // Look up verification token for this asset (from growth_images if exists)
+          // Growth images are linked to projects, need to find by project + match criteria
+          // NOTE: Using 'as any' because Prisma types haven't been regenerated yet
+          // After running migration and `prisma generate`, these fields will be typed
+          const growthImage = await (prisma.growthImage as any).findFirst({
+            where: {
+              projectId,
+              filename: asset.originalFilename,
+              publicVerificationEnabled: true,
+              verificationToken: { not: null },
+              verificationRevokedAt: null,
+            },
+            select: { verificationToken: true },
+          });
+          
+          if (growthImage?.verificationToken) {
+            assetBusinessContext = {
+              ...businessContext,
+              verification: {
+                token: growthImage.verificationToken as string,
+                url: buildVerificationUrl(growthImage.verificationToken as string),
+              },
+            };
+          }
+        }
+        
         const result = await processFileForExport({
           assetId: asset.id,
           sourcePath,
@@ -866,7 +902,7 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
           metadata: metadata as any,
           options: exportOptions,
           sequence: i + 1,
-          businessContext,
+          businessContext: assetBusinessContext,
         }, metadataWriter);
         
         if (result.success && result.file) {

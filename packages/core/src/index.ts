@@ -33,6 +33,9 @@ export * from './pipeline/pipeline-orchestrator';
 // Authorship Integrity Engine
 export * from './authorship';
 
+// Public Verification (Forensic-Grade)
+export * from './verification';
+
 // Utilities
 export * from './utils/hash';
 export * from './utils/validators';

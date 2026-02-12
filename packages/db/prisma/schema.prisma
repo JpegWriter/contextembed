@@ -254,6 +254,10 @@ model Project {
   visualAuthenticityPolicy  VisualAuthenticityPolicy?  // NULL = 'conditional' in code
   startupModeEnabled        Boolean  @default(false)   // When true, policy locked to 'deny_ai_proof'
   
+  // Public verification settings (quiet, dispute-only)
+  publicVerificationDefaultEnabled Boolean @default(false)  // Default OFF, opt-in only
+  embedVerificationLink     Boolean  @default(false)        // Embed verification URL in exports
+  
   user                      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   workspace                 Workspace? @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
   onboardingProfile         OnboardingProfile?
@@ -796,8 +800,16 @@ model GrowthImage {
   // Decision log (JSON array of log entries)
   decisionLog     Json      @default("[]")
   
+  // Public verification (quiet, dispute-only)
+  publicVerificationEnabled Boolean?    // null = inherit from project default
+  verificationToken          String?    @unique @db.Uuid  // UUID token for verification endpoint
+  verificationCreatedAt      DateTime?  @db.Timestamptz
+  verificationRevokedAt      DateTime?  @db.Timestamptz
+  verificationLastCheckedAt  DateTime?  @db.Timestamptz
+  
   // Relations
   project         Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  verificationLogs VerificationLog[]
   
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -805,6 +817,7 @@ model GrowthImage {
   @@index([projectId])
   @@index([governanceStatus])
   @@index([role])
+  @@index([verificationToken])
   @@map("growth_images")
 }
 
@@ -1149,4 +1162,32 @@ model CeSupportTicket {
   @@index([status])
   @@index([createdAt])
   @@map("ce_support_tickets")
+}
+
+// ============================================
+// Public Verification Logs (Forensic-Grade Audit Trail)
+// ============================================
+
+/// Append-only log of all public verification attempts.
+/// Used for rate limiting, abuse detection, and dispute resolution.
+model VerificationLog {
+  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  verificationToken   String   @db.Uuid
+  assetId             String
+  projectId           String?
+  
+  checkedAt           DateTime @default(now()) @db.Timestamptz
+  ipHash              String   // SHA-256 of IP, never raw IP
+  userAgent           String?  @db.VarChar(300)
+  result              String   // verified, revoked, not_found, rate_limited
+  checksumProvided    Boolean  @default(false)
+  checksumMatched     Boolean?
+  
+  // Relation to growth_images
+  growthImage         GrowthImage? @relation(fields: [verificationToken], references: [verificationToken], onDelete: SetNull)
+  
+  @@index([verificationToken, checkedAt])
+  @@index([assetId])
+  @@index([ipHash, checkedAt])
+  @@map("verification_logs")
 }

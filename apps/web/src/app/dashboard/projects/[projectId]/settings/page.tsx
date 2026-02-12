@@ -17,6 +17,7 @@ import { useSupabase } from '@/lib/supabase-provider';
 import { projectsApi, governanceApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { WordPressSettings } from '@/components/dashboard/WordPressSettings';
+import { VerificationSettings } from '@/components/dashboard/VerificationSettings';
 
 type VisualAuthenticityPolicy = 'conditional' | 'deny_ai_proof' | 'allow';
 
@@ -346,6 +347,11 @@ export default function ProjectSettingsPage() {
       {/* WordPress Integration */}
       {authToken && (
         <WordPressSettings projectId={projectId} token={authToken} />
+      )}
+
+      {/* Public Verification (Quiet, Dispute-Only) */}
+      {authToken && (
+        <VerificationSettings projectId={projectId} token={authToken} />
       )}
     </div>
   );

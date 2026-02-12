@@ -51,6 +51,11 @@ export interface ProcessFileRequest {
       checkedAt?: string | null;
       decisionRef?: string | null;
     };
+    // Public verification (NEW v2.3 - forensic-grade)
+    verification?: {
+      token?: string;
+      url?: string;
+    };
   };
   /** Skip IPTC validation (not recommended) */
   skipValidation?: boolean;

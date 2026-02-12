@@ -142,6 +142,10 @@ export const CONTEXTEMBED_XMP_CONFIG = `
     GovernanceReason => { },
     GovernanceCheckedAt => { },
     GovernanceDecisionRef => { },
+    
+    # Public Verification (NEW v2.3 - forensic-grade verification)
+    VerificationToken => { },
+    VerificationURL => { },
 );
 `;
 
@@ -546,6 +550,15 @@ function buildExifToolTags(contract: MetadataContract): Record<string, unknown> 
         tags['XMP-contextembed:GovernanceDecisionRef'] = String(gov.decisionRef).slice(0, 80);
       }
     }
+    
+    // --- Public Verification (NEW v2.3 - forensic-grade) ---
+    // Written ONLY when project has embedVerificationLink enabled
+    if (xmpContextEmbed.verificationToken) {
+      tags['XMP-contextembed:VerificationToken'] = xmpContextEmbed.verificationToken;
+    }
+    if (xmpContextEmbed.verificationURL) {
+      tags['XMP-contextembed:VerificationURL'] = xmpContextEmbed.verificationURL;
+    }
   }
   
   return tags;
@@ -696,6 +709,12 @@ export interface MetadataToContractOptions {
     checkedAt?: string | null;
     decisionRef?: string | null;
   };
+  
+  // Public verification (NEW v2.3 - forensic-grade)
+  verification?: {
+    token?: string;
+    url?: string;
+  };
 }
 
 /**
@@ -810,6 +829,11 @@ export function toMetadataContract(
       checkedAt: options.governance.checkedAt || new Date().toISOString(),
       decisionRef: options.governance.decisionRef ?? null,
     } : undefined,
+    
+    // Public Verification (NEW v2.3 - forensic-grade)
+    // Only included when project has embedVerificationLink enabled
+    verificationToken: options.verification?.token,
+    verificationURL: options.verification?.url,
   };
   
   return { iptc, xmpContextEmbed };

@@ -15,10 +15,28 @@ import { ensureWorkspaceForUser, getWorkspaceEntitlements } from '../services/wo
 export const billingRouter: IRouter = Router();
 
 // ============================================
-// Stripe Client
+// Stripe Client (lazy initialization)
 // ============================================
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
+let _stripe: Stripe | null = null;
+
+function getStripe(): Stripe {
+  if (!_stripe) {
+    const apiKey = process.env.STRIPE_SECRET_KEY;
+    if (!apiKey) {
+      throw new Error('STRIPE_SECRET_KEY environment variable is not set');
+    }
+    _stripe = new Stripe(apiKey);
+  }
+  return _stripe;
+}
+
+/**
+ * Check if Stripe is configured (for graceful degradation)
+ */
+function isStripeConfigured(): boolean {
+  return Boolean(process.env.STRIPE_SECRET_KEY);
+}
 
 // Price IDs (configure in Stripe Dashboard)
 const PRICE_IDS = {
@@ -66,6 +84,10 @@ const CheckoutSchema = z.object({
 });
 
 billingRouter.post('/checkout', asyncHandler(async (req, res) => {
+  if (!isStripeConfigured()) {
+    throw createApiError('Billing is not configured', 503);
+  }
+  
   const { userId } = req as AuthenticatedRequest;
   const { plan, successUrl, cancelUrl } = CheckoutSchema.parse(req.body);
   
@@ -81,7 +103,7 @@ billingRouter.post('/checkout', asyncHandler(async (req, res) => {
     // Get user email for customer creation
     const workspace = await workspaceRepository.findById(workspaceId);
     
-    const customer = await stripe.customers.create({
+    const customer = await getStripe().customers.create({
       metadata: {
         workspace_id: workspaceId,
         user_id: userId,
@@ -103,7 +125,7 @@ billingRouter.post('/checkout', asyncHandler(async (req, res) => {
   // Create checkout session
   const appUrl = process.env.APP_URL || 'http://localhost:3000';
   
-  const session = await stripe.checkout.sessions.create({
+  const session = await getStripe().checkout.sessions.create({
     customer: customerId,
     mode: 'subscription',
     line_items: [
@@ -139,6 +161,10 @@ billingRouter.post('/checkout', asyncHandler(async (req, res) => {
 // ============================================
 
 billingRouter.post('/portal', asyncHandler(async (req, res) => {
+  if (!isStripeConfigured()) {
+    throw createApiError('Billing is not configured', 503);
+  }
+  
   const { userId } = req as AuthenticatedRequest;
   
   // Ensure workspace exists
@@ -151,7 +177,7 @@ billingRouter.post('/portal', asyncHandler(async (req, res) => {
   
   const appUrl = process.env.APP_URL || 'http://localhost:3000';
   
-  const session = await stripe.billingPortal.sessions.create({
+  const session = await getStripe().billingPortal.sessions.create({
     customer: subscription.stripeCustomerId,
     return_url: `${appUrl}/dashboard/settings`,
   });
@@ -167,6 +193,11 @@ billingRouter.post('/portal', asyncHandler(async (req, res) => {
 
 // Note: This route needs raw body parsing (configured in main app)
 export async function handleStripeWebhook(req: Request, res: Response) {
+  if (!isStripeConfigured()) {
+    res.status(503).send('Billing not configured');
+    return;
+  }
+  
   const sig = req.headers['stripe-signature'];
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   
@@ -179,7 +210,7 @@ export async function handleStripeWebhook(req: Request, res: Response) {
   let event: Stripe.Event;
   
   try {
-    event = stripe.webhooks.constructEvent(
+    event = getStripe().webhooks.constructEvent(
       (req as any).rawBody || req.body,
       sig,
       webhookSecret
@@ -245,7 +276,7 @@ async function handleCheckoutComplete(session: Stripe.Checkout.Session) {
   }
   
   // Fetch full subscription details
-  const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+  const subscription = await getStripe().subscriptions.retrieve(subscriptionId);
   
   await subscriptionRepository.upsert(workspaceId, {
     stripeSubscriptionId: subscriptionId,

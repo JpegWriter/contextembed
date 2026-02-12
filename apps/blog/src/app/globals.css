@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg: 0 0% 100%;
+    --bg-secondary: 0 0% 96%;
+    --fg: 0 0% 9%;
+    --fg-muted: 0 0% 45%;
+    --border: 0 0% 90%;
+    --accent: 220 70% 50%;
+    --accent-fg: 0 0% 100%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: 0 0% 7%;
+      --bg-secondary: 0 0% 12%;
+      --fg: 0 0% 93%;
+      --fg-muted: 0 0% 55%;
+      --border: 0 0% 20%;
+      --accent: 220 70% 60%;
+      --accent-fg: 0 0% 100%;
+    }
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-bg text-fg antialiased;
+  }
+}
+
+/* Code blocks via rehype-pretty-code */
+[data-rehype-pretty-code-figure] pre {
+  @apply overflow-x-auto rounded-lg border border-border p-4 text-sm leading-relaxed;
+}
+
+[data-rehype-pretty-code-figure] code {
+  @apply bg-transparent p-0;
+  font-size: inherit;
+}
+
+[data-rehype-pretty-code-figure] [data-line] {
+  @apply px-1;
+}
+
+[data-rehype-pretty-code-figure] [data-highlighted-line] {
+  @apply bg-accent/10 -mx-4 px-4;
+}
+
+/* Draft badge pulse */
+@keyframes draft-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.draft-badge {
+  animation: draft-pulse 2s ease-in-out infinite;
+}

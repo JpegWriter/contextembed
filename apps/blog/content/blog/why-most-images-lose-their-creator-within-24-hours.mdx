@@ -1,0 +1,61 @@
+---
+title: "Why Most Images Lose Their Creator Within 24 Hours"
+description: "From camera to social feed, an image can pass through a dozen systems in a single day. At each step, creator metadata is silently stripped away."
+date: "2025-12-03"
+tags: ["authorship", "metadata", "social-media"]
+pillar: "authorship-integrity"
+series: "authorship-fundamentals"
+draft: true
+---
+
+## The 24-hour lifecycle of an image
+
+A photographer takes a portrait. The camera writes EXIF data: date, GPS, device
+model. Lightroom adds IPTC fields: creator name, copyright notice, caption. The
+image is exported as a JPEG with all metadata intact.
+
+Then the journey begins.
+
+### Hour 1 — Upload to cloud storage
+
+The photographer uploads the file to Google Drive or Dropbox. Both preserve metadata.
+So far, so good.
+
+### Hour 4 — Sent to client via email
+
+The image is attached to an email. Email clients preserve the file as-is. Metadata
+survives.
+
+### Hour 6 — Client uploads to WordPress
+
+WordPress reads the file but does **not** map IPTC fields to media-library fields
+by default. The alt text field remains empty. The creator name is buried in metadata
+that the CMS ignores.
+
+### Hour 8 — Published on social media
+
+The client posts the image to Instagram. Instagram strips all EXIF and IPTC metadata
+during processing. The creator name is gone.
+
+### Hour 12 — Reshared on Twitter/X
+
+Someone screenshots the Instagram post and shares it on X. The screenshot carries
+zero metadata. The original creator is now unrecoverable.
+
+### Hour 24 — Indexed by AI
+
+A training pipeline scrapes the tweet. The image enters a dataset with no
+attribution. The photographer will never know.
+
+## What can you do?
+
+The answer is not to stop sharing images. It is to build pipelines that embed
+metadata so deeply and consistently that even when platforms strip it, the
+**next** copy retains it. Visible watermarks help. Content Credentials (C2PA) help
+more. But the foundation is always structured, embedded metadata.
+
+## Key takeaway
+
+If you rely on external databases, spreadsheets or platform captions to track
+authorship, you have already lost. The only attribution that travels with the file
+is the attribution **inside** the file.

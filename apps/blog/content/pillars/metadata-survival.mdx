@@ -1,0 +1,46 @@
+---
+title: "What Really Survives When You Upload an Image?"
+description: "A technical deep-dive into EXIF, IPTC and XMP metadata — which fields survive uploads, resizing and platform processing, and which do not."
+date: "2025-12-08"
+tags: ["metadata", "exif", "iptc", "xmp", "testing"]
+draft: true
+---
+
+## Three standards, one image
+
+Modern image files can carry metadata in three overlapping formats:
+
+- **EXIF** — camera-generated data (shutter speed, GPS, date taken)
+- **IPTC IIM** — editorial fields (headline, caption, creator)
+- **XMP** — extensible, XML-based sidecar data (rights, keywords, custom schemas)
+
+Most tools write a subset. Most platforms strip a subset. The gap between what gets
+written and what survives is where authorship dies.
+
+## The survival matrix
+
+We tested a reference JPEG with fully populated EXIF, IPTC and XMP fields across
+five major platforms and three CMS systems. The results were stark:
+
+| Field | WordPress | Instagram | Twitter/X | LinkedIn | Google Drive |
+|-------|-----------|-----------|-----------|----------|-------------|
+| IPTC Creator | ✅ | ❌ | ❌ | ❌ | ✅ |
+| IPTC Copyright | ✅ | ❌ | ❌ | ❌ | ✅ |
+| EXIF GPS | ✅ | ❌ | ❌ | ❌ | ✅ |
+| XMP Rights | ✅ | ❌ | ❌ | ❌ | ✅ |
+
+The pattern is clear: social platforms strip almost everything. File-storage platforms
+preserve almost everything. CMS behaviour depends on configuration.
+
+## Why this matters
+
+If your publishing pipeline touches any stripping platform, the metadata you
+carefully embedded may never reach your audience. Understanding the survival matrix
+lets you design workflows that protect the fields that matter most.
+
+## What this pillar covers
+
+1. EXIF vs IPTC vs XMP — a practical comparison
+2. Does WordPress preserve metadata? (It depends)
+3. What happens to metadata when images are resized
+4. Testing image metadata survival across five platforms

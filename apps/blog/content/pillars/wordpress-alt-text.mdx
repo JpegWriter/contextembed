@@ -1,0 +1,47 @@
+---
+title: "Auto-Filling WordPress Alt Text from Embedded Metadata"
+description: "How to bridge the gap between image metadata and WordPress media fields, eliminating manual data entry and ensuring every image carries context."
+date: "2025-12-22"
+tags: ["wordpress", "alt-text", "automation", "metadata"]
+draft: true
+---
+
+## The WordPress metadata gap
+
+WordPress stores image context in three media-library fields: **Alt Text**,
+**Caption** and **Description**. These fields are independent of any metadata
+embedded in the image file itself.
+
+When you upload a JPEG with a carefully written IPTC caption, WordPress ignores it.
+The alt text field stays empty. The caption field stays empty. All that embedded
+context vanishes into the media library as if it never existed.
+
+## Why this matters at scale
+
+For a site with dozens of images, manual entry is tedious but manageable. For a site
+with thousands — a stock library, an agency portfolio, a news archive — manual entry
+is impossible. The result is thousands of images with empty alt text, harming both
+accessibility and SEO.
+
+## The solution: read-on-upload
+
+A plugin or pipeline that reads IPTC/XMP fields at upload time and maps them to
+WordPress media-library fields can eliminate this gap entirely:
+
+| IPTC Field | WordPress Field |
+|------------|----------------|
+| Headline | Title |
+| Description/Caption | Caption |
+| Description/Caption | Alt Text (if empty) |
+| Copyright Notice | Description |
+| Keywords | Tags (optional) |
+
+The mapping is configurable. The important principle is: **never leave alt text
+empty when the image already carries a description**.
+
+## What this pillar covers
+
+1. How to auto-populate WordPress alt text from embedded metadata
+2. Why the media library is not using the data already in your images
+3. Should you overwrite existing alt text with metadata?
+4. The right character limits for alt text, captions and descriptions

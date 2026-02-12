@@ -1,0 +1,63 @@
+---
+title: "Testing Image Metadata Across 5 Platforms"
+description: "We uploaded a fully tagged reference image to five major platforms and checked what survived. The results are sobering."
+date: "2025-12-16"
+tags: ["metadata", "testing", "platforms", "iptc"]
+pillar: "metadata-survival"
+series: "metadata-deep-dive"
+draft: true
+---
+
+## Methodology
+
+We created a reference JPEG with the following metadata fully populated:
+
+- **EXIF:** DateTime, GPS, Make, Model, Software
+- **IPTC:** Creator, Copyright, Caption, Headline, Keywords, Source
+- **XMP:** Rights, Creator, Description, Subject, UsageTerms
+
+The image was uploaded to five platforms and then downloaded (where possible) to
+check which fields survived.
+
+## Results
+
+### Instagram
+
+**Survived:** Nothing.
+Instagram re-encodes all images, stripping every metadata field. Even EXIF
+DateTime is replaced with the upload timestamp.
+
+### Twitter/X
+
+**Survived:** Nothing.
+X strips all EXIF, IPTC and XMP data. The downloaded image is a clean re-encode.
+
+### LinkedIn
+
+**Survived:** Nothing.
+LinkedIn behaves identically to Instagram and X. Complete metadata removal.
+
+### WordPress (default install)
+
+**Survived:** Everything in the original. Nothing in resized copies.
+The uploaded original retains all EXIF, IPTC and XMP fields. Generated thumbnails
+and intermediate sizes lose everything (GD library default).
+
+### Google Drive
+
+**Survived:** Everything.
+Google Drive stores files as-is. No re-encoding, no metadata stripping. The
+downloaded file is byte-identical to the uploaded file.
+
+## Key findings
+
+1. **Social platforms strip everything.** Design your workflow assuming zero metadata survival.
+2. **WordPress preserves originals** but strips resized copies — and visitors see resized copies.
+3. **Cloud storage preserves everything** — use it as your canonical archive.
+4. **You cannot rely on any single platform** to be the custodian of your metadata.
+
+## What to do
+
+Maintain your own canonical, metadata-rich archive. Treat platform copies as
+ephemeral. Embed your most critical data (Creator, Copyright) in every file before
+it leaves your control.

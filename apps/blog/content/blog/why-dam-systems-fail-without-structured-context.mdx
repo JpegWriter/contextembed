@@ -1,0 +1,63 @@
+---
+title: "Why DAM Systems Fail Without Structured Context"
+description: "Digital Asset Management systems promise order. But without structured metadata at ingest, they become expensive, unsearchable file dumps."
+date: "2026-01-06"
+tags: ["dam", "governance", "metadata", "enterprise"]
+pillar: "image-governance"
+series: "governance-essentials"
+draft: true
+---
+
+## The DAM promise
+
+Digital Asset Management (DAM) systems promise a single source of truth for all your
+visual assets. Upload once, tag once, distribute everywhere. Search by keyword,
+filter by licence, track usage across channels.
+
+## The DAM reality
+
+Most DAM implementations fail to deliver on this promise. The reason is not the
+software — it is the data going into it.
+
+### Garbage in, garbage out
+
+A DAM system is only as searchable as the metadata attached to its assets. If images
+are uploaded with:
+
+- Generic file names (`IMG_0001.jpg`)
+- No IPTC or XMP metadata
+- No keywords or categories
+- No licence information
+
+Then the DAM becomes an expensive cloud folder. Unsearchable. Unmanageable.
+
+### The tagging bottleneck
+
+Many organisations plan to "tag everything later". This never happens. The backlog
+grows exponentially. New images arrive faster than old images are tagged. Within
+months, the DAM contains thousands of untagged assets.
+
+## The fix: structured context at ingest
+
+The solution is to embed metadata **before** images enter the DAM:
+
+1. **Writer pipelines** — automated tools that embed Creator, Copyright, Caption
+   and Keywords at the point of creation or import
+2. **Validation gates** — reject uploads that lack required fields
+3. **AI-assisted tagging** — use machine learning to suggest keywords, then have
+   humans approve (never fully automated)
+4. **Template enforcement** — pre-populate fields based on project, client or
+   content type
+
+## What "structured context" means
+
+Structured context is metadata that follows a consistent schema. Not free-text
+notes in a Description field, but typed, validated fields:
+
+- `Creator: Jane Smith` (not "photo by jane")
+- `Copyright: © 2026 Acme Agency` (not "acme owns this")
+- `Keywords: ["product", "red", "widget", "front-view"]` (not "stuff")
+- `Licence: Editorial use only, expires 2027-01-01` (not "check with legal")
+
+When every asset follows the same schema, the DAM becomes genuinely searchable and
+the governance layer can automate compliance checks.

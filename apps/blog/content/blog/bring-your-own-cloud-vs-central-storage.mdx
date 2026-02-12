@@ -1,0 +1,73 @@
+---
+title: "Bring Your Own Cloud vs Centralised Storage for Image Assets"
+description: "Should your images live in one central DAM or across team-owned cloud accounts? The trade-offs for governance, cost and flexibility."
+date: "2026-01-08"
+tags: ["cloud-storage", "governance", "dam", "architecture"]
+pillar: "image-governance"
+series: "governance-essentials"
+draft: true
+---
+
+## Two models
+
+### Centralised storage (traditional DAM)
+
+All images live in one system — Bynder, Canto, Brandfolder, Adobe Experience Manager.
+A single team controls access, tagging and distribution.
+
+**Pros:**
+- Single source of truth
+- Centralised governance and access control
+- Consistent metadata schema
+- Audit trail in one place
+
+**Cons:**
+- Expensive licensing (per-user or per-asset)
+- Vendor lock-in
+- Often slow to adopt (IT procurement cycles)
+- Resistance from teams who prefer their own tools
+
+### Bring Your Own Cloud (BYOC)
+
+Teams use their existing cloud storage — Google Drive, Dropbox, OneDrive, S3 — and
+a metadata layer sits on top, reading and writing metadata across all of them.
+
+**Pros:**
+- Zero new storage costs (use existing cloud accounts)
+- Faster adoption (no new tool to learn)
+- Flexible — teams keep their preferred workflow
+- No vendor lock-in for storage
+
+**Cons:**
+- Metadata consistency requires enforcement tooling
+- No built-in access control across clouds
+- Audit trail must be aggregated from multiple sources
+- Search requires indexing across multiple backends
+
+## Which model is right?
+
+### Choose centralised when:
+
+- You have budget for a DAM licence
+- Compliance requirements demand a single audit trail
+- All teams are willing to adopt a new tool
+- Asset volume justifies the investment (10,000+ images)
+
+### Choose BYOC when:
+
+- Budget is limited
+- Teams are distributed and use different tools
+- You need to govern existing assets without migrating them
+- Speed of adoption matters more than centralised control
+
+### Choose hybrid when:
+
+- Critical assets (brand, product, campaign) go in the DAM
+- Day-to-day working files stay in team cloud storage
+- A metadata layer connects both, ensuring consistent governance
+
+## The ContextEmbed approach
+
+ContextEmbed takes the BYOC approach: embed metadata directly in image files stored
+wherever your team already works. The governance layer reads and validates metadata
+from any source — no migration required, no DAM licence needed.

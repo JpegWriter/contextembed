@@ -1,0 +1,66 @@
+---
+title: "Should You Overwrite Existing Alt Text with Metadata?"
+description: "When embedded metadata and manually written alt text conflict, which should win? A framework for deciding."
+date: "2025-12-28"
+tags: ["alt-text", "metadata", "wordpress", "strategy"]
+pillar: "wordpress-alt-text"
+series: "wordpress-metadata-workflow"
+draft: true
+---
+
+## The conflict
+
+You have an image with IPTC Caption: "Aerial view of the Thames at dusk". Someone
+has already manually entered the WordPress alt text: "London river photo".
+
+If you auto-populate alt text from metadata, should you overwrite the existing
+value?
+
+## Arguments for overwriting
+
+- The IPTC caption was written by the photographer with domain expertise
+- "Aerial view of the Thames at dusk" is objectively more descriptive
+- Consistency is valuable — all images should follow the same pattern
+- Manual alt text is often hastily written and lower quality
+
+## Arguments against overwriting
+
+- The manual alt text may reflect the **page context**, not just the image content
+- An editor may have deliberately chosen different wording for readability
+- Overwriting feels destructive — data loss is hard to reverse
+- Some images have been manually tagged by accessibility specialists
+
+## A decision framework
+
+### Strategy 1: Fill empty only (safest)
+
+Only populate alt text from metadata when the current field is empty. Never touch
+existing values.
+
+**Best for:** sites with significant manual alt text investment.
+
+### Strategy 2: Fill empty, flag conflicts
+
+Populate empty fields and flag images where metadata differs from existing alt text
+for manual review.
+
+**Best for:** sites migrating to a metadata-first workflow.
+
+### Strategy 3: Metadata wins (aggressive)
+
+Always overwrite with metadata values. Trust the embedded data over manual entry.
+
+**Best for:** new sites with no existing alt text, or sites where metadata quality
+is consistently higher than manual entry.
+
+### Strategy 4: Longest wins
+
+Compare lengths. Keep whichever value is more descriptive (longer).
+
+**Best for:** quick heuristic when manual review is impractical.
+
+## Recommendation
+
+Start with Strategy 1 (fill empty only). Move to Strategy 2 once you trust your
+metadata pipeline. Only use Strategy 3 if you have validated that your IPTC data
+is consistently high quality.

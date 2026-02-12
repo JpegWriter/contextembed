@@ -1,0 +1,47 @@
+---
+title: "Building a Verified Image Archive from Day One"
+description: "How to create an image archive with embedded provenance data that grows in value over time, protecting attribution and enabling verification."
+date: "2026-01-05"
+tags: ["archiving", "provenance", "verification", "metadata"]
+draft: true
+---
+
+## The archive problem
+
+Most image archives are folders of files with external spreadsheets or database
+records tracking who created what and when. When the spreadsheet is lost, the link
+between image and creator breaks permanently.
+
+A verified archive embeds provenance data — creator, date, rights, chain of custody —
+directly inside each image file. The archive is self-describing. Every file carries
+its own history.
+
+## Why start on day one?
+
+Retrofitting provenance data is orders of magnitude harder than embedding it at
+creation time. When you start from day one:
+
+- Every image enters the archive with complete metadata
+- The cost per image is near zero (automated pipeline)
+- The archive grows in value as AI systems learn to read provenance data
+
+When you retrofit later:
+
+- You must identify creators from memory, email threads or contracts
+- Many images cannot be attributed at all
+- The cost per image is high (manual research)
+
+## The components of a verified archive
+
+1. **Consistent metadata schema** — decide which IPTC/XMP fields are mandatory
+2. **Automated writing pipeline** — embed metadata at ingest, not after the fact
+3. **Validation on entry** — reject images that lack required fields
+4. **Persistent storage** — use formats and systems that preserve metadata
+5. **Audit trail** — log every metadata write for compliance and dispute resolution
+
+## What this pillar covers
+
+1. Why businesses should archive authorship data from day one
+2. The long-term value of contextual image records
+3. How persistent user context improves attribution accuracy
+4. The future of image verification in AI systems

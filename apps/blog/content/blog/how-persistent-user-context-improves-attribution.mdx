@@ -1,0 +1,71 @@
+---
+title: "How Persistent User Context Improves Attribution Accuracy"
+description: "When your metadata pipeline knows who you are and what defaults to apply, every image gets accurate attribution without manual effort."
+date: "2026-01-14"
+tags: ["attribution", "automation", "context", "workflow"]
+pillar: "provenance-archive"
+series: "archive-strategy"
+draft: true
+---
+
+## The manual attribution problem
+
+In most workflows, attribution is a manual step. A photographer finishes editing,
+opens the metadata panel, and types their name, copyright notice, and contact
+details. Every single time.
+
+This leads to:
+
+- **Inconsistency** — "Jane Smith" vs "J. Smith" vs "Smith, Jane"
+- **Omission** — forgot to fill it in before exporting
+- **Errors** — typos, wrong copyright year, outdated contact info
+
+## What is persistent user context?
+
+Persistent user context is a stored profile of metadata defaults that are
+automatically applied to every image processed through a pipeline. Once configured,
+it works silently:
+
+```yaml
+profile:
+  creator: "Jane Smith"
+  copyright: "© {year} Jane Smith Photography"
+  contact:
+    email: "jane@example.com"
+    website: "https://janesmith.photography"
+  defaults:
+    source: "Jane Smith Photography"
+    credit: "Jane Smith"
+```
+
+Every image processed through the pipeline receives these fields automatically. The
+photographer never types their name again.
+
+## Benefits of persistent context
+
+### 1. Consistency
+
+Every image carries the same creator format, copyright structure and contact
+details. No variations, no typos.
+
+### 2. Zero effort after setup
+
+The one-time cost of configuring the profile is amortised across every image
+processed. After setup, attribution is fully automated.
+
+### 3. Easy updates
+
+When contact details change, update the profile once. All future images carry the
+new information. (Existing images are not affected — they carry a historical record.)
+
+### 4. Team scalability
+
+In an agency, each team member has their own profile. The pipeline applies the
+correct creator metadata based on who is processing the image.
+
+## How ContextEmbed implements this
+
+ContextEmbed stores user context in the application profile. During the onboarding
+flow, users configure their creator details, copyright template, and default fields.
+Every image processed through the pipeline inherits these defaults, ensuring every
+file carries accurate, consistent attribution from the moment it is created.

@@ -1,0 +1,63 @@
+---
+title: "Why the Media Library Is Not Using the Data in Your Images"
+description: "WordPress reads a fraction of the metadata embedded in your images. Here is what it misses, why, and how to close the gap."
+date: "2025-12-26"
+tags: ["wordpress", "metadata", "media-library", "iptc"]
+pillar: "wordpress-alt-text"
+series: "wordpress-metadata-workflow"
+draft: true
+---
+
+## What WordPress reads
+
+When you upload an image, WordPress extracts a small subset of EXIF data:
+
+- Camera make and model
+- Aperture, shutter speed, ISO
+- Focal length
+- Date taken
+- GPS coordinates (if present)
+
+This data is stored in `wp_postmeta` and displayed in the media library detail view
+under "EXIF Data".
+
+## What WordPress ignores
+
+WordPress does **not** read or display:
+
+- **IPTC Creator** — the photographer's name
+- **IPTC Copyright Notice** — the rights holder
+- **IPTC Caption/Abstract** — the editorial description
+- **IPTC Headline** — the title
+- **IPTC Keywords** — relevant search terms
+- **XMP Rights** — usage permissions
+- **XMP Description** — an alternative to IPTC Caption
+
+These fields are present in the uploaded file. WordPress simply does not look for
+them.
+
+## Why this happens
+
+WordPress was designed as a blogging platform, not a digital asset management system.
+Its media library was built to handle user-uploaded images with minimal friction.
+Reading and mapping complex metadata standards was never a priority.
+
+The EXIF data it does read is handled by PHP's built-in `exif_read_data()` function,
+which does not support IPTC or XMP natively. Reading IPTC requires `iptcparse()`,
+which exists in PHP but is not used by WordPress core.
+
+## The impact
+
+For a personal blog, this is a minor inconvenience. For a professional publisher, an
+agency or an e-commerce site, it means:
+
+- Thousands of images with empty alt text
+- Creator information invisible to editors
+- Copyright data buried in binary metadata that no one reads
+- SEO opportunities missed on every image
+
+## Closing the gap
+
+The fix is straightforward: read IPTC/XMP at upload time and map fields to the
+WordPress media library. This can be done with a plugin, a custom function, or a
+service like ContextEmbed that automates the entire pipeline.

@@ -1,0 +1,57 @@
+---
+title: "What Happens to Metadata When Images Are Resized"
+description: "Resizing an image is one of the most common operations in publishing. It is also one of the most reliable ways to lose embedded metadata."
+date: "2025-12-14"
+tags: ["metadata", "resizing", "image-processing", "testing"]
+pillar: "metadata-survival"
+series: "metadata-deep-dive"
+draft: true
+---
+
+## The silent destroyer
+
+Resizing seems harmless. You have a 4000×3000 JPEG and you need a 1200×900 version
+for the web. Every image editor, CMS and CDN can do this. But what happens to the
+metadata?
+
+### GD Library (PHP)
+
+The default image library in many PHP installations. When GD creates a new image,
+it writes a **blank** file. No EXIF, no IPTC, no XMP. All metadata from the
+original is lost.
+
+### Imagick (ImageMagick via PHP)
+
+Imagick **can** preserve metadata, but only if configured to do so. The default
+behaviour varies by installation. Some preserve EXIF but strip IPTC. Some preserve
+everything. Some strip everything.
+
+### Sharp (Node.js)
+
+Sharp strips all metadata by default for performance. You must explicitly opt in
+to metadata preservation with `.withMetadata()`.
+
+### Pillow (Python)
+
+Pillow does not copy EXIF by default. You must manually extract and re-attach it:
+
+```python
+from PIL import Image
+img = Image.open("photo.jpg")
+exif = img.info.get("exif")
+img.thumbnail((1200, 900))
+img.save("photo-resized.jpg", exif=exif)
+```
+
+## The CDN layer
+
+Even if your application preserves metadata, your CDN may strip it. Cloudflare
+Polish, for example, removes EXIF data when optimising images. Imgix preserves it
+by default but offers an option to strip it.
+
+## Recommendations
+
+1. Test your resize pipeline end-to-end — upload a metadata-rich image and verify the output
+2. Use Imagick or Sharp with explicit metadata preservation
+3. Check your CDN settings for metadata stripping
+4. Validate metadata at the **output** of your pipeline, not just the input

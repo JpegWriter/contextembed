@@ -1,0 +1,76 @@
+---
+title: "The Right Character Limits for Alt Text, Captions and Descriptions"
+description: "How long should alt text be? What about captions? And what goes in the Description field? Definitive guidelines backed by standards and testing."
+date: "2025-12-30"
+tags: ["alt-text", "accessibility", "seo", "guidelines"]
+pillar: "wordpress-alt-text"
+series: "wordpress-metadata-workflow"
+draft: true
+---
+
+## Alt text
+
+### Purpose
+
+Describes the image for screen readers and search engines. It replaces the image
+when it cannot be displayed.
+
+### Recommended length
+
+**80–125 characters.** Screen readers handle longer text but users lose patience.
+Google truncates alt text in search results at approximately 125 characters.
+
+### Guidelines
+
+- Describe what the image **shows**, not what it **is** ("a sunset over the Thames"
+  not "a beautiful photo")
+- Do not start with "Image of" or "Photo of" — the screen reader already announces
+  it as an image
+- Include relevant keywords naturally
+- Leave alt text empty (`alt=""`) for purely decorative images
+
+## Captions
+
+### Purpose
+
+Visible text below (or alongside) the image. Read by sighted users. Provides
+context that the image alone does not convey.
+
+### Recommended length
+
+**1–2 sentences (under 200 characters).** Captions should add information, not
+repeat the alt text.
+
+### Guidelines
+
+- Use captions for context: who, where, when, why
+- Credit the creator if not credited elsewhere
+- Captions can include opinions or editorial voice — alt text should not
+
+## Descriptions
+
+### Purpose
+
+In WordPress, the Description field maps to `post_content` on the attachment post.
+It is rarely displayed on the front end but can be used by themes, plugins and
+search engines.
+
+### Recommended length
+
+**Up to 500 characters.** This is your space for extended context: licence terms,
+usage restrictions, detailed scene descriptions.
+
+### Guidelines
+
+- Use for information that does not belong in alt text or captions
+- Include copyright and licensing details
+- Include location, date and technical details if relevant
+- This field is ideal for mapping from IPTC Copyright Notice
+
+## Summary table
+
+| Field | Length | Purpose | Visible to users |
+|-------|--------|---------|-----------------|
+| Alt text | 80–125 chars | Accessibility, SEO | Screen readers, search |
+| Caption | < 200 chars | Editorial context | Yes |
+| Description | < 500 chars | Extended metadata, rights | Usually no |

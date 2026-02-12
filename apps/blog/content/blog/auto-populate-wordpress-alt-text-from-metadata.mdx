@@ -1,0 +1,77 @@
+---
+title: "Auto-Populate WordPress Alt Text from Metadata"
+description: "A step-by-step guide to reading IPTC fields at upload time and mapping them to WordPress Alt Text, Caption and Description fields."
+date: "2025-12-24"
+tags: ["wordpress", "alt-text", "automation", "iptc"]
+pillar: "wordpress-alt-text"
+series: "wordpress-metadata-workflow"
+draft: true
+---
+
+## The problem
+
+You have spent time embedding IPTC Creator, Caption and Copyright into your images.
+You upload them to WordPress. The media library ignores all of it.
+
+Alt text: empty. Caption: empty. Description: empty.
+
+Every image published without alt text is an accessibility failure and a missed SEO
+opportunity.
+
+## The solution
+
+WordPress fires several hooks during the upload process. By hooking into
+`wp_generate_attachment_metadata`, you can read the IPTC data from the original file
+and populate the media fields automatically.
+
+### The field mapping
+
+| IPTC Field (2:xxx) | WordPress Field |
+|--------------------|----------------|
+| 2:120 Caption/Abstract | Alt Text |
+| 2:105 Headline | Title |
+| 2:120 Caption/Abstract | Caption |
+| 2:116 Copyright Notice | Description |
+| 2:025 Keywords | Tags (optional) |
+
+### The code
+
+```php
+add_filter('wp_generate_attachment_metadata', function($metadata, $attachment_id) {
+    $file = get_attached_file($attachment_id);
+    $iptc = [];
+
+    $info = [];
+    getimagesize($file, $info);
+
+    if (isset($info['APP13'])) {
+        $iptc = iptcparse($info['APP13']);
+    }
+
+    // Map Caption to Alt Text
+    if (!empty($iptc['2#120'][0])) {
+        update_post_meta($attachment_id, '_wp_attachment_image_alt', $iptc['2#120'][0]);
+    }
+
+    // Map Headline to Title
+    if (!empty($iptc['2#105'][0])) {
+        wp_update_post([
+            'ID' => $attachment_id,
+            'post_title' => $iptc['2#105'][0],
+        ]);
+    }
+
+    return $metadata;
+}, 10, 2);
+```
+
+## What about existing images?
+
+You can run a bulk operation across your media library to retroactively read IPTC
+data from originals and populate empty fields. Be cautious — only populate fields
+that are currently empty to avoid overwriting manual edits.
+
+## The ContextEmbed approach
+
+ContextEmbed automates this entire workflow with configurable field mapping, conflict
+resolution and audit logging. No custom code required.

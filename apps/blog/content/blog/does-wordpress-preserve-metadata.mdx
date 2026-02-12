@@ -1,0 +1,58 @@
+---
+title: "Does WordPress Preserve Metadata?"
+description: "WordPress image handling is more nuanced than most people realise. Here is what it keeps, what it strips, and how to fix the gaps."
+date: "2025-12-12"
+tags: ["wordpress", "metadata", "iptc", "testing"]
+pillar: "metadata-survival"
+series: "metadata-deep-dive"
+draft: true
+---
+
+## The short answer
+
+**Partially.** WordPress preserves most embedded metadata in the original uploaded
+file. But it strips metadata from the **resized copies** it generates (thumbnails,
+medium, large).
+
+## What happens at upload time
+
+When you upload an image to WordPress:
+
+1. The **original file** is stored in `wp-content/uploads/` with metadata intact
+2. WordPress generates multiple resized versions (150×150, 300×300, 1024×1024, etc.)
+3. The resized versions are created using GD or Imagick — both strip IPTC/XMP by default
+4. WordPress reads a subset of EXIF data and stores it in the database
+
+The result: the original has metadata, but every version your visitors actually see
+does **not**.
+
+## The media library gap
+
+WordPress extracts some EXIF data (camera, aperture, date) and displays it in the
+media library. But it does **not** extract:
+
+- IPTC Creator
+- IPTC Copyright Notice
+- XMP Rights
+- Keywords
+
+These fields exist in the uploaded file but are invisible in the WordPress admin.
+
+## How to fix it
+
+### Option 1: Preserve metadata in resized images
+
+Use the `wp_generate_attachment_metadata` filter to copy IPTC/XMP from the original
+to each generated size. This requires a custom plugin or a metadata-aware image
+processing library.
+
+### Option 2: Map metadata to media fields
+
+Read IPTC fields at upload time and populate the Alt Text, Caption and Description
+fields automatically. This ensures the editorial content is surfaced even if the
+image metadata is stripped.
+
+### Option 3: Use ContextEmbed
+
+ContextEmbed automates both approaches — preserving metadata in generated sizes
+and mapping IPTC fields to WordPress media-library fields.

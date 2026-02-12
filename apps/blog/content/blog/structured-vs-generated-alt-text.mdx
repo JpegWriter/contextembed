@@ -1,0 +1,57 @@
+---
+title: "Structured vs Generated Alt Text: Which Performs Better?"
+description: "AI-generated alt text is convenient but often generic. Structured alt text from metadata is specific and consistent. Here is how they compare."
+date: "2025-12-21"
+tags: ["alt-text", "ai", "accessibility", "seo"]
+pillar: "ai-ready-images"
+series: "ai-ready-publishing"
+draft: true
+---
+
+## Two approaches to alt text
+
+### AI-generated
+
+Services like Azure Computer Vision, Google Cloud Vision and various WordPress
+plugins automatically generate alt text by analysing the image pixels:
+
+> "A dog standing on a sandy surface near water"
+
+### Structured (from metadata)
+
+Alt text derived from embedded IPTC fields — written by the photographer or editor
+at the point of creation:
+
+> "Golden retriever playing in the waves at Brighton beach, August 2025"
+
+## The comparison
+
+| Factor | AI-Generated | Structured |
+|--------|-------------|------------|
+| Accuracy | Generic, often vague | Specific, contextual |
+| Consistency | Varies between runs | Identical every time |
+| Cost | API call per image | Zero (already embedded) |
+| Latency | 200-500ms per image | Instant (file read) |
+| Brand voice | None | Writer-controlled |
+| Accessibility | Adequate | Superior |
+| SEO value | Moderate | High |
+
+## When AI-generated alt text makes sense
+
+- Legacy archives with thousands of untagged images
+- User-generated content where manual tagging is impractical
+- As a **fallback** when no structured alt text exists
+
+## When structured alt text is better
+
+- Professional content where accuracy matters
+- SEO-sensitive pages where keyword specificity drives traffic
+- Accessibility-critical applications (government, education)
+- Brand-controlled publishing where tone and terminology must be consistent
+
+## The hybrid approach
+
+The best strategy combines both: use structured alt text from IPTC metadata as the
+primary source, and fall back to AI-generated text only when no metadata exists.
+This gives you accuracy where you have invested in metadata, and coverage where
+you have not.

@@ -1,0 +1,62 @@
+---
+title: "Why File Names Still Matter in 2026"
+description: "In an era of AI-powered search and dynamic image serving, the humble file name remains one of the strongest SEO signals for images."
+date: "2025-12-23"
+tags: ["seo", "file-names", "best-practices"]
+pillar: "ai-ready-images"
+series: "ai-ready-publishing"
+draft: true
+---
+
+## The file name is your first impression
+
+Before a search engine reads your alt text, before it parses your IPTC metadata,
+before it analyses the pixels — it reads the file name.
+
+`IMG_4392.jpg` tells a search engine nothing.
+
+`golden-retriever-brighton-beach-sunset-2025.jpg` tells it everything.
+
+## Why file names persist
+
+Unlike metadata (which can be stripped) and alt text (which lives in HTML), the file
+name is part of the URL. It appears in:
+
+- The image URL itself
+- Browser download prompts
+- File listings and search results
+- CDN cache keys
+- Log files and analytics
+
+Changing a file name changes the URL, which affects caching, backlinks and search
+ranking. File names are effectively **permanent** once published.
+
+## Best practices for image file names
+
+### Do
+
+- Use lowercase with hyphens: `product-red-widget-front-view.jpg`
+- Include the primary subject and relevant modifiers
+- Keep it under 60 characters
+- Use the correct file extension (`.jpg`, `.png`, `.webp`)
+
+### Do not
+
+- Use spaces or underscores (harder to read in URLs)
+- Use generic names (`image1.jpg`, `photo.jpg`, `hero.jpg`)
+- Include dates in a non-standard format (`20251223_img.jpg`)
+- Use sequential numbers (`DSC_0001.jpg`)
+- Use the original camera file name
+
+## Automation
+
+If you manage hundreds of images, manual renaming is impractical. Use a naming
+pipeline that derives file names from embedded metadata:
+
+1. Read IPTC Headline or Title
+2. Slugify it (lowercase, hyphenate, remove special characters)
+3. Append a hash or sequence number for uniqueness
+4. Apply the correct extension based on format
+
+This approach ensures every image has a semantic, SEO-friendly file name without
+manual intervention.

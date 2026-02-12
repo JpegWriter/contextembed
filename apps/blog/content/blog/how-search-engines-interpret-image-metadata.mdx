@@ -1,0 +1,68 @@
+---
+title: "How Search Engines Interpret Image Metadata"
+description: "Google, Bing and AI-powered search tools use image metadata in specific ways. Understanding those signals helps you optimise for discovery."
+date: "2025-12-19"
+tags: ["seo", "metadata", "search-engines", "google"]
+pillar: "ai-ready-images"
+series: "ai-ready-publishing"
+draft: true
+---
+
+## What Google reads
+
+Google has confirmed it uses the following signals for image search ranking:
+
+1. **Alt text** — the primary textual signal for image content
+2. **Page title and headings** — context around the image
+3. **File name** — semantic file names improve understanding
+4. **Caption text** — visible text near the image
+5. **Image sitemap data** — structured information about images
+
+What Google has **not** confirmed (but evidence suggests it reads):
+
+- IPTC metadata in JPEG files
+- XMP data in JPEG and PNG files
+- EXIF data (primarily for date and location)
+
+## The structured data advantage
+
+JSON-LD `ImageObject` schema provides explicit, machine-readable context:
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "ImageObject",
+  "name": "Golden retriever on Brighton beach at sunset",
+  "description": "A golden retriever playing in the waves...",
+  "contentUrl": "https://example.com/images/golden-retriever-beach.jpg",
+  "creator": {
+    "@type": "Person",
+    "name": "Jane Smith"
+  },
+  "copyrightHolder": {
+    "@type": "Person",
+    "name": "Jane Smith"
+  },
+  "dateCreated": "2025-08-15"
+}
+```
+
+This structured data reinforces the signals from alt text and metadata, giving
+search engines high confidence in their understanding of the image.
+
+## Bing and other engines
+
+Bing Visual Search reads embedded metadata more aggressively than Google. IPTC
+Creator and Copyright fields appear in Bing Image Search results for properly
+tagged images.
+
+DuckDuckGo relies primarily on alt text and page context, with limited metadata
+parsing.
+
+## Practical recommendations
+
+1. Always write alt text — it is the highest-signal channel
+2. Use semantic file names — they are the second-highest signal
+3. Embed IPTC metadata — it reinforces alt text and helps Bing
+4. Add JSON-LD ImageObject — it is the most explicit signal available
+5. Include images in your XML sitemap with `<image:image>` tags

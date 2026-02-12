@@ -1,0 +1,54 @@
+---
+title: "EXIF vs IPTC vs XMP: What Survives Online"
+description: "A practical comparison of the three major image metadata standards, their overlap, and which fields survive the journey from camera to web."
+date: "2025-12-10"
+tags: ["exif", "iptc", "xmp", "metadata", "standards"]
+pillar: "metadata-survival"
+series: "metadata-deep-dive"
+draft: true
+---
+
+## Three standards, one messy history
+
+Image metadata did not start as a unified system. It grew in layers:
+
+### EXIF (1995)
+
+Exchangeable Image File Format. Created by camera manufacturers to store technical
+shooting data. Think shutter speed, aperture, ISO, GPS, date taken.
+
+**Strengths:** universally written by cameras.
+**Weaknesses:** no rights fields, no editorial fields, limited to specific data types.
+
+### IPTC IIM (1991, updated)
+
+International Press Telecommunications Council. Designed for news photography.
+Stores editorial data: headline, caption, creator, copyright, keywords.
+
+**Strengths:** widely supported by photo editors and agencies.
+**Weaknesses:** fixed field lengths, binary format, harder to extend.
+
+### XMP (2001)
+
+Extensible Metadata Platform by Adobe. XML-based, unlimited extensibility. Can
+store anything IPTC can plus custom schemas.
+
+**Strengths:** extensible, human-readable, supports complex rights expressions.
+**Weaknesses:** not universally written by cameras, larger file overhead.
+
+## The overlap problem
+
+IPTC and XMP overlap significantly. Both can store Creator, Copyright, Caption and
+Keywords. When they disagree, tools handle the conflict differently:
+
+- **Lightroom** writes both IPTC and XMP, keeping them in sync
+- **Photoshop** prefers XMP but reads IPTC
+- **ExifTool** lets you read and write any field independently
+
+The safest approach: write both IPTC and XMP, let EXIF handle the camera data, and
+validate that all three agree before publishing.
+
+## Survival by standard
+
+In our testing, XMP was the most reliably preserved by modern tools and platforms,
+followed by IPTC, with EXIF camera data being the most frequently stripped.

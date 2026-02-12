@@ -1,0 +1,73 @@
+---
+title: "The Future of Image Verification in AI Systems"
+description: "As AI-generated images become indistinguishable from photographs, verification of origin and authenticity becomes critical. Here is where the field is heading."
+date: "2026-01-16"
+tags: ["ai", "verification", "c2pa", "provenance", "future"]
+pillar: "provenance-archive"
+series: "archive-strategy"
+draft: true
+---
+
+## The authenticity crisis
+
+In 2026, AI-generated images are photorealistic. A generated portrait is
+indistinguishable from a photograph to the human eye. A generated product image
+can replace a studio photoshoot. A generated news photo can fabricate an event that
+never happened.
+
+The question "is this image real?" is no longer answerable by looking at it.
+
+## The verification stack
+
+The industry is converging on a multi-layered approach to image verification:
+
+### Layer 1: Embedded metadata (IPTC/XMP)
+
+Traditional metadata fields — Creator, Copyright, Source — provide basic provenance.
+They are not tamper-proof but they are widely supported and easy to implement.
+
+### Layer 2: Content Credentials (C2PA)
+
+The Coalition for Content Provenance and Authenticity (C2PA) provides a
+cryptographic manifest that records:
+
+- Who created the image
+- What tool was used (camera, editor, AI model)
+- Every edit made since creation
+- A hash chain proving the manifest has not been tampered with
+
+Camera manufacturers (Leica, Sony, Nikon) and software vendors (Adobe, Microsoft)
+are shipping C2PA support. This is the most promising technical standard for
+image verification.
+
+### Layer 3: Platform verification
+
+Platforms like Google, Meta and X are beginning to label AI-generated content. This
+relies on a combination of C2PA manifests, invisible watermarks (SynthID), and
+classifier models that detect AI-generated patterns.
+
+### Layer 4: Blockchain and distributed ledgers
+
+Some systems record image hashes on a blockchain to provide immutable proof of
+existence at a point in time. This is useful for timestamping but does not prove
+authorship on its own.
+
+## What this means for creators
+
+1. **Embed metadata now** — it is the foundation for every verification layer
+2. **Adopt C2PA when available** — it is becoming the industry standard
+3. **Archive originals** — keep the highest-fidelity version with full provenance
+4. **Maintain a verifiable chain of custody** — every handoff should be logged
+
+## What this means for businesses
+
+- Image governance policies must account for AI-generated content
+- Procurement processes should require provenance data for purchased images
+- Legal teams should understand C2PA manifests as evidence
+- Publishing pipelines should verify provenance before publication
+
+## The ContextEmbed position
+
+ContextEmbed focuses on Layer 1 (embedded metadata) with a pathway to Layer 2
+(C2PA). By building a robust metadata foundation today, your images are ready for
+the verification systems of tomorrow.

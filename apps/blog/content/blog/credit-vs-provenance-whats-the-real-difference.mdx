@@ -1,0 +1,53 @@
+---
+title: "Credit vs Provenance: What is the Real Difference?"
+description: "Credit tells you who to thank. Provenance tells you who created it, when, where, and whether the file has been modified. They are not the same thing."
+date: "2025-12-05"
+tags: ["authorship", "provenance", "definitions"]
+pillar: "authorship-integrity"
+series: "authorship-fundamentals"
+draft: true
+---
+
+## Credit is social. Provenance is technical.
+
+When a photographer is credited in a magazine caption — "Photo: Jane Smith" — that
+is **credit**. It is a social convention, easily removed, edited or fabricated.
+
+When the same image carries IPTC Creator, XMP Rights, a C2PA manifest and a
+timestamped hash — that is **provenance**. It is technical, machine-readable and
+tamper-evident.
+
+## Why the distinction matters
+
+Credit can be:
+
+- Added by anyone (not just the creator)
+- Changed without detection
+- Lost when content is reshared
+
+Provenance, by contrast:
+
+- Is embedded at the point of creation
+- Can be cryptographically verified
+- Survives platform processing (when using C2PA)
+
+## The spectrum
+
+In practice, most images sit somewhere on a spectrum:
+
+| Level | What exists | Trust level |
+|-------|------------|-------------|
+| None | No creator info anywhere | Zero |
+| Caption credit | "Photo: Jane Smith" in surrounding text | Low |
+| IPTC metadata | Creator field embedded in file | Medium |
+| Full provenance | IPTC + C2PA manifest + hash chain | High |
+
+The goal is to move every image as far right on this spectrum as your workflow
+allows.
+
+## Practical advice
+
+1. Always embed IPTC Creator and Copyright Notice — it costs nothing
+2. Use C2PA-compatible tools where available
+3. Do not rely on platform captions as your only form of attribution
+4. Treat credit as a nice-to-have and provenance as a must-have

@@ -1,0 +1,56 @@
+---
+title: "Why Social Platforms Strip Metadata"
+description: "Instagram, X, Facebook and TikTok all remove embedded metadata from uploaded images. Here is why they do it and what it means for creators."
+date: "2025-12-07"
+tags: ["metadata", "social-media", "privacy", "platforms"]
+pillar: "authorship-integrity"
+series: "authorship-fundamentals"
+draft: true
+---
+
+## It is not malice — it is engineering
+
+When Instagram strips EXIF GPS data from your uploaded photo, it is not trying to
+erase your authorship. It is trying to protect your location privacy. When Twitter/X
+re-encodes your JPEG, it is optimising for bandwidth and storage. The metadata loss
+is a side effect, not a goal.
+
+But the result is the same: creator information is destroyed.
+
+## What gets stripped and why
+
+### GPS and location data
+
+Almost every platform strips EXIF GPS coordinates. This is a **privacy** decision —
+users often do not realise their photos contain precise location data.
+
+### Camera and device data
+
+Some platforms strip EXIF Make, Model and Serial Number fields. This is partly
+privacy (device fingerprinting) and partly to reduce file size.
+
+### Creator and rights fields
+
+IPTC Creator, Copyright Notice and XMP Rights are stripped by most social platforms.
+This is usually a side effect of image re-encoding — the platform generates a new
+file and does not copy non-visual metadata.
+
+## The re-encoding problem
+
+Social platforms do not serve your original file. They:
+
+1. Decode the uploaded image
+2. Resize it to platform-specific dimensions
+3. Re-encode it (often as WebP or lower-quality JPEG)
+4. Serve the new file
+
+Step 3 is where metadata dies. The re-encoder writes a clean file with no IPTC,
+no XMP, and minimal EXIF (if any).
+
+## What creators can do
+
+- Accept that social-platform copies will lose metadata
+- Focus on preserving metadata in **source** files and **owned** platforms
+- Use Content Credentials (C2PA) which some platforms are beginning to preserve
+- Add visible attribution (watermarks, overlays) as a fallback
+- Publish canonical versions on platforms you control (your own site, blog)

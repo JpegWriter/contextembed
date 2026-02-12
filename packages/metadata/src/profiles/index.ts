@@ -14,6 +14,7 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as os from 'os';
+import * as crypto from 'crypto';
 import { ExifTool } from 'exiftool-vendored';
 
 import {
@@ -23,6 +24,8 @@ import {
   AssetContext,
   EmbedOptions,
   ProfileEmbedResult,
+  ForensicContext,
+  ForensicEmbedResult,
 } from './types';
 import { productionStandard } from './production-standard';
 import { labForensic } from './lab-forensic';
@@ -44,6 +47,14 @@ export function getProfile(name: ProfileName): EmbedProfile {
   if (!profile) {
     throw new Error(`Unknown export profile: ${name}`);
   }
+
+  // CE_LAB_FORENSIC is internal-only — block unless LAB_MODE=true
+  if (name === 'CE_LAB_FORENSIC' && process.env.LAB_MODE !== 'true') {
+    throw new Error(
+      'CE_LAB_FORENSIC is internal only. Set LAB_MODE=true to enable.',
+    );
+  }
+
   return profile;
 }
 
@@ -86,9 +97,17 @@ const CE_NAMESPACE_CONFIG = `
     GROUPS => { 0 => 'XMP', 1 => 'XMP-CE', 2 => 'Image' },
     NAMESPACE => { 'CE' => 'http://contextembed.com/ns/1.0/' },
     WRITABLE => 'string',
-    Version        => { },
-    ExportProfile  => { },
-    Timestamp      => { },
+
+    # Shared (production + forensic)
+    Version           => { },
+    ExportProfile     => { },
+    Timestamp         => { },
+
+    # Forensic-only (CE_LAB_FORENSIC)
+    RunID             => { },
+    BaselineID        => { },
+    OriginalHash      => { },
+    FileSizeOriginal  => { Writable => 'integer' },
 );
 `;
 
@@ -226,6 +245,110 @@ export async function embedWithProfile(
       error: error instanceof Error ? error.message : String(error),
     };
   }
+}
+
+// =============================================================================
+// FORENSIC BASELINE ENTRY POINT
+// =============================================================================
+
+/**
+ * Compute SHA-256 of a file on disk.
+ */
+async function sha256File(filePath: string): Promise<string> {
+  const buf = await fs.readFile(filePath);
+  return crypto.createHash('sha256').update(buf).digest('hex');
+}
+
+/**
+ * Embed a forensic baseline image for Survival Lab testing.
+ *
+ * This is the dedicated entry point for CE_LAB_FORENSIC.  It:
+ *   1. Computes the SHA-256 of the original file.
+ *   2. Renames the output to include the baselineID long-filename marker.
+ *   3. Delegates to embedWithProfile() with ForensicContext injected.
+ *   4. Re-reads the full metadata snapshot and computes a post-write hash.
+ *
+ * Requires LAB_MODE=true in the environment.
+ *
+ * @example
+ * ```bash
+ * LAB_MODE=true npx ts-node -e "
+ *   import { embedForensicBaseline } from '@contextembed/metadata';
+ *   embedForensicBaseline(
+ *     './test-images/sample.jpg',
+ *     '01',
+ *     { displayName: 'Test User' },
+ *   ).then(r => console.log(JSON.stringify(r, null, 2)));
+ * "
+ * ```
+ */
+export async function embedForensicBaseline(
+  filePath: string,
+  baselineID: string,
+  user: UserContext,
+  outputDir?: string,
+): Promise<ForensicEmbedResult> {
+  // 1. Compute original hash + size
+  const stat = await fs.stat(filePath);
+  const originalHash = await sha256File(filePath);
+  const fileSizeOriginal = stat.size;
+
+  // 2. Build output path with long-filename marker
+  const ext = path.extname(filePath);
+  const dir = outputDir || path.dirname(filePath);
+  const outputPath = path.join(
+    dir,
+    `CE_LAB_${baselineID}_LONG_FILENAME_TEST${ext}`,
+  );
+
+  // 3. Inject ForensicContext into asset via hidden _forensic field
+  const forensicCtx: ForensicContext = {
+    baselineID,
+    originalHash,
+    fileSizeOriginal,
+  };
+
+  const asset: AssetContext & { _forensic: ForensicContext } = {
+    _forensic: forensicCtx,
+  };
+
+  // 4. Delegate to the standard embed pipeline
+  const result = await embedWithProfile(
+    filePath,
+    'CE_LAB_FORENSIC',
+    user,
+    asset as unknown as AssetContext,
+    { overwrite: true },
+    outputPath,
+  );
+
+  // 5. Post-write: compute embedded hash + full metadata snapshot
+  let embeddedHash = '';
+  let metadataSnapshot: Record<string, unknown> = {};
+
+  if (result.success) {
+    embeddedHash = await sha256File(outputPath);
+
+    try {
+      const et = await getExifTool();
+      const tags = await et.read(outputPath);
+      metadataSnapshot = Object.fromEntries(
+        Object.entries(tags as Record<string, unknown>).filter(
+          ([_, v]) => v !== undefined && v !== null,
+        ),
+      );
+    } catch {
+      result.warnings.push('Failed to read metadata snapshot after embed');
+    }
+  }
+
+  return {
+    ...result,
+    baselineID,
+    originalHash,
+    embeddedHash,
+    metadataSnapshot,
+  };
 }
 
 // =============================================================================

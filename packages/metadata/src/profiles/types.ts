@@ -101,3 +101,40 @@ export interface ProfileEmbedResult {
   durationMs: number;
   error?: string;
 }
+
+// =============================================================================
+// FORENSIC LAB CONTEXT
+// =============================================================================
+
+/**
+ * Additional context required by the CE_LAB_FORENSIC profile.
+ * Provides the baseline identifier and original file hash.
+ */
+export interface ForensicContext {
+  /** Baseline identifier — e.g. "01", "02" — embedded in every marker */
+  baselineID: string;
+
+  /** SHA-256 hash of the original file (computed before any embed) */
+  originalHash: string;
+
+  /** Original file size in bytes */
+  fileSizeOriginal: number;
+}
+
+/**
+ * Extended result returned by embedForensicBaseline().
+ * Includes pre/post hashes and a full metadata snapshot for diffing.
+ */
+export interface ForensicEmbedResult extends ProfileEmbedResult {
+  /** Baseline identifier */
+  baselineID: string;
+
+  /** SHA-256 of the original (pre-embed) file */
+  originalHash: string;
+
+  /** SHA-256 of the embedded (post-write) file */
+  embeddedHash: string;
+
+  /** Full metadata snapshot read back after embed (key→value) */
+  metadataSnapshot: Record<string, unknown>;
+}

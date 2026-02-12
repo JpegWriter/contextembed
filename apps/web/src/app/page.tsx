@@ -22,6 +22,12 @@ export default function HomePage() {
           </div>
           <div className="flex items-center gap-6">
             <Link
+              href="/pillars"
+              className="text-xs font-bold text-steel-400 uppercase tracking-wider hover:text-white transition-colors"
+            >
+              Pillars
+            </Link>
+            <Link
               href="/pricing"
               className="text-xs font-bold text-steel-400 uppercase tracking-wider hover:text-white transition-colors"
             >

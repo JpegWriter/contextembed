@@ -82,16 +82,18 @@ survivalLabRouter.get('/platforms', asyncHandler(async (_req, res) => {
  */
 survivalLabRouter.post('/platforms/seed', asyncHandler(async (_req, res) => {
   const phase1Platforms = [
-    { slug: 'wordpress_selfhosted', name: 'WordPress (Self-Hosted)', category: 'CMS', freeTier: false, notes: 'Depends on hosting provider' },
-    { slug: 'wordpress_com', name: 'WordPress.com', category: 'CMS', freeTier: true, notes: 'Free but limited features' },
-    { slug: 'webflow', name: 'Webflow', category: 'CMS', freeTier: true, notes: 'Paid for CMS/hosting features' },
-    { slug: 'medium', name: 'Medium', category: 'Publishing', freeTier: true, notes: undefined },
-    { slug: 'substack', name: 'Substack', category: 'Publishing', freeTier: true, notes: undefined },
-    { slug: 'pixieset', name: 'Pixieset', category: 'Proofing', freeTier: true, notes: 'Free basic tier' },
-    { slug: 'dropbox', name: 'Dropbox', category: 'Storage', freeTier: true, notes: undefined },
-    { slug: 'google_drive', name: 'Google Drive', category: 'Storage', freeTier: true, notes: undefined },
-    { slug: 'wetransfer', name: 'WeTransfer', category: 'Transfer', freeTier: true, notes: undefined },
-    { slug: 'instagram', name: 'Instagram', category: 'Social', freeTier: true, notes: 'Known to strip most metadata' },
+    { slug: 'wordpress_selfhosted', name: 'WordPress (Self-Hosted)', category: 'CMS', freeTier: false, notes: 'Powers ~40% of the web. Test: original in Media Library, resized derivatives, with/without CDN, with CE WP plugin active.' },
+    { slug: 'wordpress_com', name: 'WordPress.com (Hosted)', category: 'CMS', freeTier: true, notes: 'Managed CMS — likely more aggressive stripping than self-hosted. Test free plan vs business plan if possible.' },
+    { slug: 'squarespace', name: 'Squarespace', category: 'Website Builder', freeTier: false, notes: 'Popular with photographers. Test: original upload, re-download via front-end, gallery vs single image block.' },
+    { slug: 'wix', name: 'Wix', category: 'Website Builder', freeTier: true, notes: 'Heavy re-encoding pipeline. Test: upload → publish → download, thumbnail vs full-size.' },
+    { slug: 'webflow', name: 'Webflow', category: 'Website Builder', freeTier: true, notes: 'Used by agencies and startups. Test: CMS upload, static asset upload, CDN behaviour.' },
+    { slug: 'shopify', name: 'Shopify', category: 'Ecommerce', freeTier: false, notes: 'Product imagery critical for authenticity. Test: product image upload, re-download original, CDN derivative.' },
+    { slug: 'instagram', name: 'Instagram', category: 'Social', freeTier: true, notes: 'Most assumed "portfolio" platform. Test: feed post, re-download via browser, inspect EXIF.' },
+    { slug: 'facebook', name: 'Facebook', category: 'Social', freeTier: true, notes: 'Business pages still widely used. Test: page upload, direct download, image URL fetch.' },
+    { slug: 'linkedin', name: 'LinkedIn', category: 'Social', freeTier: true, notes: 'Corporate proof-of-work platform. Test: post image, company page upload, re-download.' },
+    { slug: 'dropbox', name: 'Dropbox', category: 'Cloud Storage', freeTier: true, notes: 'Baseline "safe storage" test. Test: upload, preview, direct download.' },
+    { slug: 'google_drive', name: 'Google Drive', category: 'Cloud Storage', freeTier: true, notes: 'Common client delivery method. Test: upload, preview download, full download.' },
+    { slug: 'smugmug', name: 'SmugMug', category: 'Photography', freeTier: false, notes: 'Built for photographers — interesting survival comparison. Test: gallery upload, client download, original file retention.' },
   ];
   
   for (const platform of phase1Platforms) {

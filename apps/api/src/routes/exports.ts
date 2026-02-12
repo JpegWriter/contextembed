@@ -52,6 +52,11 @@ import {
   resolveCredit,
   type WebVariantOptions,
 } from '../services/web-preview-generator';
+import {
+  generateCaseStudy,
+  type CaseStudyAsset,
+  DEFAULT_CASE_STUDY_OPTIONS,
+} from '../services/case-study-generator';
 import { assertEntitledOrThrow, recordSuccessfulAction } from '../services/entitlements';
 
 export const exportsRouter: IRouter = Router();
@@ -650,6 +655,17 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
       quality: z.number().min(50).max(100).default(82),
       style: z.enum(['clean_bar_v1']).default('clean_bar_v1'),
     }).optional(),
+    // Case Study Pack options (v1)
+    caseStudyPack: z.object({
+      enabled: z.boolean().default(false),
+      includeMetadataComparison: z.boolean().default(true),
+      includeGallery: z.boolean().default(true),
+      includeStructuredData: z.boolean().default(true),
+      includeVerification: z.boolean().default(true),
+      thumbnailMaxEdge: z.number().min(200).max(1600).default(800),
+      title: z.string().max(200).optional(),
+      summary: z.string().max(2000).optional(),
+    }).optional(),
   });
   
   const body = AdvancedExportSchema.parse(req.body);
@@ -949,11 +965,11 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
       }, new Date().getFullYear());
       
       // Process each successfully exported file
-      const successfulFiles = exportedFiles.filter(f => f.success && f.outputPath);
+      const successfulFiles = exportedFiles.filter(f => f.success && f.exportedPath);
       
       for (let i = 0; i < successfulFiles.length; i++) {
         const file = successfulFiles[i]!;
-        const baseName = path.basename(file.outputPath, path.extname(file.outputPath));
+        const baseName = path.basename(file.exportedPath, path.extname(file.exportedPath));
         const webOutputPath = path.join(webFolder, `${baseName}-web.jpg`);
         
         emitProgress(exportRecord.id, {
@@ -977,7 +993,7 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
             : undefined;
           
           await generateWebVariant(
-            file.outputPath,
+            file.exportedPath,
             webOutputPath,
             {
               maxEdge: webPackOptions.maxEdge ?? 1200,
@@ -1001,6 +1017,92 @@ exportsRouter.post('/advanced', asyncHandler(async (req, res) => {
       }
       
       logMemory(`web-pack-done[${requestId}]`, { count: successfulFiles.length });
+    }
+    
+    // ─────────────────────────────────────────────────────────────────────────
+    // Case Study Pack v1: Generate self-contained HTML case study
+    // ─────────────────────────────────────────────────────────────────────────
+    const caseStudyPackOptions = body.caseStudyPack;
+    if (caseStudyPackOptions?.enabled) {
+      emitProgress(exportRecord.id, {
+        stage: 'converting',
+        message: 'Generating Case Study Pack...',
+      });
+
+      // Build case study assets from successfully exported files
+      const successfulForCaseStudy = exportedFiles.filter((f: any) => f.success && f.exportedPath);
+      const caseStudyAssets: CaseStudyAsset[] = [];
+
+      for (const file of successfulForCaseStudy) {
+        const asset = completedAssets.find(a => a?.id === file.assetId);
+        const metadataResult = await metadataResultRepository.findLatestByAsset(file.assetId);
+        const metadata = (metadataResult?.result as Record<string, any>) || {};
+
+        // Check for verification token
+        let verificationToken: string | undefined;
+        let verificationUrl: string | undefined;
+        if (embedVerificationLink) {
+          const growthImage = await (prisma.growthImage as any).findFirst({
+            where: {
+              projectId,
+              filename: asset?.originalFilename,
+              publicVerificationEnabled: true,
+              verificationToken: { not: null },
+              verificationRevokedAt: null,
+            },
+            select: { verificationToken: true },
+          });
+          if (growthImage?.verificationToken) {
+            verificationToken = growthImage.verificationToken as string;
+            verificationUrl = buildVerificationUrl(verificationToken);
+          }
+        }
+
+        caseStudyAssets.push({
+          assetId: file.assetId,
+          originalFilename: file.originalFilename,
+          exportedPath: file.exportedPath,
+          metadata,
+          verificationToken,
+          verificationUrl,
+        });
+      }
+
+      if (caseStudyAssets.length > 0) {
+        const caseStudyResult = await generateCaseStudy(
+          exportFolder!,
+          caseStudyAssets,
+          {
+            projectName: project.name,
+            projectCreatedAt: project.createdAt?.toISOString?.() || new Date().toISOString(),
+            brand: businessContext.brand,
+            photographerName: businessContext.photographerName,
+            credit: businessContext.credit,
+            city: businessContext.city,
+            country: businessContext.country,
+            copyrightTemplate: businessContext.copyrightTemplate,
+            usageTerms: businessContext.usageTerms,
+            governancePolicy: project.visualAuthenticityPolicy || 'conditional',
+            totalAssets: completedAssets.length,
+            exportedAssets: caseStudyAssets.length,
+          },
+          {
+            includeMetadataComparison: caseStudyPackOptions.includeMetadataComparison ?? true,
+            includeGallery: caseStudyPackOptions.includeGallery ?? true,
+            includeStructuredData: caseStudyPackOptions.includeStructuredData ?? true,
+            includeVerification: caseStudyPackOptions.includeVerification ?? true,
+            thumbnailMaxEdge: caseStudyPackOptions.thumbnailMaxEdge ?? 800,
+            title: caseStudyPackOptions.title,
+            summary: caseStudyPackOptions.summary,
+          },
+        );
+
+        if (!caseStudyResult.success) {
+          console.error(`[CaseStudy] Pack generation failed: ${caseStudyResult.error}`);
+        }
+      }
+
+      logMemory(`case-study-pack-done[${requestId}]`, { count: caseStudyAssets.length });
     }
     
     // Generate manifest if requested

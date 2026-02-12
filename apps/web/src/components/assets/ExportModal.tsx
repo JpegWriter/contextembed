@@ -13,6 +13,7 @@ import {
   Loader2,
   Check,
   FileImage,
+  FileText,
   Sparkles,
   ChevronDown,
 } from 'lucide-react';
@@ -89,6 +90,16 @@ interface WebPackOptions {
   quality: number;
 }
 
+interface CaseStudyPackOptions {
+  enabled: boolean;
+  includeMetadataComparison: boolean;
+  includeGallery: boolean;
+  includeStructuredData: boolean;
+  includeVerification: boolean;
+  title: string;
+  summary: string;
+}
+
 interface ExportModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -144,6 +155,17 @@ export function ExportModal({
     quality: 82,
   });
 
+  // Case Study Pack options (v1)
+  const [caseStudyPack, setCaseStudyPack] = useState<CaseStudyPackOptions>({
+    enabled: false,
+    includeMetadataComparison: true,
+    includeGallery: true,
+    includeStructuredData: true,
+    includeVerification: true,
+    title: '',
+    summary: '',
+  });
+
   // Reset when modal opens
   useEffect(() => {
     if (isOpen) {
@@ -158,6 +180,15 @@ export function ExportModal({
         includeCredit: true,
         maxEdge: 1200,
         quality: 82,
+      });
+      setCaseStudyPack({
+        enabled: false,
+        includeMetadataComparison: true,
+        includeGallery: true,
+        includeStructuredData: true,
+        includeVerification: true,
+        title: '',
+        summary: '',
       });
     }
   }, [isOpen]);
@@ -253,6 +284,16 @@ export function ExportModal({
         options: selectedPreset === 'custom' ? options : undefined,
         // Include Web Preview Pack options if enabled
         webPack: webPack.enabled ? webPack : undefined,
+        // Include Case Study Pack options if enabled
+        caseStudyPack: caseStudyPack.enabled ? {
+          enabled: true,
+          includeMetadataComparison: caseStudyPack.includeMetadataComparison,
+          includeGallery: caseStudyPack.includeGallery,
+          includeStructuredData: caseStudyPack.includeStructuredData,
+          includeVerification: caseStudyPack.includeVerification,
+          title: caseStudyPack.title || undefined,
+          summary: caseStudyPack.summary || undefined,
+        } : undefined,
       });
       
       // Connect to SSE for progress updates during processing
@@ -618,6 +659,90 @@ export function ExportModal({
                     
                     <div className="text-[10px] text-gray-500">
                       Caption drawn from headline/title • Credit from your profile settings
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Case Study Pack Section */}
+              <div className="mt-3 p-4 bg-gradient-to-r from-emerald-900/20 to-teal-900/20 border border-emerald-700/30 rounded-none">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={caseStudyPack.enabled}
+                    onChange={(e) => setCaseStudyPack(c => ({ ...c, enabled: e.target.checked }))}
+                    className="rounded border-gray-600 bg-gray-800 text-emerald-500 focus:ring-emerald-500"
+                  />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-emerald-400" />
+                      <span className="text-sm font-medium text-white">Generate Case Study Pack</span>
+                      <span className="px-1.5 py-0.5 text-[10px] font-medium bg-emerald-600/30 text-emerald-300 rounded">
+                        Portfolio-ready
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Creates a self-contained HTML case study with thumbnails, metadata, and schema.org markup in a <code className="text-emerald-400">case-study/</code> folder
+                    </p>
+                  </div>
+                </label>
+
+                {caseStudyPack.enabled && (
+                  <div className="mt-4 pl-7 space-y-3 border-t border-emerald-700/20 pt-3">
+                    <div className="flex flex-wrap gap-x-6 gap-y-2">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={caseStudyPack.includeGallery}
+                          onChange={(e) => setCaseStudyPack(c => ({ ...c, includeGallery: e.target.checked }))}
+                          className="rounded border-gray-600 bg-gray-800 text-emerald-500 focus:ring-emerald-500"
+                        />
+                        <span className="text-xs text-gray-300">Image gallery</span>
+                      </label>
+                      
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={caseStudyPack.includeMetadataComparison}
+                          onChange={(e) => setCaseStudyPack(c => ({ ...c, includeMetadataComparison: e.target.checked }))}
+                          className="rounded border-gray-600 bg-gray-800 text-emerald-500 focus:ring-emerald-500"
+                        />
+                        <span className="text-xs text-gray-300">Metadata details</span>
+                      </label>
+
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={caseStudyPack.includeVerification}
+                          onChange={(e) => setCaseStudyPack(c => ({ ...c, includeVerification: e.target.checked }))}
+                          className="rounded border-gray-600 bg-gray-800 text-emerald-500 focus:ring-emerald-500"
+                        />
+                        <span className="text-xs text-gray-300">Verification badges</span>
+                      </label>
+
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={caseStudyPack.includeStructuredData}
+                          onChange={(e) => setCaseStudyPack(c => ({ ...c, includeStructuredData: e.target.checked }))}
+                          className="rounded border-gray-600 bg-gray-800 text-emerald-500 focus:ring-emerald-500"
+                        />
+                        <span className="text-xs text-gray-300">Schema.org SEO</span>
+                      </label>
+                    </div>
+
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="Custom title (optional — defaults to project name)"
+                        value={caseStudyPack.title}
+                        onChange={(e) => setCaseStudyPack(c => ({ ...c, title: e.target.value }))}
+                        className="w-full px-3 py-1.5 bg-gray-800 border border-gray-700 text-sm text-gray-200 placeholder-gray-600 rounded-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
+                      />
+                    </div>
+                    
+                    <div className="text-[10px] text-gray-500">
+                      Self-contained HTML • Works offline • Base64-inlined thumbnails • Print-friendly
                     </div>
                   </div>
                 )}

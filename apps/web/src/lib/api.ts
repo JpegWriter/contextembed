@@ -305,6 +305,17 @@ export const exportsApi = {
       maxEdge?: number;
       quality?: number;
     };
+    // Case Study Pack options (v1)
+    caseStudyPack?: {
+      enabled: boolean;
+      includeMetadataComparison?: boolean;
+      includeGallery?: boolean;
+      includeStructuredData?: boolean;
+      includeVerification?: boolean;
+      thumbnailMaxEdge?: number;
+      title?: string;
+      summary?: string;
+    };
   }) =>
     fetchWithAuth('/exports/advanced', {
       token,

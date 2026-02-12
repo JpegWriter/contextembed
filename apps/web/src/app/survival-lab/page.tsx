@@ -46,13 +46,15 @@ export default function SurvivalLabPage() {
   const [creating, setCreating] = useState(false);
 
   useEffect(() => {
+    if (!supabase) return;
     loadData();
-  }, []);
+  }, [supabase]);
 
   async function loadData() {
     try {
       setLoading(true);
-      const { data: { session } } = await supabase!.auth.getSession();
+      if (!supabase) return;
+      const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         router.push('/login');
         return;
@@ -76,7 +78,8 @@ export default function SurvivalLabPage() {
   async function seedPlatforms() {
     try {
       setSeeding(true);
-      const { data: { session } } = await supabase!.auth.getSession();
+      if (!supabase) return;
+      const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
       
       await survivalLabApi.seedPlatforms(session.access_token);
@@ -98,7 +101,8 @@ export default function SurvivalLabPage() {
     
     try {
       setCreating(true);
-      const { data: { session } } = await supabase!.auth.getSession();
+      if (!supabase) return;
+      const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
       
       const result = await survivalLabApi.createRun(session.access_token, {

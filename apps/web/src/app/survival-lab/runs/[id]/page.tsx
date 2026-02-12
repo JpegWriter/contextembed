@@ -114,13 +114,15 @@ export default function TestRunPage() {
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
+    if (!supabase) return;
     loadRunData();
-  }, [runId]);
+  }, [supabase, runId]);
 
   async function loadRunData() {
     try {
       setLoading(true);
-      const { data: { session } } = await supabase!.auth.getSession();
+      if (!supabase) return;
+      const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         router.push('/login');
         return;
@@ -164,7 +166,8 @@ export default function TestRunPage() {
     
     try {
       setAttaching(true);
-      const { data: { session } } = await supabase!.auth.getSession();
+      if (!supabase) return;
+      const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
       
       await survivalLabApi.attachBaselines(
@@ -192,7 +195,8 @@ export default function TestRunPage() {
     
     try {
       setUploading(true);
-      const { data: { session } } = await supabase!.auth.getSession();
+      if (!supabase) return;
+      const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
       
       const result = await survivalLabApi.uploadScenario(
@@ -264,7 +268,8 @@ export default function TestRunPage() {
             href={survivalLabApi.exportCsv('', runId)}
             onClick={async (e) => {
               e.preventDefault();
-              const { data: { session } } = await supabase!.auth.getSession();
+              if (!supabase) return;
+              const { data: { session } } = await supabase.auth.getSession();
               if (session) {
                 window.location.href = survivalLabApi.exportCsv(session.access_token, runId);
               }

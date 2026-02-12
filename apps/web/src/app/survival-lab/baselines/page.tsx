@@ -50,13 +50,15 @@ export default function BaselinesPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   useEffect(() => {
+    if (!supabase) return;
     loadBaselines();
-  }, []);
+  }, [supabase]);
 
   async function loadBaselines() {
     try {
       setLoading(true);
-      const { data: { session } } = await supabase!.auth.getSession();
+      if (!supabase) return;
+      const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         router.push('/login');
         return;
@@ -80,7 +82,8 @@ export default function BaselinesPage() {
     
     try {
       setUploading(true);
-      const { data: { session } } = await supabase!.auth.getSession();
+      if (!supabase) return;
+      const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
       
       await survivalLabApi.uploadBaseline(
@@ -105,7 +108,8 @@ export default function BaselinesPage() {
   async function verifyIntegrity(id: string) {
     try {
       setVerifying(id);
-      const { data: { session } } = await supabase!.auth.getSession();
+      if (!supabase) return;
+      const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
       
       const result = await survivalLabApi.verifyBaseline(session.access_token, id);

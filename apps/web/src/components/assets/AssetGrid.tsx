@@ -39,7 +39,7 @@ export interface Asset {
   originalFilename: string;
   mimeType: string;
   size: number;
-  status: 'pending' | 'processing' | 'analyzing' | 'completed' | 'failed' | 'approved';
+  status: 'pending' | 'processing' | 'analyzing' | 'synthesizing' | 'embedding' | 'completed' | 'failed' | 'approved';
   thumbnailPath: string;
   width?: number;
   height?: number;
@@ -80,6 +80,20 @@ const statusConfig = {
     bg: 'bg-brand-600', 
     text: 'AI',
     textFull: 'Analyzing',
+    animate: true
+  },
+  synthesizing: { 
+    icon: Loader2, 
+    bg: 'bg-brand-600', 
+    text: 'AI',
+    textFull: 'Writing',
+    animate: true
+  },
+  embedding: { 
+    icon: Loader2, 
+    bg: 'bg-brand-600', 
+    text: 'AI',
+    textFull: 'Embedding',
     animate: true
   },
   completed: { 
@@ -316,8 +330,8 @@ export function AssetGrid({
                   </div>
                 )}
 
-                {/* Processing Overlay - Shows during pending/processing/analyzing */}
-                {(asset.status === 'pending' || asset.status === 'processing' || asset.status === 'analyzing') && (
+                {/* Processing Overlay - Shows during pending/processing/analyzing/synthesizing/embedding */}
+                {(asset.status === 'pending' || asset.status === 'processing' || asset.status === 'analyzing' || asset.status === 'synthesizing' || asset.status === 'embedding') && (
                   <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center z-10">
                     <div className="relative">
                       {/* Outer ring animation */}
@@ -326,7 +340,7 @@ export function AssetGrid({
                       <Loader2 className="w-10 h-10 text-brand-400 animate-spin" />
                     </div>
                     <span className="text-[10px] text-brand-300 mt-2 font-bold uppercase tracking-wider">
-                      {asset.status === 'pending' ? 'Queued' : asset.status === 'analyzing' ? 'AI Analyzing' : 'Processing'}
+                      {asset.status === 'pending' ? 'Queued' : asset.status === 'analyzing' ? 'AI Analyzing' : asset.status === 'synthesizing' ? 'AI Writing' : asset.status === 'embedding' ? 'Embedding' : 'Processing'}
                     </span>
                   </div>
                 )}

@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
   Plus, FlaskConical, Database, PlayCircle, 
-  CheckCircle2, Loader2, AlertCircle, RefreshCw, BarChart3
+  CheckCircle2, Loader2, AlertCircle, RefreshCw, BarChart3,
+  BookOpen, ArrowRight
 } from 'lucide-react';
 import { useSupabase } from '@/lib/supabase-provider';
 import { survivalLabApi } from '@/lib/api';
@@ -38,6 +39,7 @@ export default function SurvivalLabPage() {
   const [runs, setRuns] = useState<TestRun[]>([]);
   const [loading, setLoading] = useState(true);
   const [seeding, setSeeding] = useState(false);
+  const [activeStudySession, setActiveStudySession] = useState<{ id: string; title: string; currentStep: string } | null>(null);
   
   const [showNewRunModal, setShowNewRunModal] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<string>('');
@@ -60,13 +62,20 @@ export default function SurvivalLabPage() {
         return;
       }
       
-      const [platformsRes, runsRes] = await Promise.all([
+      const [platformsRes, runsRes, studyRes] = await Promise.all([
         survivalLabApi.listPlatforms(session.access_token),
         survivalLabApi.listRuns(session.access_token),
+        survivalLabApi.studyList(session.access_token).catch(() => ({ sessions: [] })),
       ]);
       
       setPlatforms(platformsRes.platforms || []);
       setRuns(runsRes.runs || []);
+
+      // Find most recent IN_PROGRESS study session
+      const inProgress = (studyRes.sessions || []).find(
+        (s: any) => s.status === 'IN_PROGRESS'
+      );
+      setActiveStudySession(inProgress || null);
     } catch (error) {
       console.error('Failed to load data:', error);
       toast.error('Failed to load survival lab data');
@@ -173,8 +182,38 @@ export default function SurvivalLabPage() {
             <Plus className="w-4 h-4" />
             New Test Run
           </button>
+          <Link
+            href="/survival-lab/mode"
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-700 border border-emerald-600
+              text-white text-sm font-bold hover:bg-emerald-600 transition-all"
+          >
+            <BookOpen className="w-4 h-4" />
+            Guided Mode
+          </Link>
         </div>
       </div>
+
+      {/* Continue Study Banner */}
+      {activeStudySession && (
+        <Link
+          href={`/survival-lab/mode?session=${activeStudySession.id}`}
+          className="flex items-center justify-between mb-6 p-4 bg-emerald-900/20 border border-emerald-700/50
+            hover:border-emerald-600/70 transition-all group"
+        >
+          <div className="flex items-center gap-3">
+            <BookOpen className="w-5 h-5 text-emerald-400" />
+            <div>
+              <p className="text-sm font-medium text-white">
+                Continue Study{activeStudySession.title ? `: ${activeStudySession.title}` : ''}
+              </p>
+              <p className="text-xs text-steel-500">
+                Current step: {activeStudySession.currentStep.replace(/_/g, ' ')}
+              </p>
+            </div>
+          </div>
+          <ArrowRight className="w-4 h-4 text-emerald-400 group-hover:translate-x-1 transition-transform" />
+        </Link>
+      )}
 
       {/* Platforms Section */}
       <div className="mb-8">

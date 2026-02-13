@@ -603,11 +603,14 @@ export const survivalLabApi = {
     file: File,
     baselineImageId: string,
     scenario: string,
+    options?: { scenarioType?: string; studySessionId?: string },
   ) => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('baselineImageId', baselineImageId);
     formData.append('scenario', scenario);
+    if (options?.scenarioType) formData.append('scenarioType', options.scenarioType);
+    if (options?.studySessionId) formData.append('studySessionId', options.studySessionId);
     
     const response = await fetch(`${API_URL}/survival/runs/${runId}/upload-scenario`, {
       method: 'POST',
@@ -635,6 +638,54 @@ export const survivalLabApi = {
   
   getPlatformAnalytics: (token: string, slug: string) =>
     fetchWithAuth(`/survival/analytics/platform/${slug}`, { token }),
+  
+  // Study Sessions (Guided Mode)
+  studyStart: (token: string, data?: { title?: string; baselineIds?: string[]; platformSlugs?: string[] }) =>
+    fetchWithAuth('/survival/study/start', {
+      token,
+      method: 'POST',
+      body: JSON.stringify(data ?? {}),
+    }),
+  
+  studyList: (token: string) =>
+    fetchWithAuth('/survival/study', { token }),
+  
+  studyGet: (token: string, id: string) =>
+    fetchWithAuth(`/survival/study/${id}`, { token }),
+  
+  studyAdvance: (token: string, id: string, nextStep: string) =>
+    fetchWithAuth(`/survival/study/${id}/advance`, {
+      token,
+      method: 'POST',
+      body: JSON.stringify({ nextStep }),
+    }),
+  
+  studyAttachBaselines: (token: string, id: string, baselineIds: string[]) =>
+    fetchWithAuth(`/survival/study/${id}/attach-baselines`, {
+      token,
+      method: 'POST',
+      body: JSON.stringify({ baselineIds }),
+    }),
+  
+  studyAttachPlatforms: (token: string, id: string, platformSlugs: string[]) =>
+    fetchWithAuth(`/survival/study/${id}/attach-platforms`, {
+      token,
+      method: 'POST',
+      body: JSON.stringify({ platformSlugs }),
+    }),
+  
+  studyEvidencePack: (token: string, id: string) =>
+    fetchWithAuth(`/survival/study/${id}/evidence-pack`, {
+      token,
+      method: 'POST',
+    }),
+  
+  studyEnsureRun: (token: string, id: string, platformSlug: string) =>
+    fetchWithAuth(`/survival/study/${id}/ensure-run`, {
+      token,
+      method: 'POST',
+      body: JSON.stringify({ platformSlug }),
+    }),
 };
 
 // Billing

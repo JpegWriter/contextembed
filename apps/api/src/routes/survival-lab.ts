@@ -22,6 +22,7 @@ import {
 } from '@contextembed/db';
 import { asyncHandler, createApiError } from '../middleware/error-handler';
 import { AuthenticatedRequest } from '../middleware/auth';
+import { survivalStudyRouter } from './survival-study';
 import {
   extractMetadataFromFile,
   computeFileSha256,
@@ -65,6 +66,9 @@ async function ensureStorage() {
     storageInitialized = true;
   }
 }
+
+// Mount study session sub-router
+survivalLabRouter.use('/study', survivalStudyRouter);
 
 // ============================================
 // Platforms
@@ -405,9 +409,11 @@ survivalLabRouter.post('/runs/:id/upload-scenario', upload.single('file'), async
       'platform_export',
       'other',
     ]),
+    scenarioType: z.string().optional(),
+    studySessionId: z.string().optional(),
   });
   
-  const { baselineImageId, scenario } = ScenarioSchema.parse(req.body);
+  const { baselineImageId, scenario, scenarioType, studySessionId } = ScenarioSchema.parse(req.body);
   
   // Verify baseline is attached to this run
   const isAttached = run.assets.some(a => a.baselineImageId === baselineImageId);
@@ -453,6 +459,8 @@ survivalLabRouter.post('/runs/:id/upload-scenario', upload.single('file'), async
       bytes,
       width: metadata.width,
       height: metadata.height,
+      scenarioType: scenarioType ?? undefined,
+      studySessionId: studySessionId ?? undefined,
     });
     
     // Create metadata report
@@ -528,7 +536,7 @@ survivalLabRouter.post('/runs/:id/upload-scenario', upload.single('file'), async
       comparison.survivalScore,
       comparison.scoreV2,
       comparison.survivalClass,
-      scenario,
+      scenarioType ?? scenario,
     ).catch(() => {});
     
     res.status(201).json({

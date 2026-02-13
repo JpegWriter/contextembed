@@ -1065,12 +1065,21 @@ export const survivalTestRunRepository = {
     title: string;
     accountType?: string;
     status?: string;
+    studySessionId?: string;
   }) {
     return prisma.survivalTestRun.create({ data });
   },
 
   async updateStatus(id: string, status: string) {
     return prisma.survivalTestRun.update({ where: { id }, data: { status } });
+  },
+
+  async findByStudySession(studySessionId: string) {
+    return prisma.survivalTestRun.findMany({
+      where: { studySessionId },
+      include: { platform: true, assets: true, uploads: { include: { comparisons: true } } },
+      orderBy: { createdAt: 'asc' },
+    });
   },
 
   async delete(id: string) {
@@ -1123,8 +1132,18 @@ export const survivalScenarioUploadRepository = {
     bytes: bigint;
     width: number;
     height: number;
+    scenarioType?: string;
+    studySessionId?: string;
   }) {
     return prisma.survivalScenarioUpload.create({ data });
+  },
+
+  async findByStudySession(studySessionId: string) {
+    return prisma.survivalScenarioUpload.findMany({
+      where: { studySessionId },
+      include: { baselineImage: true, metadataReports: true, comparisons: true, testRun: { include: { platform: true } } },
+      orderBy: { createdAt: 'asc' },
+    });
   },
 };
 
@@ -1262,6 +1281,68 @@ export const survivalPlatformTrendRepository = {
     scenario: string;
   }) {
     return prisma.survivalPlatformTrend.create({ data });
+  },
+};
+
+// ============================================
+// Survival Lab — Study Session Repository
+// ============================================
+
+export const survivalStudySessionRepository = {
+  async createSession(userId: string, payload: {
+    title?: string;
+    baselineIds?: string[];
+    platformSlugs?: string[];
+  }) {
+    return prisma.survivalStudySession.create({
+      data: {
+        userId,
+        title: payload.title ?? 'Foundation Study',
+        baselineIds: payload.baselineIds ?? [],
+        platformSlugs: payload.platformSlugs ?? [],
+      },
+    });
+  },
+
+  async findByUser(userId: string) {
+    return prisma.survivalStudySession.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    });
+  },
+
+  async findById(userId: string, id: string) {
+    return prisma.survivalStudySession.findFirst({
+      where: { id, userId },
+    });
+  },
+
+  async updateStep(userId: string, id: string, currentStep: string) {
+    return prisma.survivalStudySession.update({
+      where: { id },
+      data: { currentStep },
+    });
+  },
+
+  async updateStatus(userId: string, id: string, status: string) {
+    return prisma.survivalStudySession.update({
+      where: { id },
+      data: { status },
+    });
+  },
+
+  async setBaselines(userId: string, id: string, baselineIds: string[]) {
+    return prisma.survivalStudySession.update({
+      where: { id },
+      data: { baselineIds },
+    });
+  },
+
+  async setPlatforms(userId: string, id: string, platformSlugs: string[]) {
+    return prisma.survivalStudySession.update({
+      where: { id },
+      data: { platformSlugs },
+    });
   },
 };
 

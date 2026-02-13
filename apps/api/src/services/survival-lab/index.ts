@@ -9,4 +9,4 @@ export * from './canonical-map';
 export * from './diff-engine';
 export * from './classifier';
 export * from './analytics';
-export * from './comparison';
+export * from './evidence-pack';

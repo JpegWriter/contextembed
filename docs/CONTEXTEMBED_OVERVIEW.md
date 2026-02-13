@@ -456,6 +456,60 @@ Every governance decision is logged:
 
 ---
 
+# Survival Lab
+
+## Overview
+**Survival Lab** is ContextEmbed's metadata preservation testing engine. It lets photographers empirically measure what happens to their embedded metadata after files pass through real-world platforms — CMS, social media, cloud storage, CDNs, and local export tools.
+
+## Two Modes
+
+### Free-Form Runs
+Create a test run for any platform, attach CE-embedded baselines, upload re-downloaded files, and compare. Full flexibility — no prescribed order.
+
+### Guided Study Mode (Foundation Study)
+A step-by-step wizard that walks the user through a structured testing protocol:
+
+| Step | Purpose | Scenario Types |
+|------|---------|---------------|
+| **BASELINE_LOCK** | Select 1–3 verified baselines | — |
+| **LOCAL_EXPORT** | Re-save locally and compare | `LOCAL_EXPORT` |
+| **CDN_DERIVATIVE** | Test CDN-generated variants | `CDN_DERIVATIVE` |
+| **CLOUD_STORAGE** | Google Drive, Dropbox round-trips | `CLOUD_GOOGLE_DRIVE`, `CLOUD_DROPBOX` |
+| **CMS** | WordPress (original + thumb), Squarespace, Wix, Webflow, Shopify | `CMS_WP_ORIGINAL`, `CMS_WP_THUMB`, `CMS_SQUARESPACE`, `CMS_WIX`, `CMS_WEBFLOW`, `CMS_SHOPIFY` |
+| **SOCIAL** | Instagram, Facebook, LinkedIn | `SOCIAL_INSTAGRAM`, `SOCIAL_FACEBOOK`, `SOCIAL_LINKEDIN` |
+| **SUMMARY** | Aggregated results review | — |
+| **EVIDENCE_PACK** | Generate downloadable ZIP archive | — |
+
+Steps enforce forward-only advancement. Sessions persist across browser refreshes via URL query parameter.
+
+## Key Concepts
+
+- **Canonical Diff Engine** — Field-by-field metadata comparison between baseline and scenario, producing a structured diff with `added`, `removed`, `changed`, and `retained` categories.
+- **Survival Classifier v2** — Weighted scoring system (scoreV2) mapping containers to classes: PRISTINE (≥95), SAFE (≥75), DEGRADED (≥50), HOSTILE (≥25), DESTRUCTIVE (<25).
+- **Evidence Pack** — ZIP archive containing baselines, scenario files, comparison reports, CSV summary, and a README, stored in Supabase Storage with a signed download URL.
+- **Auto-Run Management** — Guided mode transparently creates test runs per platform, so the user never manually manages run objects.
+
+## Data Model
+
+- **SurvivalStudySession** — Tracks session state (userId, title, status, currentStep, baselineIds[], platformSlugs[])
+- **SurvivalTestRun** — Optionally linked to a session via `studySessionId`
+- **SurvivalScenarioUpload** — Carries `scenarioType` label and optional `studySessionId`
+
+## API Endpoints (Guided Mode)
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| POST | `/survival/study/start` | Create session |
+| GET | `/survival/study` | List sessions |
+| GET | `/survival/study/:id` | Session detail |
+| POST | `/survival/study/:id/advance` | Advance step |
+| POST | `/survival/study/:id/attach-baselines` | Lock baselines |
+| POST | `/survival/study/:id/attach-platforms` | Set platforms |
+| POST | `/survival/study/:id/evidence-pack` | Generate ZIP |
+| POST | `/survival/study/:id/ensure-run` | Auto-create/find run |
+
+---
+
 # Roadmap
 
 ## Q1 2026 (Current) ✅

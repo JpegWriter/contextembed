@@ -976,6 +976,28 @@ model WordPressConfig {
 // SURVIVAL LAB - Metadata Survival Study
 // ============================================
 
+/// Guided study session — walks user through Foundation Study stages
+model SurvivalStudySession {
+  id              String   @id @default(uuid())
+  userId          String
+  title           String   @default("Foundation Study")
+  status          String   @default("IN_PROGRESS") // IN_PROGRESS | COMPLETE | ABANDONED
+  currentStep     String   @default("BASELINE_LOCK") // step enum-like string
+  baselineIds     String[] // baseline image ids used in this session
+  platformSlugs   String[] // chosen platforms (default: the 12 seed set)
+  
+  testRuns        SurvivalTestRun[]
+  scenarioUploads SurvivalScenarioUpload[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("survival_study_sessions")
+}
+
 /// Platforms being tested for metadata preservation (e.g., WordPress, Instagram, etc.)
 model SurvivalPlatform {
   id          String   @id @default(cuid())
@@ -1019,21 +1041,24 @@ model SurvivalBaselineImage {
 
 /// A test run for a specific platform
 model SurvivalTestRun {
-  id            String   @id @default(cuid())
-  userId        String
-  platformId    String
-  title         String   // "Phase 1 - Pixieset - Feb 2026"
-  accountType   String?  // free/paid + plan name
-  status        String   @default("draft") // draft, running, complete
+  id              String   @id @default(cuid())
+  userId          String
+  platformId      String
+  title           String   // "Phase 1 - Pixieset - Feb 2026"
+  accountType     String?  // free/paid + plan name
+  status          String   @default("draft") // draft, running, complete
+  studySessionId  String?  // FK to guided study session (null for free-form runs)
   
-  platform      SurvivalPlatform @relation(fields: [platformId], references: [id], onDelete: Cascade)
-  assets        SurvivalTestRunAsset[]
-  uploads       SurvivalScenarioUpload[]
+  platform        SurvivalPlatform @relation(fields: [platformId], references: [id], onDelete: Cascade)
+  studySession    SurvivalStudySession? @relation(fields: [studySessionId], references: [id], onDelete: SetNull)
+  assets          SurvivalTestRunAsset[]
+  uploads         SurvivalScenarioUpload[]
   
-  createdAt     DateTime @default(now())
+  createdAt       DateTime @default(now())
   
   @@index([userId])
   @@index([platformId])
+  @@index([studySessionId])
   @@map("survival_test_runs")
 }
 
@@ -1066,9 +1091,12 @@ model SurvivalScenarioUpload {
   bytes             BigInt
   width             Int
   height            Int
+  scenarioType      String?  // Guided mode label: LOCAL_EXPORT, CDN_DERIVATIVE, CLOUD_GOOGLE_DRIVE, etc.
+  studySessionId    String?  // FK to guided study session
   
   testRun           SurvivalTestRun @relation(fields: [testRunId], references: [id], onDelete: Cascade)
   baselineImage     SurvivalBaselineImage @relation(fields: [baselineImageId], references: [id], onDelete: Cascade)
+  studySession      SurvivalStudySession? @relation(fields: [studySessionId], references: [id], onDelete: SetNull)
   metadataReports   SurvivalMetadataReport[]
   comparisons       SurvivalComparison[]
   
@@ -1076,6 +1104,7 @@ model SurvivalScenarioUpload {
   
   @@index([testRunId])
   @@index([baselineImageId])
+  @@index([studySessionId])
   @@map("survival_scenario_uploads")
 }
 

@@ -42,6 +42,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.39.0
         version: 2.93.3
+      '@types/archiver':
+        specifier: ^6.0.4
+        version: 6.0.4
       '@types/cors':
         specifier: ^2.8.17
         version: 2.8.19
@@ -103,9 +106,6 @@ importers:
         specifier: ^3.22.4
         version: 3.25.76
     devDependencies:
-      '@types/archiver':
-        specifier: ^6.0.4
-        version: 6.0.4
       rimraf:
         specifier: ^5.0.5
         version: 5.0.10
@@ -1613,7 +1613,7 @@ packages:
     resolution: {integrity: sha512-ULdQpARQ3sz9WH4nb98mJDYA0ft2A8C4f4fovvUcFwINa1cgGjY36JCAYuP5YypRq4mco1lJp1/7jEMS2oR0Hg==}
     dependencies:
       '@types/readdir-glob': 1.1.5
-    dev: true
+    dev: false
 
   /@types/body-parser@1.19.6:
     resolution: {integrity: sha512-HLFeCYgz89uk22N5Qg3dvGvsv46B8GLvKKo1zKG4NybA8U2DiEO3w9lqGg29t/tfLRJpJ6iQxnVw4OnB7MoM9g==}
@@ -1768,7 +1768,7 @@ packages:
     resolution: {integrity: sha512-raiuEPUYqXu+nvtY2Pe8s8FEmZ3x5yAH4VkLdihcPdalvsHltomrRC9BzuStrJ9yk06470hS0Crw0f1pXqD+Hg==}
     dependencies:
       '@types/node': 20.19.30
-    dev: true
+    dev: false
 
   /@types/rss@0.0.32:
     resolution: {integrity: sha512-2oKNqKyUY4RSdvl5eZR1n2Q9yvw3XTe3mQHsFPn9alaNBxfPnbXBtGP8R0SV8pK1PrVnLul0zx7izbm5/gF5Qw==}

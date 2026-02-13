@@ -12,7 +12,7 @@
 
 'use client';
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { Suspense, useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FlaskConical, Loader2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -65,6 +65,18 @@ interface LiveScenario {
 }
 
 export default function GuidedModePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-screen">
+        <Loader2 className="w-8 h-8 animate-spin text-brand-500" />
+      </div>
+    }>
+      <GuidedModeInner />
+    </Suspense>
+  );
+}
+
+function GuidedModeInner() {
   const { supabase } = useSupabase();
   const router = useRouter();
   const searchParams = useSearchParams();

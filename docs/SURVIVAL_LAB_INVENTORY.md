@@ -1,8 +1,8 @@
 # 🔬 ContextEmbed — Survival Lab: System Inventory
 
-> **Generated:** February 12, 2026
-> **Commit:** `f11aa38` (main)
-> **Dedicated source lines:** ~7,100
+> **Generated:** February 13, 2026
+> **Commit:** `f98532c` (main)
+> **Dedicated source lines:** ~9,300
 
 ---
 
@@ -13,8 +13,9 @@
 │                            SURVIVAL LAB                                 │
 ├──────────┬──────────┬──────────┬──────────┬──────────┬────────────────┤
 │ Database │   API    │   Web    │ Metadata │  Tests   │    Scripts     │
-│ 9 tables │ 15 endpt │ 4 pages  │ 2 profs  │ 21 unit  │  2 CLI tools  │
-│ 9 repos  │ 7 svc    │ 1 pillar │ 1 ns cfg │ 2 suites │  1 matrix     │
+│ 10 tables│ 23 endpt │ 5 pages  │ 2 profs  │ 37 unit  │  2 CLI tools  │
+│ 10 repos │ 8 svc    │ 5 comps  │ 1 ns cfg │ 3 suites │  1 matrix     │
+│          │          │ 1 pillar │          │          │               │
 └──────────┴──────────┴──────────┴──────────┴──────────┴────────────────┘
 ```
 
@@ -22,7 +23,7 @@
 
 ## 1. Database Layer
 
-### Prisma Models (9 tables)
+### Prisma Models (10 tables)
 
 | Model | Table | Purpose |
 |-------|-------|---------|
@@ -35,6 +36,7 @@
 | `SurvivalComparison` | `survival_comparisons` | Field-by-field diff + survival score (v1 + v2) |
 | `SurvivalPlatformStats` | `survival_platform_stats` | Aggregated per-platform analytics (scores, retention, field survival) |
 | `SurvivalPlatformTrend` | `survival_platform_trends` | Time-series trend data per platform per scenario |
+| `SurvivalStudySession` | `survival_study_sessions` | Guided study session state (step, baselines, platforms) |
 
 #### v2 Columns on `SurvivalComparison`
 
@@ -72,12 +74,39 @@
 | `scenario` | `String?` | Scenario type label |
 | `createdAt` | `DateTime` | Timestamp (indexed with platformId) |
 
+#### `SurvivalStudySession` — Fields
+
+| Column | Type | Purpose |
+|--------|------|---------|  
+| `id` | `String` (uuid) | Primary key |
+| `userId` | `String` | Session owner |
+| `title` | `String?` | Optional session label |
+| `status` | `String` | `IN_PROGRESS` or `COMPLETE` |
+| `currentStep` | `String` | Current wizard step (default `BASELINE_LOCK`) |
+| `baselineIds` | `String[]` | Locked baseline image IDs |
+| `platformSlugs` | `String[]` | Platform slugs under test |
+| `createdAt` / `updatedAt` | `DateTime` | Timestamps |
+
+#### v3 Columns on `SurvivalTestRun`
+
+| Column | Type | Purpose |
+|--------|------|---------|  
+| `studySessionId` | `String?` | FK → `survival_study_sessions` (SET NULL) |
+
+#### v3 Columns on `SurvivalScenarioUpload`
+
+| Column | Type | Purpose |
+|--------|------|---------|  
+| `scenarioType` | `String?` | Guided-mode scenario label (e.g. `CMS_WP_ORIGINAL`) |
+| `studySessionId` | `String?` | FK → `survival_study_sessions` (SET NULL) |
+
 ### Migrations
 
 | File | Purpose |
 |------|---------|
 | `packages/db/prisma/migrations/20260212_add_survival_lab_tables/migration.sql` | DDL for original 7 tables, indexes, FK constraints (CASCADE) |
 | `packages/db/prisma/migrations/20260206000000_survival_lab_v2_analytics/migration.sql` | v2: scoreV2/survivalClass/diffReport on comparisons, new stats + trends tables |
+| `packages/db/prisma/migrations/20260212_survival_study_sessions/migration.sql` | v3: `survival_study_sessions` table, `studySessionId` + `scenarioType` on existing tables |
 
 ### Repositories (in `packages/db/src/repositories.ts`)
 
@@ -92,15 +121,22 @@ Each model has a typed repository with standard CRUD:
 - `survivalComparisonRepo` — `create` (now accepts `scoreV2?`, `survivalClass?`, `diffReport?`), `findByRunId`, `findByScenarioId`
 - `survivalPlatformStatsRepo` — `findByPlatformId`, `findAll` (ordered by avgScoreV2 desc), `upsert`
 - `survivalPlatformTrendRepo` — `findByPlatform` (limit, desc by createdAt), `create`
+- `survivalStudySessionRepo` — `createSession`, `findByUser`, `findById`, `updateStep`, `updateStatus`, `setBaselines`, `setPlatforms`
+
+v3 additions to existing repos:
+- `survivalTestRunRepo` — `create()` now accepts `studySessionId?`; added `findByStudySession()`
+- `survivalScenarioRepo` — `create()` now accepts `scenarioType?`, `studySessionId?`; added `findByStudySession()`
 
 ---
 
 ## 2. API Layer
 
-### Endpoints (15 routes mounted at `/survival`)
+### Endpoints (23 routes mounted at `/survival`)
+
+#### Free-Form Endpoints (15)
 
 | Method | Path | Purpose |
-|--------|------|---------|
+|--------|------|---------|  
 | `GET` | `/platforms` | List all platforms |
 | `POST` | `/platforms/seed` | Seed the 12 Phase 1 study platforms |
 | `GET` | `/baselines` | List user's baseline images + metadata reports |
@@ -116,6 +152,34 @@ Each model has a typed repository with standard CRUD:
 | `GET` | `/analytics/summary` | Cross-platform analytics dashboard data |
 | `GET` | `/analytics/platform/:slug` | Per-platform analytics + trend history |
 | _(hook)_ | _(after scenario upload)_ | Non-blocking `updatePlatformStats()` + `recordTrend()` |
+
+#### Guided Study Endpoints (8) — mounted at `/survival/study`
+
+| Method | Path | Purpose |
+|--------|------|---------|  
+| `POST` | `/study/start` | Create a new guided study session |
+| `GET` | `/study` | List user's study sessions |
+| `GET` | `/study/:id` | Session detail with baselines, scenarios grouped by type, runs |
+| `POST` | `/study/:id/advance` | Advance to next step (forward-only enforcement) |
+| `POST` | `/study/:id/attach-baselines` | Lock 1–10 baselines for the session |
+| `POST` | `/study/:id/attach-platforms` | Set platform slugs under test |
+| `POST` | `/study/:id/evidence-pack` | Generate ZIP archive with signed download URL |
+| `POST` | `/study/:id/ensure-run` | Auto-create or find existing run for a platform+session |
+
+#### Study Step Sequence (9 steps)
+
+```
+BASELINE_LOCK → LOCAL_EXPORT → CDN_DERIVATIVE → CLOUD_STORAGE → CMS → SOCIAL → SUMMARY → EVIDENCE_PACK → COMPLETE
+```
+
+#### Scenario Types (13 labels)
+
+```
+LOCAL_EXPORT, CDN_DERIVATIVE,
+CLOUD_GOOGLE_DRIVE, CLOUD_DROPBOX,
+CMS_WP_ORIGINAL, CMS_WP_THUMB, CMS_SQUARESPACE, CMS_WIX, CMS_WEBFLOW, CMS_SHOPIFY,
+SOCIAL_INSTAGRAM, SOCIAL_FACEBOOK, SOCIAL_LINKEDIN
+```
 
 ### Seed Platforms (12)
 
@@ -134,10 +198,10 @@ Each model has a typed repository with standard CRUD:
 | `google_drive` | Google Drive | Upload via web interface |
 | `smugmug` | SmugMug | Upload via web uploader |
 
-### Services (7 dedicated)
+### Services (8 dedicated)
 
 | File | Lines | Purpose | Key Exports |
-|------|-------|---------|-------------|
+|------|-------|---------|-------------|  
 | `metadata-extractor.ts` | 322 | Non-destructive ExifTool extraction (EXIF/XMP/IPTC detection, field extraction, mojibake detection, SHA-256) | `extractMetadataReport()` |
 | `storage.ts` | 278 | Supabase Storage integration, bucket `ce-survival-lab`, raw binary upload/download, signed URLs | `uploadBaseline()`, `downloadFile()`, `getSignedUrl()` |
 | `comparison.ts` | 224 | Field-by-field diff, v1 + v2 survival scores, human-readable summary | `compareToBaseline()` (now with `scoreV2`, `survivalClass`, `diffReport`) |
@@ -145,6 +209,7 @@ Each model has a typed repository with standard CRUD:
 | `diff-engine.ts` | 307 | Field-level diff with 8 status types, container retention tracking | `generateMetadataDiff()`, `summariseDiff()` |
 | `classifier.ts` | 197 | Weighted scoreV2 calculation and survival classification | `classifyDiff()`, `classFromScore()`, `classColor()`, `classLabel()` |
 | `analytics.ts` | 326 | Platform-level analytics aggregation and dashboard data | `updatePlatformStats()`, `recordTrend()`, `getAnalyticsSummary()`, `getPlatformAnalytics()` |
+| `evidence-pack.ts` | 272 | **NEW** — ZIP archive generator for study sessions (baselines + scenarios + diffs + CSV + README) | `buildEvidencePack()` |
 
 All services are re-exported via the barrel at `apps/api/src/services/survival-lab/index.ts`.
 
@@ -223,15 +288,26 @@ Each of the 9 canonical fields has a weight (totalling 1.0). The diff engine ass
 
 ## 3. Web App (Frontend)
 
-### Pages (4 + 1 pillar)
+### Pages (5 + 1 pillar)
 
 | Page | Path | Lines | Purpose |
-|------|------|-------|---------|
-| Main Dashboard | `/survival-lab` | 335 | Platform list, test run list, seed button, create-run modal, analytics nav |
+|------|------|-------|---------|  
+| Main Dashboard | `/survival-lab` | 359 | Platform list, test run list, seed button, create-run modal, Guided Mode button, Continue Study banner |
 | Baselines | `/survival-lab/baselines` | 342 | Upload CE-embedded images, list baselines, verify SHA-256 integrity |
 | Run Detail | `/survival-lab/runs/[id]` | 772 | Attach baselines, upload scenarios, expandable v2 diff view per scenario, CSV export |
-| Analytics Dashboard | `/survival-lab/analytics` | 347 | Cross-platform leaderboard, field survival bars, container retention chips |
+| Analytics Dashboard | `/survival-lab/analytics` | 347 | Cross-platform analytics dashboard data |
+| **Guided Mode** | `/survival-lab/mode` | 297 | **NEW** — Three-column wizard: StepRail \| StepPanel \| LiveResultCards. Session ID in URL query param. |
 | Pillar Page | `/metadata-survival` | 428 | Public-facing educational page with survival matrix |
+
+### Guided Mode Components (5)
+
+| Component | Lines | Purpose |
+|-----------|-------|---------|  
+| `StepRail.tsx` | 111 | Vertical step progress indicator (8 steps, CheckCircle2/Loader2/Circle icons) |
+| `StepPanel.tsx` | 573 | Per-step content panel with 8 sub-panels: BaselineLock, SingleUpload, MultiPlatform, CMS, Social, Summary, EvidencePack, Complete |
+| `ScenarioUploader.tsx` | 170 | Drag-and-drop file upload with auto ensure-run, result cards with v1/v2 scores |
+| `LiveResultCards.tsx` | 93 | Right-rail live score cards with survival class color coding and field retention chips |
+| `StudySummary.tsx` | 240 | Aggregated results: overall score, field retention bars, per-type table with class distribution bars |
 
 #### Analytics Dashboard Components
 
@@ -252,13 +328,15 @@ Each of the 9 canonical fields has a weight (totalling 1.0). The diff engine ass
 
 ### API Client (in `apps/web/src/lib/api.ts`)
 
-14 typed methods on the `survivalLabApi` object:
+22 typed methods on the `survivalLabApi` object:
 
 ```
 getPlatforms, seedPlatforms, getBaselines, uploadBaseline,
 verifyBaseline, getRuns, createRun, getRunDetail,
 attachBaselines, uploadScenario, getComparisons, exportCsv,
-getAnalyticsSummary, getPlatformAnalytics
+getAnalyticsSummary, getPlatformAnalytics,
+studyStart, studyList, studyGet, studyAdvance,
+studyAttachBaselines, studyAttachPlatforms, studyEvidencePack, studyEnsureRun
 ```
 
 ---
@@ -329,13 +407,8 @@ Prefix: CE
 |------|-------|--------|
 | `apps/api/src/services/survival-lab/__tests__/diff-engine.test.ts` | 12 | ✅ Passing |
 | `apps/api/src/services/survival-lab/__tests__/classifier.test.ts` | 9 | ✅ Passing |
-| **Total** | **21** | ✅ |
-
-#### Diff Engine Tests (12)
-
-| Test | Asserts |
-|------|---------|
-| PRESERVED — exact match | Status = PRESERVED |
+| `apps/api/src/services/survival-lab/__tests__/study-session.test.ts` | 16 | ✅ Passing |
+| **Total** | **37** | ✅ |
 | STRIPPED — creator removed | Status = STRIPPED |
 | STRIPPED — copyright removed | Status = STRIPPED |
 | MIGRATED — container change | Status = MIGRATED |
@@ -361,6 +434,24 @@ Prefix: CE
 | classFromScore boundaries | 100, 80, 50, 20, 19 thresholds |
 | classLabel strings | Correct display labels |
 | classColor hex | Correct hex colors |
+
+#### Study Session Tests (16)
+
+| Test | Asserts |
+|------|---------|  
+| STUDY_STEPS — 9 ordered steps | Length, first = BASELINE_LOCK, last = COMPLETE |
+| STUDY_STEPS — includes all platform steps | Full sequence match |
+| Forward advancement allowed | BASELINE_LOCK → LOCAL_EXPORT, etc. |
+| Skip steps allowed | BASELINE_LOCK → CMS |
+| Backward movement rejected | CMS → BASELINE_LOCK → error |
+| Same-step advancement rejected | LOCAL_EXPORT → LOCAL_EXPORT → error |
+| Invalid step names rejected | Unknown step → error |
+| COMPLETE is terminal | Index = length − 1 |
+| SCENARIO_TYPES — 13 labels | Includes all platform scenario types |
+| CMS coverage | ≥ 6 CMS_ types |
+| Social coverage | Exactly 3 SOCIAL_ types |
+| Every scenario type maps to a step | Full coverage check |
+| Step-specific types subset of SCENARIO_TYPES | Bidirectional validation |
 
 ---
 
@@ -416,58 +507,93 @@ const result = await embedWithProfile(
 
 ### Web UI
 
-Navigate to `/survival-lab` → Seed Platforms → Upload Baselines → Create Run → Upload Scenarios → View Results → Export CSV.
+**Free-Form:** Navigate to `/survival-lab` → Seed Platforms → Upload Baselines → Create Run → Upload Scenarios → View Results → Export CSV.
+
+**Guided Mode:** `/survival-lab` → Click "Guided Mode" → Lock Baselines → Walk through Local Export → CDN → Cloud → CMS → Social → Summary → Evidence Pack → Complete.
+
+**Continue Study:** If an IN_PROGRESS session exists, a banner appears on the main dashboard with a direct link.
 
 Analytics: `/survival-lab/analytics` → Cross-platform leaderboard, field survival bars, container retention.
 
 ---
 
-## 8. File Index (38 files)
+## 8. File Index (48 files)
 
 | # | Layer | File | Notes |
 |---|-------|------|-------|
-| 1 | DB | `packages/db/prisma/schema.prisma` | 9 survival models |
+| 1 | DB | `packages/db/prisma/schema.prisma` | 10 survival models |
 | 2 | DB | `packages/db/prisma/migrations/20260212_add_survival_lab_tables/migration.sql` | Original 7 tables |
-| 3 | DB | `packages/db/prisma/migrations/20260206000000_survival_lab_v2_analytics/migration.sql` | **NEW** — v2 columns + stats/trends tables |
-| 4 | DB | `packages/db/src/repositories.ts` | 9 survival repos |
-| 5 | API | `apps/api/src/routes/survival-lab.ts` | 15 endpoints |
-| 6 | API | `apps/api/src/services/survival-lab/index.ts` | Barrel export (7 modules) |
-| 7 | API | `apps/api/src/services/survival-lab/metadata-extractor.ts` | ExifTool extraction |
-| 8 | API | `apps/api/src/services/survival-lab/storage.ts` | Supabase Storage |
-| 9 | API | `apps/api/src/services/survival-lab/comparison.ts` | v1 + v2 scoring |
-| 10 | API | `apps/api/src/services/survival-lab/canonical-map.ts` | **NEW** — 9 canonical fields |
-| 11 | API | `apps/api/src/services/survival-lab/diff-engine.ts` | **NEW** — 8-status field diff |
-| 12 | API | `apps/api/src/services/survival-lab/classifier.ts` | **NEW** — weighted classification |
-| 13 | API | `apps/api/src/services/survival-lab/analytics.ts` | **NEW** — platform aggregation |
-| 14 | Test | `apps/api/src/services/survival-lab/__tests__/diff-engine.test.ts` | **NEW** — 12 tests |
-| 15 | Test | `apps/api/src/services/survival-lab/__tests__/classifier.test.ts` | **NEW** — 9 tests |
-| 16 | API | `apps/api/src/index.ts` | Mounts `/survival` |
-| 17 | API | `apps/api/src/services/entitlements.ts` | |
-| 18 | API | `apps/api/src/services/workspace-limits.ts` | |
-| 19 | API | `apps/api/src/services/operator.ts` | Survival playbook |
-| 20 | Web | `apps/web/src/app/survival-lab/page.tsx` | Main dashboard |
-| 21 | Web | `apps/web/src/app/survival-lab/baselines/page.tsx` | Baseline management |
-| 22 | Web | `apps/web/src/app/survival-lab/runs/[id]/page.tsx` | Run detail + v2 diff view |
-| 23 | Web | `apps/web/src/app/survival-lab/analytics/page.tsx` | **NEW** — Analytics dashboard |
-| 24 | Web | `apps/web/src/app/metadata-survival/page.tsx` | Public pillar page |
-| 25 | Web | `apps/web/src/lib/api.ts` | 14 survival methods |
-| 26 | Web | `apps/web/src/components/copilot/playbooks.ts` | |
-| 27 | Web | `apps/web/src/components/copilot/CopilotPanel.tsx` | |
-| 28 | Meta | `packages/metadata/src/profiles/types.ts` | |
-| 29 | Meta | `packages/metadata/src/profiles/index.ts` | |
-| 30 | Meta | `packages/metadata/src/profiles/production-standard.ts` | |
-| 31 | Meta | `packages/metadata/src/profiles/lab-forensic.ts` | |
-| 32 | Script | `scripts/survival/extract-baseline.ts` | |
-| 33 | Script | `scripts/survival/run-survival-test.ts` | |
-| 34 | Script | `scripts/smoke-test-embed.ts` | Survival assertions |
-| 35 | Config | `apps/api/src/services/seed-users.ts` | Survival concerns |
-| 36 | Config | `apps/api/package.json` | vitest devDependency |
-| 37 | Docs | `docs/CONTEXTEMBED_OVERVIEW.md` | Survival section |
-| 38 | Blog | `apps/blog/content/pillars/metadata-survival.mdx` | |
+| 3 | DB | `packages/db/prisma/migrations/20260206000000_survival_lab_v2_analytics/migration.sql` | v2 columns + stats/trends tables |
+| 4 | DB | `packages/db/prisma/migrations/20260212_survival_study_sessions/migration.sql` | **v3** — study sessions table + FK columns |
+| 5 | DB | `packages/db/src/repositories.ts` | 10 survival repos |
+| 6 | API | `apps/api/src/routes/survival-lab.ts` | 15 free-form endpoints |
+| 7 | API | `apps/api/src/routes/survival-study.ts` | **v3** — 8 guided study endpoints |
+| 8 | API | `apps/api/src/services/survival-lab/index.ts` | Barrel export (8 modules) |
+| 9 | API | `apps/api/src/services/survival-lab/metadata-extractor.ts` | ExifTool extraction |
+| 10 | API | `apps/api/src/services/survival-lab/storage.ts` | Supabase Storage |
+| 11 | API | `apps/api/src/services/survival-lab/comparison.ts` | v1 + v2 scoring |
+| 12 | API | `apps/api/src/services/survival-lab/canonical-map.ts` | 9 canonical fields |
+| 13 | API | `apps/api/src/services/survival-lab/diff-engine.ts` | 8-status field diff |
+| 14 | API | `apps/api/src/services/survival-lab/classifier.ts` | Weighted classification |
+| 15 | API | `apps/api/src/services/survival-lab/analytics.ts` | Platform aggregation |
+| 16 | API | `apps/api/src/services/survival-lab/evidence-pack.ts` | **v3** — ZIP archive generator |
+| 17 | Test | `apps/api/src/services/survival-lab/__tests__/diff-engine.test.ts` | 12 tests |
+| 18 | Test | `apps/api/src/services/survival-lab/__tests__/classifier.test.ts` | 9 tests |
+| 19 | Test | `apps/api/src/services/survival-lab/__tests__/study-session.test.ts` | **v3** — 16 tests |
+| 20 | API | `apps/api/src/index.ts` | Mounts `/survival` |
+| 21 | API | `apps/api/src/services/entitlements.ts` | |
+| 22 | API | `apps/api/src/services/workspace-limits.ts` | |
+| 23 | API | `apps/api/src/services/operator.ts` | Survival playbook |
+| 24 | Web | `apps/web/src/app/survival-lab/page.tsx` | Main dashboard + Guided Mode button |
+| 25 | Web | `apps/web/src/app/survival-lab/baselines/page.tsx` | Baseline management |
+| 26 | Web | `apps/web/src/app/survival-lab/runs/[id]/page.tsx` | Run detail + v2 diff view |
+| 27 | Web | `apps/web/src/app/survival-lab/analytics/page.tsx` | Analytics dashboard |
+| 28 | Web | `apps/web/src/app/survival-lab/mode/page.tsx` | **v3** — Guided mode wizard |
+| 29 | Web | `apps/web/src/app/metadata-survival/page.tsx` | Public pillar page |
+| 30 | Web | `apps/web/src/lib/api.ts` | 22 survival methods |
+| 31 | Web | `apps/web/src/components/survival/StepRail.tsx` | **v3** — Step progress indicator |
+| 32 | Web | `apps/web/src/components/survival/StepPanel.tsx` | **v3** — Per-step content panel |
+| 33 | Web | `apps/web/src/components/survival/ScenarioUploader.tsx` | **v3** — Drag-drop file upload |
+| 34 | Web | `apps/web/src/components/survival/LiveResultCards.tsx` | **v3** — Live score cards |
+| 35 | Web | `apps/web/src/components/survival/StudySummary.tsx` | **v3** — Aggregated results view |
+| 36 | Web | `apps/web/src/components/copilot/playbooks.ts` | |
+| 37 | Web | `apps/web/src/components/copilot/CopilotPanel.tsx` | |
+| 38 | Meta | `packages/metadata/src/profiles/types.ts` | |
+| 39 | Meta | `packages/metadata/src/profiles/index.ts` | |
+| 40 | Meta | `packages/metadata/src/profiles/production-standard.ts` | |
+| 41 | Meta | `packages/metadata/src/profiles/lab-forensic.ts` | |
+| 42 | Script | `scripts/survival/extract-baseline.ts` | |
+| 43 | Script | `scripts/survival/run-survival-test.ts` | |
+| 44 | Script | `scripts/smoke-test-embed.ts` | Survival assertions |
+| 45 | Config | `apps/api/src/services/seed-users.ts` | Survival concerns |
+| 46 | Config | `apps/api/package.json` | vitest + archiver deps |
+| 47 | Docs | `docs/CONTEXTEMBED_OVERVIEW.md` | Survival Lab section |
+| 48 | Blog | `apps/blog/content/pillars/metadata-survival.mdx` | |
 
 ---
 
 ## 9. Changelog
+
+### v3 — `f98532c` (February 13, 2026)
+
+**Guided Study Mode — Foundation Study Wizard**
+
+| Area | Change |
+|------|--------|
+| DB | +1 table (`survival_study_sessions`), +2 columns on `survival_test_runs`, +2 columns on `survival_scenario_uploads` |
+| DB | +1 repository (`survivalStudySessionRepo` — 7 methods), updated 2 existing repos with `findByStudySession()` |
+| API | +1 route file (`survival-study.ts` — 8 endpoints at `/survival/study`) |
+| API | +1 service (`evidence-pack.ts` — ZIP archive generator with `archiver`) |
+| API | Scenario upload now accepts `scenarioType` and `studySessionId` |
+| Web | +1 page (`/survival-lab/mode` — three-column wizard with Suspense boundary) |
+| Web | +5 components (StepRail, StepPanel, ScenarioUploader, LiveResultCards, StudySummary) |
+| Web | Main dashboard updated with "Guided Mode" button + "Continue Study" banner |
+| Web | +8 API client methods (`studyStart` … `studyEnsureRun`), updated `uploadScenario` signature |
+| Test | +16 unit tests (step ordering, advancement logic, scenario types, step↔type mapping) |
+| Docs | `CONTEXTEMBED_OVERVIEW.md` updated with Survival Lab section |
+| Build | `@types/archiver` moved to deps, test files excluded from `tsc` build, Suspense fix |
+| Lines | ~7,100 → ~9,300 (+2,200) |
+| Files | 38 → 48 (+10 new) |
 
 ### v2 — `f11aa38` (February 12, 2026)
 

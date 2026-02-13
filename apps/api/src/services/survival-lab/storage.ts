@@ -106,14 +106,14 @@ export async function uploadRawFile(
     
     if (error) {
       console.error('[SurvivalLab] Upload error:', error.message);
-      return null;
+      throw new Error(`Supabase upload failed: ${error.message}`);
     }
     
     console.log(`[SurvivalLab] Uploaded: ${storagePath} (${buffer.length} bytes)`);
     return storagePath;
-  } catch (err) {
+  } catch (err: any) {
     console.error('[SurvivalLab] Upload failed:', err);
-    return null;
+    throw new Error(`Storage upload failed: ${err?.message || String(err)}`);
   }
 }
 

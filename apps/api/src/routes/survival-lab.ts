@@ -164,14 +164,32 @@ survivalLabRouter.post('/baselines/upload', upload.single('file'), asyncHandler(
     const bytes = await getFileSize(tempPath);
     
     // Extract metadata (reads from temp file, no modification)
-    const metadata = await extractMetadataFromFile(tempPath);
+    let metadata;
+    try {
+      metadata = await extractMetadataFromFile(tempPath);
+    } catch (metaErr: any) {
+      console.error('[SurvivalLab] Metadata extraction failed:', metaErr);
+      // Provide fallback so upload can still proceed
+      metadata = {
+        exifPresent: false, xmpPresent: false, iptcPresent: false,
+        creatorValue: null, rightsValue: null, creditValue: null, descriptionValue: null,
+        encodingOk: true, notes: `Metadata extraction failed: ${metaErr?.message || 'unknown'}`,
+        rawJson: {}, width: 0, height: 0,
+      };
+    }
     
     // Generate baseline ID and storage path
     const baselineId = `bl_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
     const storagePath = storagePaths.baseline(userId, baselineId, file.originalname);
     
     // Upload raw file to storage (no transformation!)
-    const uploadedPath = await uploadRawFile(tempPath, storagePath);
+    let uploadedPath: string | null = null;
+    try {
+      uploadedPath = await uploadRawFile(tempPath, storagePath);
+    } catch (uploadErr: any) {
+      console.error('[SurvivalLab] Upload to storage failed:', uploadErr);
+      throw createApiError(`Failed to upload file to storage: ${uploadErr.message}`, 500);
+    }
     
     if (!uploadedPath && isStorageAvailable()) {
       throw createApiError('Failed to upload file to storage', 500);
@@ -442,11 +460,29 @@ survivalLabRouter.post('/runs/:id/upload-scenario', upload.single('file'), async
     const bytes = await getFileSize(tempPath);
     
     // Extract metadata
-    const metadata = await extractMetadataFromFile(tempPath);
+    let metadata;
+    try {
+      metadata = await extractMetadataFromFile(tempPath);
+    } catch (metaErr: any) {
+      console.error('[SurvivalLab] Scenario metadata extraction failed:', metaErr);
+      metadata = {
+        exifPresent: false, xmpPresent: false, iptcPresent: false,
+        creatorValue: null, rightsValue: null, creditValue: null, descriptionValue: null,
+        encodingOk: true, notes: `Metadata extraction failed: ${metaErr?.message || 'unknown'}`,
+        rawJson: {}, width: 0, height: 0,
+      };
+    }
     
     // Upload to storage
     const storagePath = storagePaths.scenario(userId, id, scenario, baselineImageId, file.originalname);
-    const uploadedPath = await uploadRawFile(tempPath, storagePath);
+    let uploadedPath: string | null = null;
+    try {
+      uploadedPath = await uploadRawFile(tempPath, storagePath);
+    } catch (uploadErr: any) {
+      console.error('[SurvivalLab] Scenario upload failed:', uploadErr);
+      // Continue with local path as fallback
+      uploadedPath = null;
+    }
     
     // Create scenario upload record
     const scenarioUpload = await survivalScenarioUploadRepository.create({

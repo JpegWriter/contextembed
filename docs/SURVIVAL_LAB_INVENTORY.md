@@ -1,7 +1,7 @@
 # 🔬 ContextEmbed — Survival Lab: System Inventory
 
 > **Generated:** February 13, 2026
-> **Commit:** `f98532c` (main)
+> **Commit:** `c79a8a5` (main)
 > **Dedicated source lines:** ~9,300
 
 ---
@@ -203,7 +203,7 @@ SOCIAL_INSTAGRAM, SOCIAL_FACEBOOK, SOCIAL_LINKEDIN
 | File | Lines | Purpose | Key Exports |
 |------|-------|---------|-------------|  
 | `metadata-extractor.ts` | 322 | Non-destructive ExifTool extraction (EXIF/XMP/IPTC detection, field extraction, mojibake detection, SHA-256) | `extractMetadataReport()` |
-| `storage.ts` | 278 | Supabase Storage integration, bucket `ce-survival-lab`, raw binary upload/download, signed URLs | `uploadBaseline()`, `downloadFile()`, `getSignedUrl()` |
+| `storage.ts` | 292 | Supabase Storage integration, bucket `ce-survival-lab`, raw binary upload/download, signed URLs, error propagation | `uploadRawFile()`, `downloadToTempFile()`, `getFileUrl()` |
 | `comparison.ts` | 224 | Field-by-field diff, v1 + v2 survival scores, human-readable summary | `compareToBaseline()` (now with `scoreV2`, `survivalClass`, `diffReport`) |
 | `canonical-map.ts` | 195 | 9 canonical metadata fields with container-aware aliases and weight system | `CANONICAL_FIELDS`, `resolveCanonical()`, `extractCanonicalValue()` |
 | `diff-engine.ts` | 307 | Field-level diff with 8 status types, container retention tracking | `generateMetadataDiff()`, `summariseDiff()` |
@@ -574,7 +574,7 @@ Analytics: `/survival-lab/analytics` → Cross-platform leaderboard, field survi
 
 ## 9. Changelog
 
-### v3 — `f98532c` (February 13, 2026)
+### v3 — `c79a8a5` (February 13, 2026)
 
 **Guided Study Mode — Foundation Study Wizard**
 
@@ -585,6 +585,8 @@ Analytics: `/survival-lab/analytics` → Cross-platform leaderboard, field survi
 | API | +1 route file (`survival-study.ts` — 8 endpoints at `/survival/study`) |
 | API | +1 service (`evidence-pack.ts` — ZIP archive generator with `archiver`) |
 | API | Scenario upload now accepts `scenarioType` and `studySessionId` |
+| API | `uploadRawFile()` now throws with actual Supabase error instead of silent `null` return |
+| API | Baseline + scenario upload routes wrap `extractMetadataFromFile()` in try/catch with graceful fallback |
 | Web | +1 page (`/survival-lab/mode` — three-column wizard with Suspense boundary) |
 | Web | +5 components (StepRail, StepPanel, ScenarioUploader, LiveResultCards, StudySummary) |
 | Web | Main dashboard updated with "Guided Mode" button + "Continue Study" banner |
@@ -592,6 +594,7 @@ Analytics: `/survival-lab/analytics` → Cross-platform leaderboard, field survi
 | Test | +16 unit tests (step ordering, advancement logic, scenario types, step↔type mapping) |
 | Docs | `CONTEXTEMBED_OVERVIEW.md` updated with Survival Lab section |
 | Build | `@types/archiver` moved to deps, test files excluded from `tsc` build, Suspense fix |
+| Build | `exiftool-vendored` added to `apps/api` dependencies (was only transitively available) |
 | Lines | ~7,100 → ~9,300 (+2,200) |
 | Files | 38 → 48 (+10 new) |
 

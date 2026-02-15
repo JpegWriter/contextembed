@@ -62,8 +62,12 @@ const upload = multer({
 let storageInitialized = false;
 async function ensureStorage() {
   if (!storageInitialized) {
-    await initSurvivalLabStorage();
-    storageInitialized = true;
+    const ok = await initSurvivalLabStorage();
+    if (ok) {
+      storageInitialized = true;
+    } else {
+      console.warn('[SurvivalLab] Storage init failed, will retry next request');
+    }
   }
 }
 

@@ -21,11 +21,11 @@ let supabaseClient: SupabaseClient | null = null;
 function getSupabase(): SupabaseClient | null {
   if (supabaseClient) return supabaseClient;
   
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   
   if (!url || !key) {
-    console.warn('[SurvivalLab] Supabase not configured - storage disabled');
+    console.warn('[SurvivalLab] Supabase not configured - storage disabled. SUPABASE_URL:', !!process.env.SUPABASE_URL, 'NEXT_PUBLIC_SUPABASE_URL:', !!process.env.NEXT_PUBLIC_SUPABASE_URL);
     return null;
   }
   

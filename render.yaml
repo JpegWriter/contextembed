@@ -8,7 +8,7 @@ services:
     runtime: node
     region: frankfurt
     plan: starter
-    buildCommand: pnpm install && cd packages/db && npx prisma generate && npx prisma migrate deploy && cd ../.. && pnpm build --filter=@contextembed/api...
+    buildCommand: pnpm install && cd packages/db && npx prisma generate && npx prisma migrate deploy && cd ../.. && pnpm run build:api
     startCommand: node apps/api/dist/index.js
     healthCheckPath: /health
     envVars:
@@ -41,7 +41,7 @@ services:
     runtime: node
     region: frankfurt
     plan: starter
-    buildCommand: pnpm install && cd packages/db && npx prisma generate && npx prisma migrate deploy && cd ../.. && pnpm build --filter=@contextembed/web
+    buildCommand: pnpm install && cd packages/db && npx prisma generate && npx prisma migrate deploy && cd ../.. && pnpm run build:web
     startCommand: cd apps/web && pnpm start
     envVars:
       - key: NODE_ENV

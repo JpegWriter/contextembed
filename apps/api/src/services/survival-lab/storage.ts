@@ -49,10 +49,10 @@ export async function initSurvivalLabStorage(): Promise<boolean> {
     const exists = buckets?.some(b => b.name === BUCKET);
     
     if (!exists) {
-      // Create bucket (public for easy access during testing)
+      // Create bucket — use 50MB limit (Supabase free plan rejects 100MB)
       const { error } = await client.storage.createBucket(BUCKET, {
         public: false, // Keep private for security
-        fileSizeLimit: 100 * 1024 * 1024, // 100MB max
+        fileSizeLimit: 50 * 1024 * 1024, // 50MB max (free-plan safe)
       });
       
       if (error && !error.message.includes('already exists')) {

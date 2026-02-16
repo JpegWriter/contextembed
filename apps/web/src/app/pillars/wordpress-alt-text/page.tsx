@@ -383,7 +383,7 @@ export default function WordPressAltTextPage() {
           </p>
           <Link
             href="/login"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-brand-600 border border-brand-500 text-white font-bold uppercase tracking-wider hover:bg-brand-500 transition-colors shadow-glow-green"
+            className="inline-flex items-center gap-2 px-8 py-4 text-white font-bold uppercase tracking-wider transition-colors btn-gradient-border"
           >
             Try ContextEmbed Free
             <ArrowRight className="h-5 w-5" />

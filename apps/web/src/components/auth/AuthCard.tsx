@@ -140,7 +140,7 @@ export function AuthButton({
   const baseStyles = 'w-full flex items-center justify-center gap-2 px-4 py-3 font-bold uppercase tracking-wider text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed';
   
   const variants = {
-    primary: 'bg-brand-600 hover:bg-brand-500 text-white border border-brand-500 shadow-glow-green',
+    primary: 'btn-gradient-border text-white',
     secondary: 'bg-steel-900 hover:bg-steel-800 text-steel-300 border border-steel-700/50',
     ghost: 'bg-transparent hover:bg-steel-800/60 text-steel-400',
   };

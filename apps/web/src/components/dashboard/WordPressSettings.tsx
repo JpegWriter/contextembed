@@ -308,7 +308,7 @@ export function WordPressSettings({ projectId, token }: WordPressSettingsProps) 
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="px-4 py-2 bg-brand-600 text-white rounded-none hover:bg-brand-500 transition-colors disabled:opacity-50 flex items-center gap-2"
+                className="px-4 py-2 text-white transition-colors disabled:opacity-50 flex items-center gap-2 btn-gradient-border"
               >
                 {saving && <Loader2 className="h-4 w-4 animate-spin" />}
                 <Key className="h-4 w-4" />

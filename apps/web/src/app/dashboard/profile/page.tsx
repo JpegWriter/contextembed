@@ -550,8 +550,8 @@ export default function ProfilePage() {
         <button
           onClick={handleSave}
           disabled={!hasChanges || saving}
-          className="flex items-center gap-2 px-5 py-2 bg-brand-600 text-white text-sm font-bold uppercase tracking-wider
-            hover:bg-brand-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors border border-brand-500"
+          className="flex items-center gap-2 px-5 py-2 text-white text-sm font-bold uppercase tracking-wider
+            disabled:opacity-40 disabled:cursor-not-allowed transition-colors btn-gradient-border"
         >
           {saving ? (
             <Loader2 className="w-4 h-4 animate-spin" />

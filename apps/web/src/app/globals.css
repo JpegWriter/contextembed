@@ -58,9 +58,8 @@ body {
 }
 
 .btn-tool-primary {
-  @apply px-3 py-1.5 text-sm font-medium border border-brand-600
-    bg-brand-600 hover:bg-brand-500 active:bg-brand-700
-    text-white transition-colors;
+  @apply px-3 py-1.5 text-sm font-medium
+    text-white transition-colors btn-gradient-border;
 }
 
 /* Status chip — square */
@@ -105,6 +104,68 @@ body {
 /* Green accent glow — for key interactive elements */
 .glow-green {
   box-shadow: 0 0 12px rgba(16, 185, 129, 0.15), inset 0 1px 0 rgba(16, 185, 129, 0.05);
+}
+
+/* ── Animated Gradient Border Button ── */
+@keyframes border-rotate {
+  0% { --gradient-angle: 0deg; }
+  100% { --gradient-angle: 360deg; }
+}
+
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.btn-gradient-border {
+  position: relative;
+  background: #0a0e14;
+  border: none;
+  isolation: isolate;
+  z-index: 0;
+}
+
+.btn-gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--gradient-angle, 0deg),
+    #059669,
+    #34d399,
+    #10b981,
+    #064e3b,
+    #22c55e,
+    #059669
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: border-rotate 3s linear infinite;
+  z-index: -1;
+}
+
+.btn-gradient-border:hover {
+  background: #111820;
+}
+
+.btn-gradient-border:hover::before {
+  padding: 2px;
+  animation-duration: 1.5s;
+}
+
+.btn-gradient-border:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-gradient-border:disabled::before {
+  animation-play-state: paused;
+  opacity: 0.4;
 }
 
 /* Thin separator lines */

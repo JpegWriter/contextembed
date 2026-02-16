@@ -176,16 +176,16 @@ export default function SurvivalLabPage() {
           </Link>
           <button
             onClick={() => setShowNewRunModal(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-brand-600 border border-brand-500
-              text-white text-sm font-bold hover:bg-brand-500 transition-all shadow-glow-green"
+            className="flex items-center gap-2 px-4 py-2
+              text-white text-sm font-bold transition-all btn-gradient-border"
           >
             <Plus className="w-4 h-4" />
             New Test Run
           </button>
           <Link
             href="/survival-lab/mode"
-            className="flex items-center gap-2 px-4 py-2 bg-emerald-700 border border-emerald-600
-              text-white text-sm font-bold hover:bg-emerald-600 transition-all"
+            className="flex items-center gap-2 px-4 py-2
+              text-white text-sm font-bold transition-all btn-gradient-border"
           >
             <BookOpen className="w-4 h-4" />
             Guided Mode
@@ -279,8 +279,8 @@ export default function SurvivalLabPage() {
             </p>
             <button
               onClick={() => setShowNewRunModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 border border-brand-500
-                text-white text-sm font-bold hover:bg-brand-500 transition-all"
+              className="inline-flex items-center gap-2 px-4 py-2
+                text-white text-sm font-bold transition-all btn-gradient-border"
             >
               <Plus className="w-4 h-4" />
               Create Test Run
@@ -374,8 +374,8 @@ export default function SurvivalLabPage() {
               <button
                 onClick={createTestRun}
                 disabled={creating || !selectedPlatform || !runTitle.trim()}
-                className="flex-1 px-4 py-2 bg-brand-600 border border-brand-500 text-white text-sm font-bold
-                  disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-2 text-white text-sm font-bold
+                  disabled:opacity-50 disabled:cursor-not-allowed btn-gradient-border"
               >
                 {creating ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Create'}
               </button>

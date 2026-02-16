@@ -167,7 +167,7 @@ export function UpgradeModal({ isOpen, onClose, domain, used, limit, token }: Up
                     disabled={loading !== null}
                     className={`w-full py-2.5 rounded-lg font-semibold text-sm transition-all ${
                       plan.recommended
-                        ? 'bg-brand-600 hover:bg-brand-500 text-white'
+                        ? 'btn-gradient-border text-white'
                         : 'bg-gray-700 hover:bg-gray-600 text-white'
                     } ${loading === plan.id ? 'opacity-50 cursor-wait' : ''}`}
                   >

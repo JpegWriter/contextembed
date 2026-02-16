@@ -1292,9 +1292,9 @@ export function MetadataSidebar({
         <button
           onClick={() => onApprove(asset.id)}
           disabled={!validationStats.allValid || asset.status === 'approved'}
-          className="w-full flex items-center justify-center gap-2 py-2 bg-green-600 
-            text-white rounded text-sm font-medium hover:bg-green-500 
-            disabled:opacity-50 disabled:cursor-not-allowed transition-colors border border-green-500"
+          className="w-full flex items-center justify-center gap-2 py-2 
+            text-white rounded text-sm font-medium 
+            disabled:opacity-50 disabled:cursor-not-allowed transition-colors btn-gradient-border"
         >
           <Check className="w-4 h-4" />
           {asset.status === 'approved' ? 'Committed' : 'Commit Embed'}
@@ -1316,8 +1316,8 @@ export function MetadataSidebar({
             onClick={() => onDownload(asset.id)}
             disabled={!isCompleted}
             className="flex-1 flex items-center justify-center gap-1.5 py-2 
-              bg-brand-600 text-white rounded text-sm font-medium
-              hover:bg-brand-500 disabled:opacity-50 transition-colors border border-brand-500"
+              text-white rounded text-sm font-medium
+              disabled:opacity-50 transition-colors btn-gradient-border"
           >
             <Download className="w-3.5 h-3.5" />
             Export

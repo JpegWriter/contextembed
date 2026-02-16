@@ -182,7 +182,7 @@ export default function PricingPage() {
                 
                 <Link
                   href="/login?plan=pro"
-                  className="block w-full py-3 text-center bg-brand-600 dark:bg-brand-500 text-white font-medium rounded-lg hover:bg-brand-700 dark:hover:bg-brand-600 transition-colors"
+                  className="block w-full py-3 text-center text-white font-medium transition-colors btn-gradient-border"
                 >
                   Buy Lifetime License
                 </Link>

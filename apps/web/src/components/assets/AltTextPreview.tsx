@@ -242,9 +242,8 @@ export function AltTextPreview({
             <button
               onClick={handleGenerate}
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-none
-                hover:bg-brand-500 transition-colors disabled:opacity-50 text-sm font-medium
-                shadow-sm"
+              className="flex items-center gap-2 px-4 py-2 text-white
+                transition-colors disabled:opacity-50 text-sm font-medium btn-gradient-border"
             >
               {loading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

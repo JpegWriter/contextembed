@@ -305,7 +305,7 @@ export default function SupportDrawer({ currentRoute = '' }: SupportDrawerProps)
       {/* Floating Support Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-40 w-12 h-12 bg-brand-600 hover:bg-brand-500 text-white flex items-center justify-center shadow-lg transition-all hover:scale-105"
+        className="fixed bottom-6 right-6 z-40 w-12 h-12 text-white flex items-center justify-center shadow-lg transition-all hover:scale-105 btn-gradient-border"
         aria-label="Open Support"
       >
         <MessageCircleQuestion className="h-6 w-6" />
@@ -481,7 +481,7 @@ export default function SupportDrawer({ currentRoute = '' }: SupportDrawerProps)
                   href={`mailto:support@contextembed.com?subject=Support Ticket&body=${encodeURIComponent(
                     JSON.stringify(ticketPayload, null, 2)
                   )}`}
-                  className="flex-1 py-2 text-xs font-semibold uppercase tracking-wider bg-brand-600 hover:bg-brand-500 text-white flex items-center justify-center gap-2"
+                  className="flex-1 py-2 text-xs font-semibold uppercase tracking-wider text-white flex items-center justify-center gap-2 btn-gradient-border"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
                   Email Support
@@ -507,7 +507,7 @@ export default function SupportDrawer({ currentRoute = '' }: SupportDrawerProps)
             <button
               type="submit"
               disabled={isLoading || !input.trim()}
-              className="px-4 bg-brand-600 hover:bg-brand-500 disabled:bg-steel-700 disabled:text-steel-500 text-white transition-colors"
+              className="px-4 disabled:bg-steel-700 disabled:text-steel-500 text-white transition-colors btn-gradient-border"
             >
               <Send className="h-4 w-4" />
             </button>

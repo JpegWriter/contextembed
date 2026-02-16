@@ -416,9 +416,9 @@ export function NewProjectModal({ isOpen, onClose, onSubmit }: NewProjectModalPr
             <button
               onClick={handleSubmit}
               disabled={loading || !formData.name.trim() || !selectedScope || !formData.primaryContext.trim()}
-              className="px-6 py-2.5 bg-brand-600 border border-brand-500 text-white 
-                text-sm font-bold uppercase tracking-wider hover:bg-brand-500 disabled:opacity-50 
-                disabled:cursor-not-allowed transition-all flex items-center gap-2 shadow-glow-green"
+              className="px-6 py-2.5 text-white 
+                text-sm font-bold uppercase tracking-wider disabled:opacity-50 
+                disabled:cursor-not-allowed transition-all flex items-center gap-2 btn-gradient-border"
             >
               {loading ? (
                 <>

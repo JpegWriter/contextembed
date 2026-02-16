@@ -220,8 +220,8 @@ function AdvanceButton({ label, onClick, disabled }: { label: string; onClick: (
       <button
         onClick={onClick}
         disabled={disabled}
-        className="px-5 py-2.5 bg-brand-600 border border-brand-500 text-white text-sm font-bold
-          hover:bg-brand-500 transition-all shadow-glow-green disabled:opacity-40 disabled:cursor-not-allowed"
+        className="px-5 py-2.5 text-white text-sm font-bold
+          transition-all disabled:opacity-40 disabled:cursor-not-allowed btn-gradient-border"
       >
         {label}
       </button>
@@ -331,8 +331,8 @@ function BaselineLockPanel({
           <button
             onClick={lockBaselines}
             disabled={locking || selected.size === 0}
-            className="flex items-center gap-2 px-4 py-2 bg-brand-600 border border-brand-500
-              text-white text-sm font-bold hover:bg-brand-500 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-2
+              text-white text-sm font-bold disabled:opacity-40 disabled:cursor-not-allowed btn-gradient-border"
           >
             {locking ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
             Lock {selected.size} Baseline{selected.size !== 1 ? 's' : ''}
@@ -558,8 +558,8 @@ function EvidencePackPanel({
         <button
           onClick={generate}
           disabled={generating}
-          className="flex items-center gap-2 px-5 py-3 bg-brand-600 border border-brand-500
-            text-white text-sm font-bold hover:bg-brand-500 disabled:opacity-50 transition-all"
+          className="flex items-center gap-2 px-5 py-3
+            text-white text-sm font-bold disabled:opacity-50 transition-all btn-gradient-border"
         >
           {generating ? (
             <Loader2 className="w-5 h-5 animate-spin" />

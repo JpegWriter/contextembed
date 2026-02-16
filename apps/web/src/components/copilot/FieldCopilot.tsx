@@ -424,8 +424,8 @@ export function FieldCopilot({ fieldDefinitions, onApplySuggestion, apiToken, ur
             )}
             <button
               onClick={() => onApplySuggestion(activeField.fieldId, analysis.suggestion!)}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-brand-600 hover:bg-brand-500 
-                text-white text-xs font-medium rounded transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 
+                text-white text-xs font-medium transition-colors btn-gradient-border"
             >
               <Check className="w-3 h-3" />
               Apply suggestion

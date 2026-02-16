@@ -416,7 +416,7 @@ function OnboardingContent() {
                 disabled={i > currentStep}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition-colors whitespace-nowrap ${
                   i === currentStep
-                    ? 'bg-brand-600 text-white'
+                    ? 'btn-gradient-border text-white'
                     : i < currentStep
                     ? 'bg-emerald-900/50 text-emerald-400 border border-emerald-700/50'
                     : 'bg-gray-800 text-gray-500 border border-gray-700'
@@ -453,7 +453,7 @@ function OnboardingContent() {
                   <button
                     onClick={handleAuditUrl}
                     disabled={!url || auditing}
-                    className="px-4 py-2 bg-brand-600 text-white text-sm font-medium rounded hover:bg-brand-500 disabled:opacity-50 flex items-center gap-2"
+                    className="px-4 py-2 text-white text-sm font-medium disabled:opacity-50 btn-gradient-border flex items-center gap-2"
                   >
                     {auditing ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Analyze'}
                   </button>
@@ -474,7 +474,7 @@ function OnboardingContent() {
               <div className="flex justify-end">
                 <button
                   onClick={() => setCurrentStep(1)}
-                  className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-sm font-medium rounded hover:bg-brand-500"
+                  className="flex items-center gap-2 px-4 py-2 text-white text-sm font-medium btn-gradient-border"
                 >
                   Next <ArrowRight className="h-4 w-4" />
                 </button>
@@ -599,7 +599,7 @@ function OnboardingContent() {
                 <button
                   onClick={handleSaveContext}
                   disabled={!context.brandName || saving}
-                  className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-sm font-medium rounded hover:bg-brand-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 text-white text-sm font-medium disabled:opacity-50 btn-gradient-border"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Next <ArrowRight className="h-4 w-4" /></>}
                 </button>
@@ -753,7 +753,7 @@ function OnboardingContent() {
                 <button
                   onClick={handleSaveAuthority}
                   disabled={saving}
-                  className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-sm font-medium rounded hover:bg-brand-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 text-white text-sm font-medium disabled:opacity-50 btn-gradient-border"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Next <ArrowRight className="h-4 w-4" /></>}
                 </button>
@@ -843,7 +843,7 @@ function OnboardingContent() {
                 <button
                   onClick={handleSaveRights}
                   disabled={!rights.creatorName || saving}
-                  className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-sm font-medium rounded hover:bg-brand-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 text-white text-sm font-medium disabled:opacity-50 btn-gradient-border"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Next <ArrowRight className="h-4 w-4" /></>}
                 </button>
@@ -915,7 +915,7 @@ function OnboardingContent() {
                 <button
                   onClick={handleSavePreferences}
                   disabled={saving}
-                  className="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-sm font-medium rounded hover:bg-brand-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 text-white text-sm font-medium disabled:opacity-50 btn-gradient-border"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Next <ArrowRight className="h-4 w-4" /></>}
                 </button>
@@ -956,7 +956,7 @@ function OnboardingContent() {
                 <button
                   onClick={handleComplete}
                   disabled={saving}
-                  className="flex items-center gap-2 px-6 py-2 bg-brand-600 text-white text-sm font-medium rounded hover:bg-brand-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-6 py-2 text-white text-sm font-medium disabled:opacity-50 btn-gradient-border"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Start Uploading'}
                 </button>

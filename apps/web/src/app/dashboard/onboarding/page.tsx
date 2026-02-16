@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -244,7 +244,7 @@ function OnboardingContent() {
           // Auto-generate IPTC-compliant copyright template
           creatorName: businessName || prev.creatorName,
           copyrightTemplate: businessName 
-            ? `┬® {year} ${businessName}. All Rights Reserved.` 
+            ? `â”¬Â® {year} ${businessName}. All Rights Reserved.` 
             : prev.copyrightTemplate,
           creditTemplate: businessName 
             ? `Photo by ${businessName}` 
@@ -408,7 +408,7 @@ function OnboardingContent() {
                 disabled={i > currentStep}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-medium transition-colors whitespace-nowrap ${
                   i === currentStep
-                    ? 'bg-brand-600 text-white'
+                    ? 'btn-gradient-border text-white'
                     : i < currentStep
                     ? 'bg-emerald-900/50 text-emerald-400 border border-emerald-700/50'
                     : 'bg-gray-800 text-gray-500 border border-gray-700'
@@ -445,7 +445,7 @@ function OnboardingContent() {
                   <button
                     onClick={handleAuditUrl}
                     disabled={!url || auditing}
-                    className="px-4 py-2.5 bg-brand-600 text-white text-sm font-medium rounded-none hover:bg-brand-500 disabled:opacity-50 flex items-center gap-2"
+                    className="px-4 py-2.5 text-white text-sm font-medium disabled:opacity-50 flex items-center gap-2 btn-gradient-border"
                   >
                     {auditing ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Analyze'}
                   </button>
@@ -456,10 +456,10 @@ function OnboardingContent() {
                 <div className="p-4 bg-emerald-900/20 border border-emerald-700/50 rounded-none">
                   <h3 className="font-medium text-emerald-400 text-sm mb-2">Found information:</h3>
                   <ul className="text-xs space-y-1 text-emerald-300">
-                    {urlAudit.businessName && <li>• Business: {urlAudit.businessName}</li>}
-                    {urlAudit.industry && <li>• Industry: {urlAudit.industry}</li>}
-                    {urlAudit.tagline && <li>• Tagline: {urlAudit.tagline}</li>}
-                    {urlAudit.location?.city && <li>• Location: {urlAudit.location.city}</li>}
+                    {urlAudit.businessName && <li>â€¢ Business: {urlAudit.businessName}</li>}
+                    {urlAudit.industry && <li>â€¢ Industry: {urlAudit.industry}</li>}
+                    {urlAudit.tagline && <li>â€¢ Tagline: {urlAudit.tagline}</li>}
+                    {urlAudit.location?.city && <li>â€¢ Location: {urlAudit.location.city}</li>}
                   </ul>
                 </div>
               )}
@@ -467,7 +467,7 @@ function OnboardingContent() {
               <div className="flex justify-end">
                 <button
                   onClick={() => setCurrentStep(1)}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-brand-600 text-white text-sm font-medium rounded-none hover:bg-brand-500"
+                  className="flex items-center gap-2 px-5 py-2.5 text-white text-sm font-medium btn-gradient-border"
                 >
                   Next <ArrowRight className="h-4 w-4" />
                 </button>
@@ -597,7 +597,7 @@ function OnboardingContent() {
                 <button
                   onClick={handleNextStep}
                   disabled={!context.businessName || saving}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-brand-600 text-white text-sm font-medium rounded-none hover:bg-brand-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-5 py-2.5 text-white text-sm font-medium disabled:opacity-50 btn-gradient-border"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Next <ArrowRight className="h-4 w-4" /></>}
                 </button>
@@ -751,7 +751,7 @@ function OnboardingContent() {
                 <button
                   onClick={handleNextStep}
                   disabled={saving}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-brand-600 text-white text-sm font-medium rounded-none hover:bg-brand-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-5 py-2.5 text-white text-sm font-medium disabled:opacity-50 btn-gradient-border"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Next <ArrowRight className="h-4 w-4" /></>}
                 </button>
@@ -786,7 +786,7 @@ function OnboardingContent() {
                 value={rights.copyrightTemplate}
                 onChange={(v) => setRights(r => ({ ...r, copyrightTemplate: v }))}
                 onFocus={() => handleFocus('copyrightTemplate', 'rights')}
-                placeholder="e.g., ┬® 2026 Sarah Chen Photography. All Rights Reserved."
+                placeholder="e.g., â”¬Â® 2026 Sarah Chen Photography. All Rights Reserved."
               />
 
               <InputField
@@ -837,7 +837,7 @@ function OnboardingContent() {
                 <button
                   onClick={handleNextStep}
                   disabled={!rights.creatorName || saving}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-brand-600 text-white text-sm font-medium rounded-none hover:bg-brand-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-5 py-2.5 text-white text-sm font-medium disabled:opacity-50 btn-gradient-border"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Next <ArrowRight className="h-4 w-4" /></>}
                 </button>
@@ -918,7 +918,7 @@ function OnboardingContent() {
                 <button
                   onClick={handleNextStep}
                   disabled={saving}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-brand-600 text-white text-sm font-medium rounded-none hover:bg-brand-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-5 py-2.5 text-white text-sm font-medium disabled:opacity-50 btn-gradient-border"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Next <ArrowRight className="h-4 w-4" /></>}
                 </button>
@@ -943,11 +943,11 @@ function OnboardingContent() {
               <div className="bg-gray-800/50 rounded-none p-4 space-y-3">
                 <h3 className="text-sm font-medium text-gray-300 mb-2">Profile Summary</h3>
                 <dl className="text-xs space-y-2">
-                  <SummaryRow label="Business" value={context.businessName || 'ÔÇö'} />
-                  <SummaryRow label="Industry" value={context.industry || 'ÔÇö'} />
-                  <SummaryRow label="Creator" value={rights.creatorName || 'ÔÇö'} />
-                  <SummaryRow label="Location" value={[context.city, context.state, context.country].filter(Boolean).join(', ') || 'ÔÇö'} />
-                  <SummaryRow label="Experience" value={authority.yearsExperience ? `${authority.yearsExperience} years` : 'ÔÇö'} />
+                  <SummaryRow label="Business" value={context.businessName || 'Ã”Ã‡Ã¶'} />
+                  <SummaryRow label="Industry" value={context.industry || 'Ã”Ã‡Ã¶'} />
+                  <SummaryRow label="Creator" value={rights.creatorName || 'Ã”Ã‡Ã¶'} />
+                  <SummaryRow label="Location" value={[context.city, context.state, context.country].filter(Boolean).join(', ') || 'Ã”Ã‡Ã¶'} />
+                  <SummaryRow label="Experience" value={authority.yearsExperience ? `${authority.yearsExperience} years` : 'Ã”Ã‡Ã¶'} />
                   <SummaryRow label="Language" value={preferences.primaryLanguage.toUpperCase()} />
                 </dl>
               </div>
@@ -962,7 +962,7 @@ function OnboardingContent() {
                 <button
                   onClick={handleComplete}
                   disabled={saving}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-brand-600 text-white text-sm font-medium rounded-none hover:bg-brand-500 disabled:opacity-50"
+                  className="flex items-center gap-2 px-6 py-2.5 text-white text-sm font-medium disabled:opacity-50 btn-gradient-border"
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Start Creating Projects'}
                 </button>

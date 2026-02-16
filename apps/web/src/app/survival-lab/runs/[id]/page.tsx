@@ -313,7 +313,7 @@ export default function TestRunPage() {
               onClick={() => setStep(s as any)}
               className={`px-3 py-1.5 text-xs font-medium uppercase transition-colors
                 ${step === s 
-                  ? 'bg-brand-600 text-white' 
+                  ? 'btn-gradient-border text-white' 
                   : 'bg-steel-800 text-steel-400 hover:bg-steel-700'
                 }`}
             >
@@ -340,7 +340,7 @@ export default function TestRunPage() {
               <p className="text-sm text-steel-400 mb-4">No baselines available</p>
               <Link
                 href="/survival-lab/baselines"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 text-white text-sm font-bold"
+                className="inline-flex items-center gap-2 px-4 py-2 text-white text-sm font-bold btn-gradient-border"
               >
                 <Plus className="w-4 h-4" />
                 Upload Baselines First
@@ -386,8 +386,8 @@ export default function TestRunPage() {
               <button
                 onClick={attachBaselines}
                 disabled={attaching || selectedBaselines.size === 0}
-                className="px-4 py-2 bg-brand-600 border border-brand-500 text-white text-sm font-bold
-                  disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 text-white text-sm font-bold
+                  disabled:opacity-50 disabled:cursor-not-allowed btn-gradient-border"
               >
                 {attaching ? <Loader2 className="w-4 h-4 animate-spin" /> : `Attach ${selectedBaselines.size} Baseline(s)`}
               </button>
@@ -413,8 +413,8 @@ export default function TestRunPage() {
                 setUploadBaselineId(run.assets[0]?.baselineImageId || '');
                 setShowUploadModal(true);
               }}
-              className="flex items-center gap-2 px-4 py-2 bg-brand-600 border border-brand-500
-                text-white text-sm font-bold hover:bg-brand-500 transition-all"
+              className="flex items-center gap-2 px-4 py-2
+                text-white text-sm font-bold transition-all btn-gradient-border"
             >
               <Upload className="w-4 h-4" />
               Upload Scenario
@@ -594,8 +594,8 @@ export default function TestRunPage() {
               <button
                 onClick={uploadScenarioFile}
                 disabled={uploading || !uploadFile}
-                className="flex-1 px-4 py-2 bg-brand-600 border border-brand-500 text-white text-sm font-bold
-                  disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-2 text-white text-sm font-bold
+                  disabled:opacity-50 disabled:cursor-not-allowed btn-gradient-border"
               >
                 {uploading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Upload & Compare'}
               </button>

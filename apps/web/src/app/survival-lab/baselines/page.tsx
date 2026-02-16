@@ -162,8 +162,8 @@ export default function BaselinesPage() {
         </div>
         <button
           onClick={() => setShowUploadModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-brand-600 border border-brand-500
-            text-white text-sm font-bold hover:bg-brand-500 transition-all shadow-glow-green"
+          className="flex items-center gap-2 px-4 py-2
+            text-white text-sm font-bold transition-all btn-gradient-border"
         >
           <Upload className="w-4 h-4" />
           Upload Baseline
@@ -194,8 +194,8 @@ export default function BaselinesPage() {
           </p>
           <button
             onClick={() => setShowUploadModal(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-brand-600 border border-brand-500
-              text-white text-sm font-bold hover:bg-brand-500 transition-all"
+            className="inline-flex items-center gap-2 px-4 py-2
+              text-white text-sm font-bold transition-all btn-gradient-border"
           >
             <Upload className="w-4 h-4" />
             Upload First Baseline
@@ -325,8 +325,8 @@ export default function BaselinesPage() {
               <button
                 onClick={uploadBaseline}
                 disabled={uploading || !selectedFile || !uploadLabel.trim()}
-                className="flex-1 px-4 py-2 bg-brand-600 border border-brand-500 text-white text-sm font-bold
-                  disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-2 text-white text-sm font-bold
+                  disabled:opacity-50 disabled:cursor-not-allowed btn-gradient-border"
               >
                 {uploading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'Upload'}
               </button>

@@ -587,7 +587,7 @@ export default function ProjectPage() {
                 className={`flex items-center gap-2 px-4 py-2.5 text-sm font-bold uppercase tracking-wider transition-all border
                   ${animateStep1 ? 'animate-step-in' : ''}
                   ${step1Done
-                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500 ring-2 ring-emerald-400/30'
+                    ? 'btn-gradient-border text-white'
                     : 'bg-red-600 hover:bg-red-500 text-white border-red-500 ring-2 ring-red-400/40 animate-pulse-ring'
                   }`}
               >
@@ -625,7 +625,7 @@ export default function ProjectPage() {
               ${!embedReady
                 ? 'bg-neutral-800 text-neutral-500 border-neutral-700 cursor-not-allowed'
                 : step2Done
-                ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500 ring-2 ring-emerald-400/30'
+                ? 'btn-gradient-border text-white'
                 : 'bg-red-600 hover:bg-red-500 text-white border-red-500 ring-2 ring-red-400/40'
               }`}
           >
@@ -646,7 +646,7 @@ export default function ProjectPage() {
               ${!step2Done
                 ? 'bg-neutral-800 text-neutral-500 border-neutral-700 cursor-not-allowed'
                 : step3Done
-                ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500 ring-2 ring-emerald-400/30'
+                ? 'btn-gradient-border text-white'
                 : 'bg-red-600 hover:bg-red-500 text-white border-red-500 ring-2 ring-red-400/40 animate-pulse-ring'
               }`}
           >
@@ -663,7 +663,7 @@ export default function ProjectPage() {
               ${!exportReady
                 ? 'bg-neutral-800 text-neutral-500 border-neutral-700 cursor-not-allowed'
                 : step4Done
-                ? 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500 ring-2 ring-emerald-400/30'
+                ? 'btn-gradient-border text-white'
                 : 'bg-red-600 hover:bg-red-500 text-white border-red-500 ring-2 ring-red-400/40'
               }`}
           >

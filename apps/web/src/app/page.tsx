@@ -41,7 +41,7 @@ export default function HomePage() {
             </Link>
             <Link
               href="/login"
-              className="px-4 py-2 bg-brand-600 border border-brand-500 text-white text-xs font-bold uppercase tracking-wider hover:bg-brand-500 transition-colors"
+              className="px-4 py-2 text-white text-xs font-bold uppercase tracking-wider transition-colors btn-gradient-border"
             >
               Try Free
             </Link>
@@ -61,7 +61,7 @@ export default function HomePage() {
             </p>
             <Link
               href="/login"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-brand-600 border border-brand-500 text-white font-bold uppercase tracking-wider hover:bg-brand-500 transition-colors shadow-glow-green"
+              className="inline-flex items-center gap-2 px-6 py-3 text-white font-bold uppercase tracking-wider transition-colors btn-gradient-border"
             >
               Try ContextEmbed Free
               <ArrowRight className="h-4 w-4" />
@@ -530,7 +530,7 @@ export default function HomePage() {
           <div className="max-w-3xl mx-auto text-center">
             <Link
               href="/login"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-brand-600 border border-brand-500 text-white font-bold uppercase tracking-wider hover:bg-brand-500 transition-colors text-lg mb-6 shadow-glow-green-lg"
+              className="inline-flex items-center gap-2 px-8 py-4 text-white font-bold uppercase tracking-wider transition-colors text-lg mb-6 btn-gradient-border"
             >
               Try ContextEmbed Free
               <ArrowRight className="h-5 w-5" />

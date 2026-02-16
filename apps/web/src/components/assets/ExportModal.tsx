@@ -396,7 +396,7 @@ export function ExportModal({
                 {exportResult.downloadUrl && (
                   <button
                     onClick={() => window.open(exportsApi.download(exportResult.id), '_blank')}
-                    className="px-4 py-2 bg-brand-600 text-white rounded-none hover:bg-brand-500 flex items-center gap-2"
+                    className="px-4 py-2 text-white flex items-center gap-2 btn-gradient-border"
                   >
                     <Download className="w-4 h-4" />
                     Download Again
@@ -794,7 +794,7 @@ export function ExportModal({
                 <button
                   onClick={handleExport}
                   disabled={exporting || assetCount === 0}
-                  className="px-6 py-2 bg-brand-600 text-white text-sm font-medium rounded-none hover:bg-brand-500 disabled:opacity-50 flex items-center gap-2"
+                  className="px-6 py-2 text-white text-sm font-medium disabled:opacity-50 flex items-center gap-2 btn-gradient-border"
                 >
                   {exporting ? (
                     <>

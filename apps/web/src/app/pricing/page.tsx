@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Logo } from '@/components/Logo';
+import MobileNav from '@/components/MobileNav';
 import { 
   ArrowRight, 
   Check,
@@ -18,20 +19,10 @@ export default function PricingPage() {
           <Link href="/" className="flex items-center gap-2">
             <Logo variant="full" size="md" dark={false} />
           </Link>
-          <div className="flex items-center gap-6">
-            <Link
-              href="/governance"
-              className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
-            >
-              Governance
-            </Link>
-            <Link
-              href="/login"
-              className="px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm font-medium rounded-lg hover:bg-slate-800 dark:hover:bg-gray-100 transition-colors"
-            >
-              Try Free
-            </Link>
-          </div>
+          <MobileNav
+            links={[{ href: '/governance', label: 'Governance' }]}
+            theme="light"
+          />
         </div>
       </header>
 
@@ -347,7 +338,7 @@ export default function PricingPage() {
               Pricing Summary
             </h2>
             
-            <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
+            <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
               <table className="w-full">
                 <thead>
                   <tr className="bg-slate-100 dark:bg-slate-800">

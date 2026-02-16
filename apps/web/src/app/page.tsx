@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Logo } from '@/components/Logo';
+import MobileNav from '@/components/MobileNav';
 import { 
   ArrowRight, 
   X,
@@ -20,32 +21,14 @@ export default function HomePage() {
           <div className="flex items-center gap-2">
             <Logo variant="full" size="md" dark={true} />
           </div>
-          <div className="flex items-center gap-6">
-            <Link
-              href="/pillars"
-              className="text-xs font-bold text-steel-400 uppercase tracking-wider hover:text-white transition-colors"
-            >
-              Pillars
-            </Link>
-            <Link
-              href="/pricing"
-              className="text-xs font-bold text-steel-400 uppercase tracking-wider hover:text-white transition-colors"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/governance"
-              className="text-xs font-bold text-steel-400 uppercase tracking-wider hover:text-white transition-colors"
-            >
-              Governance
-            </Link>
-            <Link
-              href="/login"
-              className="px-4 py-2 text-white text-xs font-bold uppercase tracking-wider transition-colors btn-gradient-border"
-            >
-              Try Free
-            </Link>
-          </div>
+          <MobileNav
+            links={[
+              { href: '/pillars', label: 'Pillars' },
+              { href: '/pricing', label: 'Pricing' },
+              { href: '/governance', label: 'Governance' },
+            ]}
+            theme="dark"
+          />
         </div>
       </header>
 

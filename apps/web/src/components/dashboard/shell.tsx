@@ -12,6 +12,8 @@ import {
   LogOut,
   ChevronDown,
   UserCircle,
+  Menu,
+  X,
 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import SupportDrawer from './SupportDrawer';
@@ -26,6 +28,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
   const pathname = usePathname();
   const { supabase } = useSupabase();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -68,8 +71,34 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
 
   return (
     <div className="min-h-screen flex bg-black">
+      {/* Mobile top bar */}
+      <div className="fixed top-0 left-0 right-0 h-14 bg-black border-b border-steel-700/50 flex items-center justify-between px-4 z-30 md:hidden">
+        <Link href="/dashboard" className="flex items-center gap-2">
+          <Logo variant="full" size="sm" dark />
+        </Link>
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="p-2 text-steel-400 hover:text-white transition-colors"
+          aria-label="Toggle menu"
+        >
+          {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </div>
+
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 z-30 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar — Sharp black tech panel */}
-      <aside className="w-56 bg-black border-r border-steel-700/50 flex flex-col">
+      <aside
+        className={`fixed md:static inset-y-0 left-0 w-56 bg-black border-r border-steel-700/50 flex flex-col z-40
+          transform transition-transform duration-200 md:translate-x-0
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+      >
         {/* Logo */}
         <div className="h-16 px-4 flex items-center border-b border-steel-700/50">
           <Link href="/dashboard" className="flex items-center gap-2">
@@ -83,6 +112,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
             <Link
               key={item.name}
               href={item.href}
+              onClick={() => setSidebarOpen(false)}
               className={`flex items-center gap-2.5 px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${
                 item.active
                   ? 'bg-brand-900/30 text-brand-400 border-l-2 border-brand-500'
@@ -125,7 +155,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 overflow-auto bg-black">
+      <main className="flex-1 overflow-auto bg-black pt-14 md:pt-0">
         {children}
       </main>
 

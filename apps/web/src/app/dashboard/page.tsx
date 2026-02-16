@@ -129,23 +129,24 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 md:p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-sm font-bold text-white uppercase tracking-wider">Projects</h1>
-          <p className="text-xs text-steel-500 mt-0.5 font-mono">
+          <p className="text-xs text-steel-500 mt-0.5 font-mono hidden sm:block">
             Manage your metadata embedding projects
           </p>
         </div>
         <button
           onClick={() => setShowNewProjectModal(true)}
-          className="flex items-center gap-2 px-5 py-2.5
-            text-white text-sm font-bold uppercase tracking-wider 
+          className="flex items-center gap-2 px-3 sm:px-5 py-2.5
+            text-white text-xs sm:text-sm font-bold uppercase tracking-wider 
             transition-all btn-gradient-border"
         >
           <Plus className="w-4 h-4" />
-          New Project
+          <span className="hidden sm:inline">New Project</span>
+          <span className="sm:hidden">New</span>
         </button>
       </div>
 
@@ -167,7 +168,7 @@ export default function DashboardPage() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
           {projects.map(project => (
             <div
               key={project.id}

@@ -14,7 +14,7 @@
 
 import { Suspense, useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FlaskConical, Loader2, ArrowLeft } from 'lucide-react';
+import { FlaskConical, Loader2, ArrowLeft, PanelLeftClose, PanelRightClose } from 'lucide-react';
 import Link from 'next/link';
 import { useSupabase } from '@/lib/supabase-provider';
 import { survivalLabApi } from '@/lib/api';
@@ -290,9 +290,9 @@ function GuidedModeInner() {
       </header>
 
       {/* Three-column layout */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Left rail — Step progress */}
-        <aside className="w-56 flex-shrink-0 border-r border-steel-800 bg-black/30 overflow-y-auto py-4">
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Left rail — Step progress (hidden on mobile, toggle) */}
+        <aside className="hidden md:block w-56 flex-shrink-0 border-r border-steel-800 bg-black/30 overflow-y-auto py-4">
           <StepRail
             currentStep={session.currentStep}
             onStepClick={handleStepClick}
@@ -300,7 +300,7 @@ function GuidedModeInner() {
         </aside>
 
         {/* Main panel — Step content */}
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">
           <div className="max-w-2xl mx-auto">
             <StepPanel
               currentStep={session.currentStep}
@@ -316,8 +316,8 @@ function GuidedModeInner() {
           </div>
         </main>
 
-        {/* Right rail — Live results */}
-        <aside className="w-60 flex-shrink-0 border-l border-steel-800 bg-black/30 overflow-y-auto p-3">
+        {/* Right rail — Live results (hidden on mobile) */}
+        <aside className="hidden lg:block w-60 flex-shrink-0 border-l border-steel-800 bg-black/30 overflow-y-auto p-3">
           <LiveResultCards recentScenarios={liveScenarios} />
         </aside>
       </div>

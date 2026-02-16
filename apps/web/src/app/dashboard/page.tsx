@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Plus, Folder, Clock, ArrowRight, Loader2, ImageIcon, BadgeCheck } from 'lucide-react';
+import { Plus, Folder, Clock, ArrowRight, Loader2, ImageIcon, BadgeCheck, Trash2, MoreVertical } from 'lucide-react';
 import { useSupabase } from '@/lib/supabase-provider';
 import { projectsApi, userProfileApi, assetsApi } from '@/lib/api';
 import toast from 'react-hot-toast';
@@ -28,6 +28,9 @@ export default function DashboardPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNewProjectModal, setShowNewProjectModal] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   useEffect(() => {
     checkOnboardingAndLoadProjects();
@@ -97,6 +100,26 @@ export default function DashboardPage() {
     }
   }
 
+  async function handleDeleteProject(projectId: string) {
+    try {
+      if (!supabase) return;
+      setDeleting(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      await projectsApi.delete(session.access_token, projectId);
+      setProjects(prev => prev.filter(p => p.id !== projectId));
+      setDeleteConfirm(null);
+      setOpenMenu(null);
+      toast.success('Project deleted');
+    } catch (error) {
+      console.error('Failed to delete project:', error);
+      toast.error('Failed to delete project');
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -146,12 +169,45 @@ export default function DashboardPage() {
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
           {projects.map(project => (
-            <Link
+            <div
               key={project.id}
-              href={`/dashboard/projects/${project.id}`}
-              className="block bg-steel-950 border border-steel-700/50 hover:border-brand-600/50 
+              className="relative bg-steel-950 border border-steel-700/50 hover:border-brand-600/50 
                 hover:shadow-glow-green transition-all group overflow-hidden rounded-lg"
             >
+              {/* Three-dot menu */}
+              <div className="absolute top-1.5 left-1.5 z-10">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setOpenMenu(openMenu === project.id ? null : project.id);
+                  }}
+                  className="w-6 h-6 flex items-center justify-center bg-black/70 hover:bg-black text-steel-400 hover:text-white rounded transition-colors opacity-0 group-hover:opacity-100"
+                >
+                  <MoreVertical className="h-3.5 w-3.5" />
+                </button>
+                {openMenu === project.id && (
+                  <div className="absolute top-7 left-0 bg-steel-800 border border-steel-600 py-1 shadow-xl z-50 min-w-[120px]">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setDeleteConfirm(project.id);
+                        setOpenMenu(null);
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-1.5 text-left text-xs text-red-400 hover:bg-steel-700"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                      Delete
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <Link
+                href={`/dashboard/projects/${project.id}`}
+                className="block"
+              >
               {/* Cover Image - smaller 4:3 aspect ratio */}
               <div className="relative w-full aspect-[4/3] bg-steel-900 overflow-hidden">
                 {project.coverAssetId ? (
@@ -198,7 +254,41 @@ export default function DashboardPage() {
                 </div>
               </div>
             </Link>
+            </div>
           ))}
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-steel-900 border border-steel-700 p-6 max-w-sm w-full mx-4 shadow-xl">
+            <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-2">Delete Project</h3>
+            <p className="text-xs text-steel-400 mb-1">
+              Are you sure you want to delete <span className="text-white font-medium">{projects.find(p => p.id === deleteConfirm)?.name}</span>?
+            </p>
+            <p className="text-xs text-red-400 mb-6">
+              This will permanently remove the project and all its assets. This cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                disabled={deleting}
+                className="flex-1 px-4 py-2 bg-steel-800 border border-steel-700 text-white text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDeleteProject(deleteConfirm)}
+                disabled={deleting}
+                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-500 text-white text-sm font-bold
+                  disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                {deleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

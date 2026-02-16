@@ -27,10 +27,10 @@ export function Logo({ variant = 'full', size = 'md', dark = true, className = '
   const s = sizes[size];
 
   const markBg = dark
-    ? 'bg-black'
+    ? 'bg-steel-900 border border-brand-500'
     : 'bg-slate-900';
   const markText = dark
-    ? 'text-slate-900'
+    ? 'text-brand-400'
     : 'text-white';
   const wordmarkText = dark
     ? 'text-white'

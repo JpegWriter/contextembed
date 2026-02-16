@@ -71,9 +71,9 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
       {/* Sidebar — Sharp black tech panel */}
       <aside className="w-56 bg-black border-r border-steel-700/50 flex flex-col">
         {/* Logo */}
-        <div className="h-12 px-4 flex items-center border-b border-steel-700/50">
+        <div className="h-16 px-4 flex items-center border-b border-steel-700/50">
           <Link href="/dashboard" className="flex items-center gap-2">
-            <Logo variant="full" size="sm" dark />
+            <Logo variant="full" size="lg" dark />
           </Link>
         </div>
 

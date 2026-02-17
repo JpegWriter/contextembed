@@ -41,24 +41,31 @@ interface Message {
 interface ContextBundle {
   user: {
     id: string;
-    email: string;
-    tier: string;
+    plan: string;
+    created_at?: string;
   };
   app: {
     version: string;
     environment: string;
   };
-  route: string;
+  route: { pathname: string };
   latest?: {
-    last_action?: { type: string; createdAt: string } | null;
-    last_error?: { type: string; payload: unknown; createdAt: string } | null;
+    project_id?: string | null;
+    job_id?: string | null;
+    asset_ids_count?: number;
+    last_action?: string | null;
+    last_error_code?: string | null;
   };
-  limits?: {
-    monthly_assets: number;
-    assets_used: number;
-  };
+  limits?: Record<string, number>;
   events?: unknown[];
-  project_summary?: string;
+  project_summary?: {
+    id: string;
+    name: string;
+    assets_total: number;
+    assets_pending: number;
+    assets_completed: number;
+    assets_approved: number;
+  } | null;
 }
 
 interface SupportDrawerProps {
@@ -170,11 +177,11 @@ export default function SupportDrawer({ currentRoute = '' }: SupportDrawerProps)
         const assistantMessage: Message = {
           id: crypto.randomUUID(),
           role: 'assistant',
-          content: data.response,
+          content: data.reply_markdown,
           timestamp: new Date(),
-          playbookId: data.playbookId,
+          playbookId: data.matched_playbook,
           confidence: data.confidence,
-          suggestTicket: data.suggestTicket,
+          suggestTicket: data.confidence === 'low',
         };
         setMessages(prev => [...prev, assistantMessage]);
       } else {
@@ -216,21 +223,21 @@ export default function SupportDrawer({ currentRoute = '' }: SupportDrawerProps)
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session.access_token}`,
+          'x-pathname': currentRoute,
         },
         body: JSON.stringify({
-          userMessage: lastUserMsg?.content || 'Support request',
-          conversationHistory: messages.map(m => ({
-            role: m.role,
-            content: m.content,
-          })),
-          route: currentRoute,
+          message: lastUserMsg?.content || 'Support request',
           category: lastAssistantMsg?.playbookId || 'general',
+          environment: {
+            browser: navigator.userAgent,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          },
         }),
       });
 
       if (res.ok) {
         const data = await res.json();
-        setTicketPayload(data.ticket);
+        setTicketPayload(data.payload || data);
       } else {
         const error = await res.json().catch(() => ({ error: 'Unknown error' }));
         const errorMessage: Message = {
@@ -345,10 +352,16 @@ export default function SupportDrawer({ currentRoute = '' }: SupportDrawerProps)
         {context ? (
           <div className="px-4 py-2 bg-steel-800/50 border-b border-steel-700 flex items-center gap-2 text-xs">
             <span className="text-steel-500">Context:</span>
-            <span className="text-steel-300">{context.user.email}</span>
+            <span className="text-steel-300">{context.project_summary?.name || 'No project'}</span>
             <span className="text-steel-600">|</span>
-            <span className="text-steel-400">{context.user.tier}</span>
-            {context.latest?.last_error ? (
+            <span className="text-steel-400 capitalize">{context.user.plan} plan</span>
+            {context.project_summary ? (
+              <>
+                <span className="text-steel-600">|</span>
+                <span className="text-steel-400">{context.project_summary.assets_total} assets</span>
+              </>
+            ) : null}
+            {context.latest?.last_error_code ? (
               <>
                 <span className="text-steel-600">|</span>
                 <span className="text-red-400 flex items-center gap-1">
